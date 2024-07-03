@@ -247,13 +247,15 @@
                                 </table><!-- End .table table-wishlist -->
 
                                 <div class="cart-bottom">
+                                    
                                     <div class="cart-discount">
-                                        <form action="#">
+                                        <form  id="form">
+                                            <div id="errorMessage" class="text-danger"></div>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" required
+                                                <input type="text" id="couponCheck" class="form-control" required
                                                     placeholder="coupon code">
                                                 <div class="input-group-append">
-                                                    <button class="btn btn-outline-primary-2" type="submit"><i
+                                                    <button class="btn btn-outline-primary-2" id="couponSubmit" type="submit"><i
                                                             class="icon-long-arrow-right"></i></button>
                                                 </div><!-- .End .input-group-append -->
                                             </div><!-- End .input-group -->
@@ -714,65 +716,40 @@
     })
 
 
+
+    //COUPON CHECK 
+    document.getElementById('couponSubmit').addEventListener('click' , function(event){
+        event.preventDefault()
+        const couponCode = document.getElementById('couponCheck').value
+        fetch('/checkCoupon', {
+            method:'POST',
+            headers:{
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify({couponCode:couponCode})
+        })
+        .then(response => {
+            if(!response.ok){
+                throw new Error('Network response was not okey')
+            }
+            return response.json()
+        })
+        .then(data => {
+            if(data.success){
+                console.log(couponCode)
+            }else if(data.message){
+                document.getElementById('errorMessage').innerText= data.message
+            }
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    })
     
 
 
 
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     document.querySelectorAll('.btn-increment').forEach(button => {
-    //         button.addEventListener('click', function () {
-    //             const productId = this.getAttribute('data-product-id');
-    //             const productPrice = parseFloat(this.getAttribute('data-product-price'));
-    //             let quantityElement = document.getElementById(`quantity-${productId}`);
-    //             let quantity = parseInt(quantityElement.innerText);
-
-    //             if (quantity < 3) {
-    //                 quantity++;
-    //                 quantityElement.innerText = quantity;
-    //                 updateTotal(productId, productPrice, quantity);
-    //             } else {
-    //                 Swal.fire({
-    //                     icon: 'info',
-    //                     title: 'Limit reached',
-    //                     text: 'You have reached the limit of 3 items for this product.',
-    //                 });
-    //             }
-    //         });
-    //     });
-
-    //     document.querySelectorAll('.btn-decrement').forEach(button => {
-    //         button.addEventListener('click', function () {
-    //             const productId = this.getAttribute('data-product-id');
-    //             const productPrice = parseFloat(this.getAttribute('data-product-price'));
-    //             let quantityElement = document.getElementById(`quantity-${productId}`);
-    //             let quantity = parseInt(quantityElement.innerText);
-    //             if (quantity > 1) {
-    //                 quantity--;
-    //                 quantityElement.innerText = quantity;
-    //                 updateTotal(productId, productPrice, quantity);
-    //             }
-    //         });
-    //     });
-
-    //     function updateTotal(productId, productPrice, quantity) {
-    //         let totalElement = document.getElementById(`total-${productId}`);
-    //         let total = productPrice * quantity;
-    //         totalElement.innerText = total.toFixed(2);
-    //         updateSubtotal();
-    //     }
-
-    //     function updateSubtotal() {
-    //         let subtotal = 0;
-    //         document.querySelectorAll('.total-col').forEach(totalCol => {
-    //             subtotal += parseFloat(totalCol.innerText);
-    //         });
-    //         document.getElementById('subtotal').innerText = `₹ ${subtotal.toFixed(2)}`;
-    //         document.getElementById('total').innerText = `₹ ${subtotal.toFixed(2)}`;
-    //     }
-
-    //     // Initial calculation of subtotal
-    //     updateSubtotal();
-    // });
+   
 </script>
 
 

@@ -1,4 +1,5 @@
 const couponSchema = require('../models/couponModel');
+const  userSchema = require('../models/userModel');
 
 
 const coupon = async (req,res) => {
@@ -95,12 +96,30 @@ const deleteCoupon = async (req,res) => {
 }
 
 
+const couponCheck = async (req,res) => {
+    try {
+        const {couponCode} = req.body
+        const couponData = await couponSchema.findOne({couponCode:couponCode});
+        if(couponData == null){
+            res.send({message:'the coupon code is invalid'})
+        }else{
+            
+        }
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+
 module.exports = {
     addCoupon,
     coupon,
     editCoupon,
     updateCoupon,
     deleteCoupon,
+    couponCheck,
 
 
 

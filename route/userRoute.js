@@ -29,7 +29,8 @@ const otpController = require('../controller/otpController');
 const productCantroller = require('../controller/productCantroller');
 const cartController = require('../controller/cartController');
 const checkOutController = require('../controller/checkOutController');
-const wishlistController = require('../controller/wishlistController')
+const wishlistController = require('../controller/wishlistController');
+const couponController = require('../controller/couponController');
 
 // REQUIRING AUTH MIDDELEWARE
 const userAuth = require('../middlewares/userAuth');
@@ -82,7 +83,7 @@ user_route.get('/cart',  userAuth.is_login , cartController.showCart);
 user_route.post('/checkCart', userAuth.is_login  , cartController.checkCart)
 user_route.post('/addCart', cartController.addCart);
 user_route.post('/removeCart', cartController.removeCart);
-
+user_route.post('/checkCoupon', couponController.couponCheck);
 
 
 
@@ -128,6 +129,8 @@ user_route.get('/wishlist', userAuth.is_login, wishlistController.wishlist);
 user_route.post('/addToWishlist' ,wishlistController.addToWishlist);
 user_route.post('/removeWishlist', wishlistController.removeWishlit);
 user_route.post('/checkWishlist', wishlistController.checkWishlist)
+
+
 
 
 
