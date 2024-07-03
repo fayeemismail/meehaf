@@ -1,0 +1,283 @@
+<%- include('../partials/adminHeader') %>
+
+
+    <body class="dark">
+        <div class="screen-overlay"></div>
+        <aside class="navbar-aside" id="offcanvas_aside">
+            <div class="aside-top">
+                <a href="/admin" class="brand-wrap">
+                    <div class="logo">
+                        <span>M</span>
+                        <span>E</span>
+                        <span>E</span>
+                        <span>'</span>
+                        <span>H</span>
+                        <span>A</span>
+                        <span>F</span>
+                    </div>
+                </a>
+                <div>
+                    <button class="btn btn-icon btn-aside-minimize"><i
+                            class="text-muted material-icons md-menu_open"></i></button>
+                </div>
+            </div>
+
+            <!-- INCLUDING ADMIN NAV BAR -->
+            <%- include('../partials/adminNavbar') %>
+
+
+        </aside>
+        <main class="main-wrap">
+            <header class="main-header navbar">
+                <div class="col-search">
+                    <form class="searchform">
+                        <div class="input-group">
+                            <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                            <button class="btn btn-light bg" type="button"><i
+                                    class="material-icons md-search"></i></button>
+                        </div>
+                        <datalist id="search_terms">
+                            <option value="Products"></option>
+                            <option value="New orders"></option>
+                            <option value="Apple iphone"></option>
+                            <option value="Ahmed Hassan"></option>
+                        </datalist>
+                    </form>
+                </div>
+                <div class="col-nav">
+                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                            class="material-icons md-apps"></i></button>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon" href="#">
+                                <i class="material-icons md-notifications animation-shake"></i>
+                                <span class="badge rounded-pill">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                    class="material-icons md-cast"></i></a>
+                        </li>
+                        <li class="dropdown nav-item">
+                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
+                                aria-expanded="false"><i class="material-icons md-public"></i></a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                                <a class="dropdown-item text-brand" href="#"><img
+                                        src="/admin/assets/imgs/theme/flag-us.png" alt="English" />English</a>
+                                <a class="dropdown-item" href="#"><img src="/admin/assets/imgs/theme/flag-fr.png"
+                                        alt="Français" />Français</a>
+                                <a class="dropdown-item" href="#"><img src="/admin/assets/imgs/theme/flag-jp.png"
+                                        alt="Français" />日本語</a>
+                                <a class="dropdown-item" href="#"><img src="/admin/assets/imgs/theme/flag-cn.png"
+                                        alt="Français" />中国人</a>
+                            </div>
+                        </li>
+                        <li class="dropdown nav-item">
+                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
+                                aria-expanded="false"> <img class="img-xs rounded-circle"
+                                    src="/admin/assets/imgs/people/avatar-2.png" alt="User" /></a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                                <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit
+                                    Profile</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account
+                                    Settings</a>
+                                <a class="dropdown-item" href="#"><i
+                                        class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help
+                                    center</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="#"><i
+                                        class="material-icons md-exit_to_app"></i>Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+            <section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Products grid</h2>
+                        <p>Lorem ipsum dolor sit amet.</p>
+                    </div>
+                    <div>
+                        <a href="/admin/newProducts" class="btn btn-primary btn-sm rounded">Create new</a>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <header class="card-header">
+                        <div class="row gx-3">
+                            <div class="col-lg-4 col-md-6 me-auto">
+                                <input type="text" placeholder="Search..." class="form-control" />
+                            </div>
+                            <div class="col-lg-2 col-6 col-md-3" hidden>
+                                <select class="form-select">
+                                    <option>All category</option>
+                                    <option>Electronics</option>
+                                    <option>Clothings</option>
+                                    <option>Something else</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-6 col-md-3" hidden>
+                                <select class="form-select">
+                                    <option>Latest added</option>
+                                    <option>Cheap first</option>
+                                    <option>Most viewed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </header>
+                    <!-- card-header end// -->
+                    <div class="card-body">
+
+
+
+                        <div class="row gx-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 row-cols-xxl-5">
+                            <% item.forEach(element=> { %>
+                                <div class="col">
+
+                                    <div class="card card-product-grid">
+                                        <a href="#" class="img-wrap"><img
+                                                src="/public/productImage/<%= element.image[0] %>" alt="Product" /></a>
+                                        <div class="info-wrap">
+                                            <a href="#" class="title text-truncate">
+                                                <p>Name: <%= element.name %>
+                                                </p>
+                                            </a>
+                                            <div class="price mb-2">
+                                                <p>₹ <%= element.price %>
+                                                </p>
+                                            </div>
+                                            <p class="stocks">
+                                                Stock: <%= element.stock %>
+                                            </p> <!-- Paragraph for stocks -->
+                                            <button class="btn btn-secondary justify-content-center" type="button"
+                                                data-toggle="collapse" data-target="#collapseExample" 
+                                                aria-expanded="false" aria-controls="collapseExample" style="height: 30px; width: 8px;">
+                                                Description:
+                                            </button>
+
+                                            <!-- Collapsible paragraph -->
+                                            <p class="collapse" id="collapseExample">
+                                                <%= element.description %>
+                                            </p>
+                                            <p class="category">
+                                                Category: <%= element.category %>
+                                            </p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <a href="/admin/editProducts?id=<%= element._id %>"
+                                                        class="btn btn-sm font-sm rounded btn-brand"><i
+                                                            class="material-icons md-edit"></i> Edit</a>
+                                                </div>
+                                                <div>
+
+                                                    <% if (element.status==true) { %>
+
+                                                        <button class="btn btn-sm font-sm btn-danger rounded"
+                                                            id="productBlock-<%= element.id %>"
+                                                            onclick="productBlock('<%= element.id %>', 'UnList')">UnList</button>
+
+                                                        <% } else { %>
+
+                                                            <button class="btn btn-sm font-sm btn-brand rounded"
+                                                                id="productBlock-<%= element.id %>"
+                                                                onclick="productBlock('<%= element.id %>', 'List')">List</button>
+
+                                                            <% } %>
+
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- card-product end// -->
+                                </div>
+                                <% }) %>
+                        </div>
+                        <!-- row.// -->
+
+
+
+                    </div>
+
+
+                    <!-- card-body end// -->
+                </div>
+                <!-- card end// -->
+                <div class="pagination-area mt-30 mb-50">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                            <li class="page-item"><a class="page-link" href="#">02</a></li>
+                            <li class="page-item"><a class="page-link" href="#">03</a></li>
+                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">16</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+            <!-- content-main end// -->
+
+
+            <script>
+                function productBlock(productId) {
+
+                    Swal.fire({
+                        title: "Do you want to save the changes?",
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        customClass: {
+                            title: 'swal2-title',
+                            htmlContainer: 'swal2-html-container'
+                        }
+                    }).then((result) => {
+
+                        if (result.isConfirmed) {
+                            axios.post(`/admin/productBlock?id=${productId}`)
+                                .then((response) => {
+                                    if (response.data.success == 1) {
+                                        const button = document.getElementById(`productBlock-${productId}`);
+
+                                        if (button.classList.contains('btn-danger')) {
+                                            button.classList.remove('btn-danger')
+                                            button.classList.add('btn-brand');
+                                            button.innerHTML = 'List'
+                                        } else {
+                                            button.classList.remove('btn-brand')
+                                            button.classList.add('btn-danger')
+                                            button.innerHTML = 'UnList'
+
+                                        }
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.log(error)
+                                })
+                            Swal.fire("changed!", "", "success")
+                        } else if (result.isDenied) {
+                            Swal.fire("Changes are not Saved", "", "info")
+                        }
+
+                    });
+
+                    document.querySelector('.btn').addEventListener('click', function () {
+                        // Toggle the collapse class on the paragraph
+                        document.querySelector('.collapse').classList.toggle('show');
+                    });
+
+                }
+            </script>
+
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+            <%- include('../partials/adminFooter') %>

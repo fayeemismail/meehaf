@@ -1,0 +1,283 @@
+
+<%- include('../partials/adminHeader') %>
+
+
+    <body class="dark">
+        <div class="screen-overlay"></div>
+        <aside class="navbar-aside" id="offcanvas_aside">
+            <div class="aside-top">
+                <a href="/admin" class="brand-wrap">
+                    <div class="logo">
+                        <span>M</span>
+                        <span>E</span>
+                        <span>E</span>
+                        <span>'</span>
+                        <span>H</span>
+                        <span>A</span>
+                        <span>F</span>
+                    </div>
+                </a>
+                <div>
+                    <button class="btn btn-icon btn-aside-minimize"><i
+                            class="text-muted material-icons md-menu_open"></i></button>
+                </div>
+            </div>
+
+            <!-- INCLUDING ADMIN NAV BAR -->
+            <%- include('../partials/adminNavbar') %>
+
+
+
+</aside>
+<main class="main-wrap">
+    <header class="main-header navbar">
+        <div class="col-search">
+            <form class="searchform">
+                <div class="input-group">
+                    <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                    <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                </div>
+                <datalist id="search_terms">
+                    <option value="Products"></option>
+                    <option value="New orders"></option>
+                    <option value="Apple iphone"></option>
+                    <option value="Ahmed Hassan"></option>
+                </datalist>
+            </form>
+        </div>
+        <div class="col-nav">
+            <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i class="material-icons md-apps"></i></button>
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link btn-icon" href="#">
+                        <i class="material-icons md-notifications animation-shake"></i>
+                        <span class="badge rounded-pill">3</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                </li>
+                <li class="dropdown nav-item">
+                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                        <a class="dropdown-item text-brand" href="#"><img src="/admin/assets/imgs/theme/flag-us.png" alt="English" />English</a>
+                        <a class="dropdown-item" href="#"><img src="/admin/assets/imgs/theme/flag-fr.png" alt="Français" />Français</a>
+                        <a class="dropdown-item" href="#"><img src="/admin/assets/imgs/theme/flag-jp.png" alt="Français" />日本語</a>
+                        <a class="dropdown-item" href="#"><img src="/admin/assets/imgs/theme/flag-cn.png" alt="Français" />中国人</a>
+                    </div>
+                </li>
+                <li class="dropdown nav-item">
+                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/admin/assets/imgs/people/avatar-2.png" alt="User" /></a>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                        <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                        <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                        <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                        <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                        <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+
+
+
+
+
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Order detail</h2>
+            <% orderData.Products.forEach(element => { %>
+            <p>Details for Order ID: <strong><%= element.Product.name %></strong></p>
+            <% }) %>
+        </div>
+    </div>
+    <div class="card">
+        <header class="card-header">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                    <span> <i class="material-icons md-calendar_today"></i> <b><%= orderData.createdAt.toLocaleDateString() %></b> </span> <br />
+                    <small class="text-muted">Order ID: <%= orderData.id %></small>
+                </div>
+                <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                    <select class="form-select d-inline-block mb-lg-0 mr-5 mw-200" id="statusDetails">
+                        <option>Canceled</option>
+                        <option>Pending</option>
+                        <option>Shipped</option>
+                        <option>Delivered</option>
+                    </select>
+                    <a class="btn btn-primary" onclick="saveDetails(event, '<%= orderData.id %>')" href="" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px;">
+                        Save
+                    </a>
+                    <a class="btn btn-secondary back ms-2" href="/admin/order" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px;">
+                        <i class="icon material-icons" style="font-size: 14px;">Back</i>
+                    </a>
+
+                </div>
+            </div>
+        </header>
+        <!-- card-header end// -->
+        <div class="card-body">
+            <div class="row mb-50 mt-20 order-info-wrap">
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-person"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Customer</h6>
+                            <p class="mb-1">
+                                <%= orderData.billingAddress.userName %> <br />
+                                <%= orderData.billingAddress.email %> <br />
+                                <%= orderData.billingAddress.mobile %>
+                            </p>
+                            <a href="#">View profile</a>
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-local_shipping"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Order info</h6>
+                            <p class="mb-1">
+                                Shipping: Riyaf express <br />
+                                Pay method: razor Pay <br />
+                                Status: new
+                            </p>
+                            <a href="#">Download info</a>
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-place"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Deliver to</h6>
+                            <p class="mb-1">
+                                City: <%= orderData.billingAddress.city %>, <%= orderData.billingAddress.state %> <br /><%= orderData.billingAddress.address %> <br />
+                               <%= orderData.billingAddress.pincode %>
+                            </p>
+                            <a href="#">View profile</a>
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+            </div>
+            <!-- row // -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th width="40%">Product</th>
+                                    <th width="20%">Unit Price</th>
+                                    <th width="20%">Quantity</th>
+                                    <th width="20%" class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% orderData.Products.forEach(element => { %>
+                                <tr>
+                                   
+                                     
+                                    
+                                    <td>
+                                        <a class="itemside" href="#">
+                                            <div class="left">
+                                                <img src="/public/productImage/<%= element.Product.image[0] %>" width="50" height="50" class="img-s" alt="Item" />
+                                            </div>
+                                            <div class="info"><%= element.name %></div>
+                                        </a>
+                                    </td>
+                                    <td><%= element.price %></td>
+                                    <td><%= element.quantity %></td>
+                                    <td class="text-end"><%= element.price * element.quantity %></td>
+                                    <% }) %>
+                                </tr>
+
+                              
+                                <tr>
+                                    <td colspan="4">
+                                        <hr>
+                                        <article class="float-end">
+                                            <dl class="dlist">
+                                                <dt>Subtotal:</dt>
+                                                <dd>₹ <%= orderData.totalAmount %></dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Shipping cost:</dt>
+                                                <dd>₹ 00</dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Grand total:</dt>
+                                                <dd><b class="h5">₹ <%= orderData.totalAmount %></b></dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt class="text-muted">Status:</dt>
+                                                <dd>
+                                                    <span class="badge rounded-pill alert-success text-success"><%= orderData.orderStatus %></span>
+                                                </dd>
+                                            </dl>
+                                        </article>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- table-responsive// -->
+                </div>
+               
+            </div>
+        </div>
+        <!-- card-body end// -->
+    </div>
+    <!-- card end// -->
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+    function saveDetails(event, orderId){
+        event.preventDefault()
+    
+    const currentStatus = document.getElementById('statusDetails').value 
+    console.log(orderId)
+    fetch('/admin/statusCange', {
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify({newStatus:currentStatus, orderId:orderId})
+    })
+    .then((response)=> response.json())
+    .then(data => {
+        if(data.success){
+            window.location.href = '/admin/order'
+        }
+    })
+    .catch(error => {
+        console.log(error)
+    })
+}
+</script>
+
+
+
+<%- include('../partials/adminFooter') %>

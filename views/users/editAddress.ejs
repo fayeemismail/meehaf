@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Edit Address</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="wrap d-md-flex">
+                    <div class="login-wrap p-4 p-md-5 w-100">
+                        <h1>Edit Address</h1>
+                        <form id="address_form" class="signin-form" action="/updateAddress" method="POST">
+                            <!-- Form Fields -->
+                            <div class="form-group mb-3">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" value="<%= address.name %>" name="name" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="mobile">Mobile</label>
+                                <input type="tel" class="form-control" value="<%= address.mobile %>" id="mobile" name="mobile" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" value="<%= address.address %>" id="address" name="address" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="pincode">Pincode</label>
+                                <input type="text" class="form-control" value="<%= address.pincode %>" id="pincode" name="pincode" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="city">City</label>
+                                <input type="text" class="form-control" value="<%= address.city %>" id="city" name="city" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="state">State</label>
+                                <input type="text" class="form-control" value="<%= address.state %>" id="state" name="state" required>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" id="updateButton" class="btn btn-primary rounded submit px-3">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.getElementById('updateButton').addEventListener('click', function (event) {
+        event.preventDefault();
+        const addressId = '<%= address._id %>';
+        updateAddress(addressId);
+    });
+
+    function updateAddress(addressId) {
+        const name = document.getElementById('name').value;
+        const mobile = document.getElementById('mobile').value;
+        const address = document.getElementById('address').value;
+        const pincode = document.getElementById('pincode').value;
+        const city = document.getElementById('city').value;
+        const state = document.getElementById('state').value;
+
+        const formData = {
+            id: addressId,
+            name,
+            mobile,
+            address,
+            pincode,
+            city,
+            state
+        };
+
+        fetch('/updateAddress', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Response from server:", data);
+            if (data.success) {
+                window.location.href = '/userProfile';
+            } else if (data.message) {
+                document.getElementById('error-message').textContent = data.message;
+            }
+        })
+        .catch(error => {
+            console.log("Error during request:", error); // Debugging log
+            document.getElementById('error-message').textContent = 'An error occurred. Please try again.';
+        });
+    }
+</script>
+</body>
+</html>

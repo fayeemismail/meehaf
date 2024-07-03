@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container my-5">
+        <div class="card">
+            <div class="card-header">
+                <% order.Products.forEach(element=> { %>
+
+
+                    <h1>Order Details for Order #<%= element.name %>
+                    </h1>
+                    <% }) %>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">Billing Information</h4>
+                <p><strong>Name:</strong>
+                    <%= order.billingAddress.userName %>
+                </p>
+                <p><strong>Email:</strong>
+                    <%= order.billingAddress.email %>
+                </p>
+                <p><strong>Address:</strong>
+                    <%= order.billingAddress.address %>, <%= order.billingAddress.city %>, <%=
+                                order.billingAddress.state %>, <%= order.billingAddress.pincode %>
+                </p>
+                <p><strong>Mobile:</strong>
+                    <%= order.billingAddress.mobile %>
+                </p>
+                <p><strong>Date:</strong>
+                    <%= new Date(order.createdAt).toLocaleDateString() %>
+                </p>
+                <p class="text-danger"><strong class="text-dark">Status:</strong>
+                    <%= order.orderStatus %>
+                </p>
+                <p><strong>Total:</strong> ₹<%= order.totalAmount %>.00</p>
+
+                <h4 class="card-title mt-4">Items</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Photo</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% order.Products.forEach(item=> { %>
+                                <tr>
+                                    <td>
+                                        <% if(item.Product.image) { %>
+                                            <img src="/public/productImage/<%= item.Product.image[0] %>"
+                                                alt="<%= item.name %> photo" width="100">
+                                            <% } %>
+                                    </td>
+                                    <td>
+                                        <%= item.name %>
+                                    </td>
+                                    <td>₹ <%= item.price %>
+                                    </td>
+                                    <td>
+                                        <%= item.quantity %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <% if (order.orderStatus == 'canceled') { %>
+
+                    <p class="text-danger">The order is canceled</p>
+                 
+                    <% } else { %>
+                        <button type="submit" onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">Cancel
+                            Order</button>
+
+                <% } %>
+               
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function cancelOrder(orderId) {
+        console.log(orderId)
+        Swal.fire({
+            title: "Do you want to cancel the order?",
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            customClass: {
+                title: 'swal2-title',
+                htmlContainer: 'swal2-html-container'
+            }
+
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    axios.post(`/cancelOrder?id=${orderId}`)
+                        .then((response) => {
+                            if (response.data.success == 1) {
+                                window.location.href = '/userProfile'
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
+                    Swal.fire("changed!", "", "success")
+                } else if (result.isDenied) {
+                    Swal.fire("Changes are not Saved", "", "info")
+                }
+            })
+    }
+</script>
+
+
+</html>

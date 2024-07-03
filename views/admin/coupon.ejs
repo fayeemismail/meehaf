@@ -1,0 +1,203 @@
+
+
+
+<%- include('../partials/adminHeader') %>
+<body class="dark">
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="/admin" class="brand-wrap">
+                <div class="logo">
+                    <span>M</span>
+                    <span>E</span>
+                    <span>E</span>
+                    <span>'</span>
+                    <span>H</span>
+                    <span>A</span>
+                    <span>F</span>
+                </div>
+            </a>
+            <div>
+                <button class="btn btn-icon btn-aside-minimize"><i class="text-muted material-icons md-menu_open"></i></button>
+            </div>
+        </div>
+
+        <!-- INCLUDING ADMIN NAV BAR -->
+        <%- include('../partials/adminNavbar') %>
+
+    </aside>
+
+<main class="main-wrap">
+    <header class="main-header navbar">
+        <div class="col-search">
+            <form class="searchform">
+                <div class="input-group">
+                    <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                    <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                </div>
+                <datalist id="search_terms">
+                    <option value="Products"></option>
+                    <option value="New orders"></option>
+                    <option value="Apple iphone"></option>
+                    <option value="Ahmed Hassan"></option>
+                </datalist>
+            </form>
+        </div>
+        <div class="col-nav">
+            <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i class="material-icons md-apps"></i></button>
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link btn-icon" href="#">
+                        <i class="material-icons md-notifications animation-shake"></i>
+                        <span class="badge rounded-pill">3</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                </li>
+                <li class="dropdown nav-item">
+                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                        <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png" alt="English" />English</a>
+                        <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png" alt="Français" />Français</a>
+                        <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png" alt="Français" />日本語</a>
+                        <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png" alt="Français" />中国人</a>
+                    </div>
+                </li>
+                <li class="dropdown nav-item">
+                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="assets/imgs/people/avatar-2.png" alt="User" /></a>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                        <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                        <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                        <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                        <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                        <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Coupon</h2>
+                <p>Add, edit or delete a category</p>
+            </div>
+            <div>
+                <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <form action="" method="post">
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Name</label>
+                                <input type="text" placeholder="Type here" class="form-control" id="coupon_name" name="coupon_name" required />
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_slug" class="form-label">Amount</label>
+                                <input type="number" placeholder="Type here" class="form-control" id="amount" name="amount" required />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Expires</label>
+                                <input type="date" placeholder="Type here" class="form-control" id="coupon_expires" name="coupon_expires" required />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Coupon Code</label>
+                                <input type="text" placeholder="Type here" class="form-control" id="coupon_code" name="coupon_code" required />
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_slug" class="form-label">Minimum Amount</label>
+                                <input type="number" placeholder="Type here" class="form-control" id="minimum_amount" name="minimum_amount" required />
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_slug" class="form-label">Status</label>
+                                <select type="number" placeholder="Type here" class="form-control" id="coupon_status" name="coupon_status" required >
+                                <option value="false">False</option>
+                                <option value="true">True</option>
+                                </select>
+                            </div>
+
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Create Coupon</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center"></th>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Expire date</th>
+                                        <th>Min Amount</th>
+                                        <th>Code</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr>
+                                        
+                                        <% couponData.forEach((element, index) => { %>
+                                         
+                                           
+                                        <td class="text-center"></td>
+                                        <td><%= index + 1 %></td>
+                                        <td><b><%= element.name %></b></td>
+                                        <td><%= element.expires.toLocaleDateString() %></td>
+                                        <td>₹ <%= element.minimumAmount %></td>
+                                        <td><%= element.couponCode %></td>
+                                        <td>₹ <%= element.amount %></td>
+                                        <% if (element.status === false) { %>
+                                            <td><span class="badge rounded-pill badge-soft-success"><%= element.status  %></span><td>
+                                            <% } else { %>
+                                                <td><span class="badge rounded-pill badge-soft-danger"><%= element.status  %></span><td></td>
+
+                                        <% } %>
+                                        
+                                        <td class="text-end">
+                                            <div class="dropdown">
+                                              <a href="" class="btn btn-xs btn-danger"><span>UnList</span></a>
+                                        </td>
+                                        <!-- kkkk -->
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- .col// -->
+                </div>
+                <!-- .row // -->
+            </div>
+            <!-- card body .// -->
+        </div>
+        <!-- card .// -->
+    </section>
+   
+
+
+
+
+    <script>
+
+    </script>
+
+
+
+    <%- include('../partials/adminFooter') %>
+

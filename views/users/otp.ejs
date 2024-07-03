@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>OTP Verification</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/user/login_assets/css/style.css">
+    <style>
+      .otp-input {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        font-size: 24px;
+        margin: 0 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .otp-input:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+      }
+      .otp-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .timer {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 18px;
+      }
+      .disabled {
+        pointer-events: none;
+        color: gray;
+      }
+      .error-message {
+        color: red;
+        text-align: center;
+        margin-bottom: 20px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="ftco-section">
+      <div class="container">
+        <div class="row justify-content-center" style="margin-top: -70px;">
+          <div class="col-md-12 col-lg-10">
+            <div class="wrap d-md-flex">
+              <div class="img" style="background-image: url(user/login_assets/images/cr-bla.png);"></div>
+              <div class="login-wrap p-4 p-md-5">
+                <div class="d-flex">
+                  <div class="w-100">
+                    <h3 class="mb-4">OTP Verification</h3>
+                  </div>
+                </div>
+                <form id="otpForm" action="/verifyOtp" method="post" class="signin-form">
+                  <div class="otp-container">
+                    <% if (typeof message !== 'undefined') { %>
+                      <p class="error-message" style="display: block;"><%= message %></p>
+                    <% } %>
+                    <input type="text" class="otp-input" maxlength="1" required name="otp[]">
+                    <input type="text" class="otp-input" maxlength="1" required name="otp[]">
+                    <input type="text" class="otp-input" maxlength="1" required name="otp[]">
+                    <input type="text" class="otp-input" maxlength="1" required name="otp[]">
+                  </div>
+                  <div class="timer" id="timer">Time remaining: 120 seconds</div>
+                  <div class="error-message" id="errorMessage"></div>
+                  <div class="form-group">
+                    <button type="submit" class="form-control btn btn-primary rounded submit px-3">Verify OTP</button>
+                  </div>
+                </form>
+                <p class="text-center">Didn't receive the code? <a href="/resendOtp" class="resend-otp disabled" id="resendOtpLink">Resend</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="/user/login_assets/js/jquery.min.js"></script>
+    <script src="/user/login_assets/js/popper.js"></script>
+    <script src="/user/login_assets/js/bootstrap.min.js"></script>
+    <script src="/user/login_assets/js/main.js"></script>
+    <script>
+      // Auto-focus the next input field when a number is entered
+      const inputs = document.querySelectorAll('.otp-input');
+      inputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+          // Remove non-numeric characters
+          input.value = input.value.replace(/[^0-9]/g, '');
+
+          if (input.value.length === 1 && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+        });
+
+        // Move focus to the previous field if the backspace key is pressed
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && input.value.length === 0 && index > 0) {
+            inputs[index - 1].focus();
+          }
+        });
+      });
+
+      // Timer for OTP resend
+      let timeLeft = localStorage.getItem('otpTimer') ? parseInt(localStorage.getItem('otpTimer')) : 120;
+      const timerElement = document.getElementById('timer');
+      const resendOtpLink = document.getElementById('resendOtpLink');
+      const otpForm = document.getElementById('otpForm');
+      const errorMessage = document.getElementById('errorMessage');
+
+      const updateTimer = () => {
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          timerElement.textContent = "You can now resend the OTP.";
+          resendOtpLink.classList.remove('disabled');
+          localStorage.removeItem('otpTimer');
+        } else {
+          timerElement.textContent = `Time remaining: ${timeLeft} seconds`;
+          timeLeft--;
+          localStorage.setItem('otpTimer', timeLeft);
+        }
+      };
+
+      updateTimer();
+      const timer = setInterval(updateTimer, 1000);
+
+      // Prevent form submission if the timer has expired
+      otpForm.addEventListener('submit', (e) => {
+        if (timeLeft <= 0) {
+          e.preventDefault();
+          errorMessage.textContent = 'The OTP has expired. Please click "Resend" to get a new OTP.';
+          errorMessage.style.display = 'block';
+        } else {
+          errorMessage.style.display = 'none';
+        }
+      });
+    </script>
+  </body>
+</html>

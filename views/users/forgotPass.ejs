@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Forgot Password</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/user/login_assets/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center" style="margin-top: -70px;">
+                <div class="col-md-12 col-lg-10">
+                    <div class="wrap d-md-flex">
+                        <div class="img" style="background-image: url(user/login_assets/images/cr-bla.png);"></div>
+                        <div class="login-wrap p-4 p-md-5">
+                            <div class="d-flex">
+                                <div class="w-100">
+                                    <h3 class="mb-4">Forgot Password</h3>
+                                </div>
+                            </div>
+                            <form  method="post" action="/fpasswordOTP" class="signin-form">
+                                <div class="form-group mb-3">
+                                    <% if (typeof message !== 'undefined') { %>
+                                        <p class="text-danger"><%= message %></p>
+                                    <% } %>
+                                    <label class="label" for="email">User Email</label>
+                                    <input type="email" class="form-control" placeholder="User email" id="userEmail" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" id="sendOtpButton" class="form-control btn btn-primary rounded submit px-3">Send OTP</button>
+                                </div>
+                            </form>
+                            <p class="text-center"><a href="/login">Back to Login</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+</body>
+</html>

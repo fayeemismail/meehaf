@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- molla/wishlist.html  22 Nov 2019 09:55:05 GMT -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Molla - Bootstrap eCommerce Template</title>
+    <meta name="keywords" content="HTML5 Template">
+    <meta name="description" content="Molla - Bootstrap eCommerce Template">
+    <meta name="author" content="p-themes">
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/user/assets/images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/user/assets/images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/user/assets/images/icons/favicon-16x16.png">
+    <link rel="manifest" href="/user/assets/images/icons/site.html">
+    <link rel="mask-icon" href="/user/assets/images/icons/safari-pinned-tab.svg" color="#666666">
+    <link rel="shortcut icon" href="/user/assets/images/icons/favicon.ico">
+    <meta name="apple-mobile-web-app-title" content="Molla">
+    <meta name="application-name" content="Molla">
+    <meta name="msapplication-TileColor" content="#cc9966">
+    <meta name="msapplication-config" content="/user/assets/images/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/user/assets/css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/user/assets/css/style.css">
+
+
+    <style>
+        .header-right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .header-search,
+        .wishlist,
+        .cart-dropdown,
+        .login {
+            margin-left: 15px;
+        }
+
+        .header-right a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .header-right .icon-user {
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header-right {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .header-search,
+            .wishlist,
+            .cart-dropdown,
+            .login {
+                margin-left: 10px;
+                margin-right: 10px;
+                margin-bottom: 10px;
+            }
+
+            .header-right .login a {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-right .login a {
+                font-size: 12px;
+            }
+        }
+
+        /* Dropdown content (hidden by default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <header class="header">
+
+
+            <div class="header-middle sticky-header">
+                <div class="container">
+                    <div class="header-left">
+                        <button class="mobile-menu-toggler">
+                            <span class="sr-only">Toggle mobile menu</span>
+                            <i class="icon-bars"></i>
+                        </button>
+
+                        <a href="index.html" class="logo">
+                            <img src="/user/assets/images/logo.png" alt="Molla Logo" width="105" height="25">
+                        </a>
+
+                        <nav class="main-nav">
+                            <ul class="menu sf-arrows">
+                                <li class="megamenu-container ">
+                                    <a href="/">Home</a>
+
+
+                                </li>
+                                <li>
+                                    <a href="/shop">Shop</a>
+
+
+                                </li>
+                                <li>
+                                    <a href="/cart">Cart</a>
+
+
+                                </li>
+
+                            </ul><!-- End .menu -->
+                        </nav><!-- End .main-nav -->
+                    </div><!-- End .header-left -->
+
+                    <div class=" header-right">
+                        <div class="header-search">
+                            <a href="#" class="search-toggle" role="button" title="Search"><i
+                                    class="icon-search"></i></a>
+                            <form action="#" method="get">
+                                <div class="header-search-wrapper margin-left-6">
+                                    <label for="q" class="sr-only">Search</label>
+                                    <input type="search" class="form-control" name="q" id="q" placeholder="Search in..."
+                                        required>
+                                </div><!-- End .header-search-wrapper -->
+                            </form>
+                        </div><!-- End .header-search -->
+
+                        <div class="wishlist">
+                            <a href="/wishlist" title="Wishlist">
+                                <i class="icon-heart-o" style="font-size:large;"></i>
+                                <span class="wishlist-count">3</span>
+                            </a>
+                        </div><!-- End .wishlist -->
+
+                        <div class=" cart-dropdown">
+                            <a href="/cart" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false"
+                                data-display="static">
+                                <i class="icon-shopping-cart"></i>
+                                <span class="cart-count">0</span>
+                            </a>
+
+
+                        </div><!-- End .cart-dropdown -->
+
+                        <!-- New login section -->
+                        <!-- <div class="login" style="padding-left: 6px; margin-left: 4px;">
+                            <a href="/login" title="Login">
+                                <i class="icon-user" style="font-size:large;"></i> LOGIN
+                            </a>
+                        </div> -->
+                        <!-- End .login -->
+
+                        <!-- ACCOUNTICON -->
+                        <div class="account" style="padding-left: 6px; margin-left: 4px;">
+                            <a href="#" id="accountLink" title="Account">
+                                <i class="icon-user" style="font-size: large;"></i> ACCOUNT
+                            </a>
+                            <div id="dropdownMenu" class="dropdown-content" style="display: none;">
+                                <a href="/userProfile" id="profileLink" style="display: none;">User
+                                    Profile</a>
+                                <a href="/login" id="loginLink" style="display: none;">Login</a>
+                                <a href="/logout" id="logoutLink" style="display: none;">Logout</a>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+                    </div><!-- End .header-right -->
+                </div><!-- End .container -->
+            </div><!-- End .header-middle -->
+        </header><!-- End .header -->
+
+        <main class="main">
+            <div class="page-header text-center"
+                style="background-image: url('/user/assets/images/page-header-bg.jpg')">
+                <div class="container">
+                    <h1 class="page-title">Wishlist<span>Shop</span></h1>
+                </div><!-- End .container -->
+            </div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Wishlist</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+                <div class="container">
+                    <table class="table table-wishlist table-mobile">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Stock Status</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <% if (wishlistData.Products.length === 0) { %>
+                             
+                                <tr>
+                                    <td colspan="5" style="text-align: center;">Your wishlist is empty</td>
+                                </tr>
+
+                                <% } else { %>
+
+                                    <% wishlistData.Products.forEach(element=> { %>
+                                        <tr>
+                                           
+            
+            
+                                                <td class="product-col">
+                                                    <div class="product">
+                                                        <figure class="product-media">
+                                                            <a href="#">
+                                                                <img src="/public/productImage/<%= element.Product.image[0] %>"
+                                                                    alt="Product image">
+                                                            </a>
+                                                        </figure>
+            
+                                                        <h3 class="product-title">
+                                                            <a href="">
+                                                                <%= element.Product.name %>
+                                                            </a>
+                                                        </h3><!-- End .product-title -->
+                                                    </div><!-- End .product -->
+                                                </td>
+                                                <td class="price-col">
+                                                    <%= element.Product.price %>
+                                                </td>
+                                                <% if (element.Product.stock>= 1) { %>
+                                                    <td class="stock-col"><span class="in-stock">In stock</span></td>
+                                                    <td class="action-col">
+                                                        <button class="btn btn-block btn-outline-primary-2"
+                                                            onclick="addToCart('<%= element.Product._id %>')">Add To Cart</button>
+                                                    </td>
+                                                    <% } else { %>
+                                                        <td class="stock-col"><span class="out-of-stock">Out of Stock</span></td>
+                                                        <td class="action-col">
+                                                            <button class="btn btn-block btn-outline-primary-2 disabled">Out of
+                                                                Stock</button>
+                                                        </td>
+                                                        <% } %>
+            
+            
+                                                            <td class="remove-col"><button class="btn-remove"
+                                                                    onclick="removeProduct('<%= element.Product._id %>')"><i
+                                                                        class="icon-close"></i></button></td>
+                                        </tr>
+                                        <% }) %>
+            
+
+                            <% } %>
+                           
+                        </tbody>
+                    </table><!-- End .table table-wishlist -->
+                    <div class="wishlist-share">
+                        <div class="social-icons social-icons-sm mb-2">
+                            <label class="social-label">Share on:</label>
+                            <a href="#" class="social-icon" title="Facebook" target="_blank"><i
+                                    class="icon-facebook-f"></i></a>
+                            <a href="#" class="social-icon" title="Twitter" target="_blank"><i
+                                    class="icon-twitter"></i></a>
+                            <a href="#" class="social-icon" title="Instagram" target="_blank"><i
+                                    class="icon-instagram"></i></a>
+                            <a href="#" class="social-icon" title="Youtube" target="_blank"><i
+                                    class="icon-youtube"></i></a>
+                            <a href="#" class="social-icon" title="Pinterest" target="_blank"><i
+                                    class="icon-pinterest"></i></a>
+                        </div><!-- End .soial-icons -->
+                    </div><!-- End .wishlist-share -->
+                </div><!-- End .container -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+
+        <footer class="footer">
+            <div class="footer-middle">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget widget-about">
+                                <img src="/user/assets/images/logo.png" class="footer-logo" alt="Footer Logo"
+                                    width="105" height="25">
+                                <p>Praesent dapibus, neque id cursus ucibus, tortor neque egestas augue, eu vulputate
+                                    magna eros eu erat. </p>
+
+                                <div class="social-icons">
+                                    <a href="#" class="social-icon" target="_blank" title="Facebook"><i
+                                            class="icon-facebook-f"></i></a>
+                                    <a href="#" class="social-icon" target="_blank" title="Twitter"><i
+                                            class="icon-twitter"></i></a>
+                                    <a href="#" class="social-icon" target="_blank" title="Instagram"><i
+                                            class="icon-instagram"></i></a>
+                                    <a href="#" class="social-icon" target="_blank" title="Youtube"><i
+                                            class="icon-youtube"></i></a>
+                                    <a href="#" class="social-icon" target="_blank" title="Pinterest"><i
+                                            class="icon-pinterest"></i></a>
+                                </div><!-- End .soial-icons -->
+                            </div><!-- End .widget about-widget -->
+                        </div><!-- End .col-sm-6 col-lg-3 -->
+
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget">
+                                <h4 class="widget-title">Useful Links</h4><!-- End .widget-title -->
+
+                                <ul class="widget-list">
+                                    <li><a href="about.html">About Molla</a></li>
+                                    <li><a href="#">How to shop on Molla</a></li>
+                                    <li><a href="#">FAQ</a></li>
+                                    <li><a href="contact.html">Contact us</a></li>
+                                    <li><a href="login.html">Log in</a></li>
+                                </ul><!-- End .widget-list -->
+                            </div><!-- End .widget -->
+                        </div><!-- End .col-sm-6 col-lg-3 -->
+
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget">
+                                <h4 class="widget-title">Customer Service</h4><!-- End .widget-title -->
+
+                                <ul class="widget-list">
+                                    <li><a href="#">Payment Methods</a></li>
+                                    <li><a href="#">Money-back guarantee!</a></li>
+                                    <li><a href="#">Returns</a></li>
+                                    <li><a href="#">Shipping</a></li>
+                                    <li><a href="#">Terms and conditions</a></li>
+                                    <li><a href="#">Privacy Policy</a></li>
+                                </ul><!-- End .widget-list -->
+                            </div><!-- End .widget -->
+                        </div><!-- End .col-sm-6 col-lg-3 -->
+
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget">
+                                <h4 class="widget-title">My Account</h4><!-- End .widget-title -->
+
+                                <ul class="widget-list">
+                                    <li><a href="#">Sign In</a></li>
+                                    <li><a href="cart.html">View Cart</a></li>
+                                    <li><a href="#">My Wishlist</a></li>
+                                    <li><a href="#">Track My Order</a></li>
+                                    <li><a href="#">Help</a></li>
+                                </ul><!-- End .widget-list -->
+                            </div><!-- End .widget -->
+                        </div><!-- End .col-sm-6 col-lg-3 -->
+                    </div><!-- End .row -->
+                </div><!-- End .container -->
+            </div><!-- End .footer-middle -->
+
+            <div class="footer-bottom">
+                <div class="container">
+                    <p class="footer-copyright">Copyright © 2019 Molla Store. All Rights Reserved.</p>
+                    <!-- End .footer-copyright -->
+                    <figure class="footer-payments">
+                        <img src="/user/assets/images/payments.png" alt="Payment methods" width="272" height="20">
+                    </figure><!-- End .footer-payments -->
+                </div><!-- End .container -->
+            </div><!-- End .footer-bottom -->
+        </footer><!-- End .footer -->
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+
+
+
+
+    <!-- Plugins JS File -->
+    <script src="/user/assets/js/jquery.min.js"></script>
+    <script src="/user/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/user/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="/user/assets/js/jquery.waypoints.min.js"></script>
+    <script src="/user/assets/js/superfish.min.js"></script>
+    <script src="/user/assets/js/owl.carousel.min.js"></script>
+    <!-- Main JS File -->
+    <script src="/user/assets/js/main.js"></script>
+</body>
+
+
+
+
+<script>
+    // Function to check if the user is logged in
+    function isLoggedIn() {
+        // This is a placeholder. Replace it with actual logic to check user login status.
+        return true; // For example purposes, we assume the user is logged in.
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var accountLink = document.getElementById("accountLink");
+        var dropdownMenu = document.getElementById("dropdownMenu");
+        var profileLink = document.getElementById("profileLink");
+        var loginLink = document.getElementById("loginLink");
+        var logoutLink = document.getElementById("logoutLink");
+
+        // Check if the user is logged in
+        if (isLoggedIn()) {
+            profileLink.style.display = "block";
+            logoutLink.style.display = "block";
+            loginLink.style.display = "none";
+
+            // Show the dropdown menu on account link click
+            accountLink.addEventListener("click", function (event) {
+                event.preventDefault();
+                dropdownMenu.style.display = dropdownMenu.style.display === "none" ? "block" : "none";
+            });
+        } else {
+            loginLink.style.display = "block";
+            profileLink.style.display = "none";
+            logoutLink.style.display = "none";
+
+            // Direct to login page on account link click
+            accountLink.href = "/login";
+        }
+
+        // Hide the dropdown menu if clicked outside
+        window.addEventListener("click", function (event) {
+            if (!event.target.matches('#accountLink')) {
+                if (dropdownMenu.style.display === "block") {
+                    dropdownMenu.style.display = "none";
+                }
+            }
+        });
+    });
+
+
+
+
+    //ADD TO CART
+    async function addToCart(productId) {
+        try {
+            const response = await fetch('/checkCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ productId })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Added!',
+                    text: data.success,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else if (data.fail) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'The product is already in the cart'
+                });
+            } else if (data.error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: data.error
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Something went wrong. Please try again later.'
+            });
+        }
+    }
+
+
+
+
+
+
+
+
+    //REMOVING PRODUCT FROM WISHLIST
+    function removeProduct(productId) {
+        fetch('/removeWishlist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId: productId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelector(`button[onclick="removeProduct('${productId}')"]`).closest('tr').remove();
+                    
+                }
+                window.location.reload()
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script src="sweetalert2.all.min.js"></script>
+
+<!-- molla/wishlist.html  22 Nov 2019 09:55:06 GMT -->
+
+</html>

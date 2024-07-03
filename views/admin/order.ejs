@@ -1,0 +1,114 @@
+<%- include('../partials/adminHeader') %>
+<body class="dark">
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <%- include('../partials/adminNavbar') %>
+    </aside>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <!-- Navbar content -->
+        </header>
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Order List</h2>
+                    <p>Lorem ipsum dolor sit amet.</p>
+                </div>
+                <div>
+                    <input type="text" placeholder="Search order ID" class="form-control bg-white" />
+                </div>
+            </div>
+            <div class="card mb-4">
+                <header class="card-header">
+                    <!-- Card header content -->
+                </header>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col" class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% orderList.forEach((element, index) => { %>
+                                    <tr>
+                                        <td><%= (currentPage - 1) * limit + index + 1 %></td>
+                                        <td><b><%= element.billingAddress.userName %></b></td>
+                                        <td><%= element.billingAddress.email %></td>
+                                        <td><%= element.totalAmount %></td>
+                                        <td><span class="badge rounded-pill alert-warning"><%= element.orderStatus %></span></td>
+                                        <td><%= element.createdAt.toLocaleDateString() %></td>
+                                        <td class="text-end">
+                                            <a href="/admin/orderDetails?id=<%= element.id %>" class="btn btn-md rounded font-sm">Detail</a>
+                                            <a onclick="cancelOrder('<%= element.id %>')" class="btn btn-md rounded btn-icon" style="background-color: #383e50; color: white;">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="pagination-area mt-15 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= limit %>"><i class="material-icons md-chevron_left"></i></a>
+                            </li>
+                        <% } %>
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>&limit=<%= limit %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= limit %>"><i class="material-icons md-chevron_right"></i></a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            </div>
+        </section>
+        <%- include('../partials/adminFooter') %>
+    </main>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function cancelOrder(orderId) {
+            Swal.fire({
+                title: "Do you want to cancel the order?",
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post(`/admin/cancelOrder?id=${orderId}`)
+                        .then((response) => {
+                            if (response.data.success == 1) {
+                                Swal.fire({
+                                    title: "Order status changed",
+                                    icon: 'success',
+                                    confirmButtonText: 'Ok'
+                                }).then(() => {
+                                    window.location.href = '/admin/order';
+                                });
+                            }
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+                }
+            });
+        }
+    </script>
+</body>

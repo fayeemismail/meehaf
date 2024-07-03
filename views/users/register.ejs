@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Register</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/user/login_assets/css/style.css">
+
+    <style>
+        .toggle-password {
+            cursor: pointer;
+            float: right;
+            margin-right: 10px;
+            margin-top: -30px;
+            position: relative;
+            z-index: 2;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center" style="margin-top: -70px;">
+            <div class="col-md-12 col-lg-10">
+                <div class="wrap d-md-flex">
+                    <div class="login-wrap p-4 p-md-5 w-100">
+                        <div class="d-flex">
+                            <div class="w-100">
+                                <h3 class="mb-4 justify-content-center">Create new account</h3>
+                            </div>
+                        </div>
+                        <form action="/login_post" class="signin-form" method="post" id="registerForm">
+                            <div class="form-group mb-3">
+                                <% if (typeof message !== 'undefined') { %>
+                                 <p class="text-danger"> <%= message %></p>
+                                <% } %>
+                                <label class="label" for="name">Username</label>
+                                <input type="text" class="form-control" placeholder="Username" required name="name">
+                            </div>
+                            <div class="form-group mb-3">
+                                <% if (typeof message1 !== 'undefined') { %>
+                                    <p class="text-danger"> <%= message1 %></p>
+                                <% } %>
+                                <label class="label" for="email">Email</label>
+                                <input type="email" class="form-control" placeholder="Email" required name="email">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label class="label" for="phone">Phone Number</label>
+                                <input type="tel" class="form-control" placeholder="Phone Number" required name="mobile" id="phone">
+                                <p class="error-message" id="phone-error"></p>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label class="label" for="password">Password</label>
+                                <input type="password" class="form-control" placeholder="Password" required name="password" id="password">
+                                <span toggle="#password" class="fa fa-fw fa-eye toggle-password"></span>
+                                <p class="error-message" id="password-error"></p>
+                            </div>
+                            <div class="form-group mb-3">
+                                <% if (typeof message2 !== 'undefined') { %>
+                                    <p class="text-danger"> <%= message2 %></p>
+                                <% } %>
+                                <label class="label" for="confirm-password">Confirm Password</label>
+                                <input type="password" class="form-control" placeholder="Confirm Password" required name="cPassword" id="cPassword">
+                                <span toggle="#cPassword" class="fa fa-fw fa-eye toggle-password"></span>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="form-control btn btn-primary rounded submit px-3">Register</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="/user/login_assets/js/jquery.min.js"></script>
+<script src="/user/login_assets/js/popper.js"></script>
+<script src="/user/login_assets/js/bootstrap.min.js"></script>
+<script src="/user/login_assets/js/main.js"></script>
+
+<script>
+    $(document).on('click', '.toggle-password', function() {
+        $(this).toggleClass('fa-eye fa-eye-slash');
+        var input = $($(this).attr('toggle'));
+        if (input.attr('type') == 'password') {
+            input.attr('type', 'text');
+        } else {
+            input.attr('type', 'password');
+        }
+    });
+
+    document.getElementById('phone').addEventListener('input', function (e) {
+        this.value = this.value.replace(/\D/g, '');
+        document.getElementById('phone-error').textContent = '';
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+        var password = document.getElementById('password').value;
+        var passwordError = document.getElementById('password-error');
+        var phoneError = document.getElementById('phone-error');
+
+        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordPattern.test(password)) {
+            e.preventDefault();
+            passwordError.textContent = 'Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number, and one special character.';
+        } else {
+            passwordError.textContent = '';
+        }
+
+        var phone = document.getElementById('phone').value;
+        if (phone.length < 10) {
+            e.preventDefault();
+            phoneError.textContent = 'Phone number must be at least 10 digits long.';
+        } else {
+            phoneError.textContent = '';
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+<%- include('../partials/adminHeader') %>
+
+<body class="dark">
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <!-- Navbar content -->
+        <%- include('../partials/adminNavbar') %>
+    </aside>
+
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <!-- Header content -->
+        </header>
+
+        <section class="content-main">
+            <div class="row">
+                <div class="col-9">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Product</h2>
+                    </div>
+                </div>
+                <form method="post" action="/admin/addProducts" id="product_form">
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4 class="fw-bold fs-4">Basic</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <% if (typeof message !== 'undefined' ) { %>
+                                        <p class="text-danger">
+                                            <%= message %>
+                                        </p>
+                                    <% } %>
+                                    <label for="product_name" class="form-label fw-bold fs-5">Product Name</label>
+                                    <input type="text" placeholder="Type here" class="form-control" id="product_name" name="name" required />
+                                </div>
+                                <hr>
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold fs-5">Full description</label>
+                                    <textarea placeholder="Type here" class="form-control" rows="4" name="description" id="product_description" required></textarea>
+                                </div>
+                                <hr>
+
+
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label fw-bold fs-5">Regular price</label>
+                                            <div class="row gx-2">
+                                                <input placeholder="₹" type="number" class="form-control" name="price" id="product_price" required min="1" step="1" />
+                                                <div id="price_error" class="error"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-4">
+                                        <label class="form-label fw-bold fs-5">Stock</label>
+                                        <input type="number" placeholder="STOCK" class="form-control" id="product_stock" name="stock" required min="0" step="1">
+                                        <div id="stock_error" class="error"></div>
+                                    </div>
+                                </div>
+
+
+
+
+                                <hr>
+                                <div>
+                                    <label for="category" class="fw-bold fs-5">Category</label><br><br>
+                                    <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                                        <select name="category" id="product_category" class="form-select">
+                                            <% categories.forEach(element => { %>
+                                                <option value="<%= element.name %>"><%= element.name %></option>
+                                            <% }) %>
+                                        </select>
+                                    <% } else { %>
+                                        <p>No Categories Found</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Media</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="input-upload">
+                                    <img src="assets/imgs/theme/upload.svg" alt="" class="image-preview" style="max-width: 160px;" />
+                                    <input class="form-control" type="file" onchange="previewImage(event)" id="image1" />
+                                </div>
+                                <hr>
+                                <div class="input-upload">
+                                    <img src="assets/imgs/theme/upload.svg" alt="" class="image-preview" style="max-width: 160px;" />
+                                    <input class="form-control" type="file" onchange="previewImage(event)" id="image2" />
+                                </div>
+                                <hr>
+                                <div class="input-upload">
+                                    <img src="assets/imgs/theme/upload.svg" alt="" class="image-preview" style="max-width: 160px;" />
+                                    <input class="form-control" type="file" onchange="previewImage(event)" id="image3" />
+                                </div>
+                                <hr>
+                                <div>
+                                    <button class="btn btn-md rounded font-sm hover-up" onclick="product_details()">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <%- include('../partials/adminFooter') %>
+
+        <!-- Modal for cropping -->
+        <div id="cropperModal" class="modal">
+            <div class="modal-content">
+                <div class="cropper-container">
+                    <img id="cropperImage" src="" alt="Image for cropping" />
+                </div>
+                <button onclick="cropImage()">Crop</button>
+                <button onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+
+        <link href="https://unpkg.com/cropperjs/dist/cropper.css" rel="stylesheet" />
+        <script src="https://unpkg.com/cropperjs"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+        <script>
+    document.getElementById('product_price').addEventListener('input', validatePriceInput);
+    document.getElementById('product_stock').addEventListener('input', validateStockInput);
+
+    function validatePriceInput(event) {
+        const input = event.target;
+        input.value = input.value.replace(/[^0-9]/g, '');
+        
+    }
+
+    function validateStockInput(event) {
+        const input = event.target;
+        input.value = input.value.replace(/[^0-9]/g, '');
+        if (input.value.length === 0) {
+            input.value = '0';
+        }
+    }
+
+    document.getElementById('product_form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (validateForm()) {
+            product_details();
+        }
+    });
+
+    function product_details() {
+        const name = document.getElementById('product_name').value;
+        const description = document.getElementById('product_description').value;
+        const price = document.getElementById('product_price').value;
+        const stock = document.getElementById('product_stock').value;
+        const category = document.getElementById('product_category').value;
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', description);
+        formData.append('price', price);
+        formData.append('stock', stock);
+        formData.append('category', category);
+        formData.append('Images', document.getElementById('image1').files[0]);
+        formData.append('Images', document.getElementById('image2').files[0]);
+        formData.append('Images', document.getElementById('image3').files[0]);
+
+        axios.post('/admin/addProducts', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then(response => {
+            if (response.data.success) {
+                window.location.href = '/admin/product';
+            } else {
+                // handle error
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
+
+    // CROPPER JS
+    let cropper;
+    let currentInput;
+    let croppedFiles = new Map(); // To store the cropped files
+
+    function previewImage(event) {
+        const input = event.target;
+        const file = input.files[0];
+        currentInput = input; // Save the reference to the current input
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const cropperImage = document.getElementById('cropperImage');
+                cropperImage.src = e.target.result;
+                document.getElementById('cropperModal').style.display = 'block';
+                if (cropper) {
+                    cropper.destroy();
+                }
+                cropper = new Cropper(cropperImage, {
+                    aspectRatio: 3/4, // Portrait aspect ratio
+                    viewMode: 1,
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function cropImage() {
+        if (cropper) {
+            cropper.getCroppedCanvas({
+                width: 300, // desired width
+                height: 400, // desired height
+            }).toBlob(function (blob) {
+                const croppedImageSrc = URL.createObjectURL(blob);
+                const imagePreview = currentInput.previousElementSibling;
+                if (imagePreview && imagePreview.tagName === 'IMG') {
+                    imagePreview.src = croppedImageSrc;
+                }
+                // Replace the file input with the cropped image blob
+                const dataTransfer = new DataTransfer();
+                const file = new File([blob], `croppedImage${Date.now()}.jpg`, { type: "image/jpeg" });
+                dataTransfer.items.add(file);
+                currentInput.files = dataTransfer.files;
+                // Store the cropped file in the Map
+                croppedFiles.set(currentInput.name, file);
+                closeModal();
+            }, 'image/jpeg');
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('cropperModal').style.display = 'none';
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+    }
+</script>
+    </main>
+</body>

@@ -1,0 +1,362 @@
+<%- include('../partials/adminHeader') %>
+
+    <body class="dark">
+        <div class="screen-overlay"></div>
+        <aside class="navbar-aside" id="offcanvas_aside">
+            <div class="aside-top">
+                <a href="/admin" class="brand-wrap">
+                    <div class="logo">
+                        <span>M</span>
+                        <span>E</span>
+                        <span>E</span>
+                        <span>'</span>
+                        <span>H</span>
+                        <span>A</span>
+                        <span>F</span>
+                    </div>
+                </a>
+                <div>
+                    <button class="btn btn-icon btn-aside-minimize"><i
+                            class="text-muted material-icons md-menu_open"></i></button>
+                </div>
+            </div>
+
+            <!-- INCLUDING ADMIN NAV BAR -->
+            <%- include('../partials/adminNavbar') %>
+
+        </aside>
+        <main class="main-wrap">
+            <header class="main-header navbar">
+                <div class="col-search">
+                    <!-- <form class="searchform">
+                        <div class="input-group">
+                            <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                            <button class="btn btn-light bg" type="button"><i
+                                    class="material-icons md-search"></i></button>
+                        </div>
+                        <datalist id="search_terms">
+                            <option value="Products"></option>
+                            <option value="New orders"></option>
+                            <option value="Apple iphone"></option>
+                            <option value="Ahmed Hassan"></option>
+                        </datalist>
+                    </form> -->
+                </div>
+                <div class="col-nav">
+                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                            class="material-icons md-apps"></i></button>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon" href="#">
+                                <i class="material-icons md-notifications animation-shake"></i>
+                                <span class="badge rounded-pill">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon darkmode" href="#"> <i
+                                    class="material-icons md-nights_stay"></i> </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                    class="material-icons md-cast"></i></a>
+                        </li>
+                        <li class="dropdown nav-item">
+                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
+                                aria-expanded="false"><i class="material-icons md-public"></i></a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                                <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png"
+                                        alt="English" />English</a>
+                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png"
+                                        alt="Français" />Français</a>
+                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png"
+                                        alt="Français" />日本語</a>
+                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png"
+                                        alt="Français" />中国人</a>
+                            </div>
+                        </li>
+                        <li class="dropdown nav-item">
+                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
+                                aria-expanded="false"> <img class="img-xs rounded-circle"
+                                    src="assets/imgs/people/avatar-2.png" alt="User" /></a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                                <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit
+                                    Profile</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account
+                                    Settings</a>
+                                <a class="dropdown-item" href="#"><i
+                                        class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help
+                                    center</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="#"><i
+                                        class="material-icons md-exit_to_app"></i>Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+
+            <section class="content-main">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="content-header">
+                            <h2 class="content-title">Add New Product</h2>
+                        </div>
+                    </div>
+                    <form method="post" id="editForm" enctype="multipart/form-data">
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4 class="fw-bold fs-4">Basic</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-4">
+                                        <label for="product_name" class="form-label fw-bold fs-5">Product Name</label>
+                                        <input type="text" placeholder="Type here" class="form-control"
+                                            value="<%= product.name %>" name="name" required id="product_name" />
+                                        <input type="text" name="id" value="<%= product._id %>" hidden>
+                                    </div>
+                                    <hr>
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold fs-5">Full description</label>
+                                        <textarea placeholder="Type here" class="form-control" name="description"
+                                            rows="4" id="product_description"
+                                            required><%= product.description %></textarea>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label fw-bold fs-5">Regular price</label>
+                                                <div class="row gx-2">
+                                                    <input placeholder="₹" type="text" name="price"
+                                                        value="<%= product.price %>" class="form-control"
+                                                        id="product_price" required />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label class="form-label fw-bold fs-5">Stock</label>
+                                            <input type="text" name="stock" placeholder="STOCK"
+                                                value="<%= product.stock %>" class="form-control" id="product_stock">
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div>
+                                        <label for="category" class="fw-bold fs-5">Category</label><br><br>
+                                        <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                                            <select name="category" id="product_category" class="form-select">
+                                                <% categories.forEach(element => { %>
+                                                    <option value="<%= element.name %>"><%= element.name %></option>
+                                                <% }) %>
+                                            </select>
+                                        <% } else { %>
+                                            <p>No Categories Found</p>
+                                        <% } %>
+                                    </div>
+                            </div>
+                            <!-- card end// -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Media</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="input-upload">
+                                        <% for (let i=0; i <=2; i++) { %>
+                                            <div class="col-lg-6 col-md-6 mb-3 rounded-image-preview">
+                                                <label for="imageInput<%= i %>" class="image-label">Image <%= i + 1 %>
+                                                        <div class="rounded-image-preview">
+                                                            <img id="imagePreview<%= i %>"
+                                                                src="/productImage/<%= product.image[i] %>"
+                                                                alt="Preview">
+                                                        </div>
+
+                                                        <input name="image" type="file"
+                                                            accept=".png, .jpeg, .jpg, .webp" id="imageInput<%= i %>"
+                                                            class="imageInput" data-index="<%= i %>"
+                                                            onchange="previewImage(event)"
+                                                            value="<%= product.image[i] %>">
+                                                </label>
+                                            </div>
+                                            <% } %>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-9">
+                                    <div>
+                                        <button type="submit" id="editButton"
+                                            class="btn btn-md rounded font-sm hover-up">Edit
+                                            Product</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- card end// -->
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+
+            <%- include('../partials/adminFooter') %>
+
+
+
+                <div id="cropperModal" class="modal">
+                    <div class="modal-content">
+                        <div class="cropper-container">
+                            <img id="cropperImage" src="" alt="Image for cropping" />
+                        </div>
+                        <button onclick="cropImage()">Crop</button>
+                        <button onclick="closeModal()">Cancel</button>
+                    </div>
+                </div>
+
+                <link href="https://unpkg.com/cropperjs/dist/cropper.css" rel="stylesheet" />
+                <script src="https://unpkg.com/cropperjs"></script>
+
+
+
+
+
+                <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+                <script>
+                    let cropper;
+                    let currentInput;
+
+                    function previewImage(event, previewId) {
+                        const input = event.target;
+                        const file = input.files[0];
+                        currentInput = input;
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                const cropperImage = document.getElementById('cropperImage');
+                                cropperImage.src = e.target.result;
+                                document.getElementById('cropperModal').style.display = 'block';
+                                if (cropper) {
+                                    cropper.destroy();
+                                }
+                                cropper = new Cropper(cropperImage, {
+                                    aspectRatio: 3 / 4,
+                                    viewMode: 1,
+                                });
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    }
+
+                    function cropImage() {
+                        if (cropper) {
+                            cropper.getCroppedCanvas({
+                                width: 300,
+                                height: 400,
+                            }).toBlob(function (blob) {
+                                const croppedImageSrc = URL.createObjectURL(blob);
+                                const imagePreview = document.getElementById(currentInput.id.replace('imageInput', 'imagePreview'));
+                                if (imagePreview) {
+                                    imagePreview.src = croppedImageSrc;
+                                }
+                                const dataTransfer = new DataTransfer();
+                                const file = new File([blob], `croppedImage${Date.now()}.jpg`, { type: "image/jpeg" });
+                                dataTransfer.items.add(file);
+                                currentInput.files = dataTransfer.files;
+                                closeModal();
+                            }, 'image/jpeg');
+                        }
+                    }
+
+                    function closeModal() {
+                        document.getElementById('cropperModal').style.display = 'none';
+                        if (cropper) {
+                            cropper.destroy();
+                            cropper = null;
+                        }
+                    }
+
+
+
+                    // UPDATING THE PRODUCTS ------------------------------------------------------------------------
+                    document.getElementById('editButton').addEventListener('click', function (event) {
+                        event.preventDefault();
+                        const productId = '<%= product.id %>';
+                        updateProducts(productId);
+                    });
+
+                    function updateProducts(productId) {
+                        let name = document.getElementById('product_name').value;
+                        let description = document.getElementById('product_description').value;
+                        let price = document.getElementById('product_price').value;
+                        let stock = document.getElementById('product_stock').value;
+                        let category = document.getElementById('product_category').value;
+
+                        let formData = new FormData();
+                        formData.append('productId', productId);
+                        formData.append('name', name);
+                        formData.append('description', description);
+                        formData.append('price', price);
+                        formData.append('stock', stock);
+                        formData.append('category', category);
+
+                        for (let i = 0; i <= 2; i++) {
+                            let inputElement = document.getElementById(`imageInput${i}`);
+                            let imagefile = inputElement.files[0];
+                            if (imagefile) {
+                                formData.append(`images${i}`, imagefile, `imageInput${i}`);
+                            } else {
+                                formData.append('existImagePaths', `imageInput${i}`);
+                            }
+                        }
+
+                        axios.post('/admin/editProducts', formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        })
+                            .then((response) => {
+                                if (response.data.success) {
+                                    window.location.href = '/admin/product';
+                                }
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    }
+
+
+
+                    // VALIDATING THE PRICE AND STOCK 
+                    document.getElementById('product_price').addEventListener('input', validatePriceInput);
+                    document.getElementById('product_stock').addEventListener('input', validateStockInput);
+
+                    function validatePriceInput(event) {
+                        const input = event.target;
+                        let value = input.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+
+                        if (value.length > 0) {
+                            value = parseInt(value); // Convert to integer
+
+                            if (value <= 0) {
+                                value = ''; // If the value is non-positive, clear it
+                            }
+                        }
+
+                        input.value = value.toString(); // Update input value
+                    }
+
+                    function validateStockInput(event) {
+                        const input = event.target;
+                        input.value = input.value.replace(/[^0-9]/g, '');
+                        if (input.value.length === 0) {
+                            input.value = '0';
+                        }
+                    }
+
+
+                    document.getElementById('product_form').addEventListener('submit', function (event) {
+                        event.preventDefault();
+                        if (validateForm()) {
+                            product_details();
+                        }
+                    });
+                </script>

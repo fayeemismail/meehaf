@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>OTP Verification</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/user/login_assets/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .otp-input {
+            width: 2.5rem;
+            height: 2.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            -moz-appearance: textfield;
+        }
+
+        .otp-input:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+        }
+
+        .otp-input::-webkit-outer-spin-button,
+        .otp-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .otp-container {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .timer {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .disabled {
+            pointer-events: none;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center" style="margin-top: -70px;">
+                <div class="col-md-12 col-lg-10">
+                    <div class="wrap d-md-flex">
+                        <div class="img" style="background-image: url(user/login_assets/images/cr-bla.png);"></div>
+                        <div class="login-wrap p-4 p-md-5">
+                            <div class="d-flex">
+                                <div class="w-100">
+                                    <h3 class="mb-4">OTP Verification</h3>
+                                </div>
+                            </div>
+                            <form id="otpVerificationForm" method="post" action="/fpOTP" class="signin-form">
+                                <div class="form-group mb-3">
+                                    <label class="label" for="otp">Enter OTP</label>
+                                    <% if (typeof message !== 'undefined') { %>
+                                     <p class="text-danger"> <%= message %></p>
+                                    <% } %>
+                                    <div class="otp-container">
+                                        <input type="text" class="otp-input" maxlength="1" id="otp1" name="otp1" required>
+                                        <input type="text" class="otp-input" maxlength="1" id="otp2" name="otp2" required>
+                                        <input type="text" class="otp-input" maxlength="1" id="otp3" name="otp3" required>
+                                        <input type="text" class="otp-input" maxlength="1" id="otp4" name="otp4" required>
+                                    </div>
+                                    <div class="timer" id="timer">Time remaining: 120 seconds</div>
+                                    <div class="error-message" id="errorMessage"></div>
+                                    <input type="hidden" id="otp" name="otp">
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" id="verifyOtpButton" class="form-control btn btn-primary rounded submit px-3">Verify OTP</button>
+                                </div>
+                                <p class="text-center">Didn't receive the code? <a href="/fpResendOtp" class="resend-otp disabled" id="resendOtpLink2">Resend</a></p>
+                            </form>
+                            <p class="text-center"><a href="/login">Back to Login</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputs = document.querySelectorAll('.otp-input');
+            inputs[0].focus();
+
+            inputs.forEach((input, index) => {
+                input.setAttribute('type', 'text');
+                input.addEventListener('input', () => {
+                    input.value = input.value.replace(/\D/, '');
+                    if (input.value.length === 1) {
+                        if (index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+                    }
+                    updateOtpValue();
+                });
+
+                input.addEventListener('keydown', (event) => {
+                    if (event.key === 'Backspace' && input.value === '' && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+            });
+
+            function updateOtpValue() {
+                let otpValue = '';
+                inputs.forEach(i => {
+                    otpValue += i.value;
+                });
+                document.getElementById('otp').value = otpValue;
+            }
+
+            document.getElementById('otpVerificationForm').addEventListener('submit', function (e) {
+                if (document.getElementById('otp').value.length !== inputs.length) {
+                    e.preventDefault();
+                    const errorMessage = document.getElementById('errorMessage');
+                    errorMessage.textContent = 'Please enter a valid 4-digit OTP.';
+                    errorMessage.style.display = 'block';
+                }
+            });
+
+            // Timer for OTP resend
+            let timeLeft = 120;
+            const timerElement = document.getElementById('timer');
+            const resendOtpLink2 = document.getElementById('resendOtpLink2');
+
+            const timer = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timerElement.textContent = "You can now resend the OTP.";
+                    resendOtpLink2.classList.remove('disabled');
+                } else {
+                    timerElement.textContent = `Time remaining: ${timeLeft} seconds`;
+                    timeLeft--;
+                }
+            }, 1000);
+
+            // Prevent form submission if the timer has expired
+            document.getElementById('otpVerificationForm').addEventListener('submit', function (e) {
+                if (timeLeft <= 0) {
+                    e.preventDefault();
+                    const errorMessage = document.getElementById('errorMessage');
+                    errorMessage.textContent = 'The OTP has expired. Please click "Resend" to get a new OTP.';
+                    errorMessage.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

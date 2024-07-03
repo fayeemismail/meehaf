@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Molla - Bootstrap eCommerce Template</title>
+    <meta name="keywords" content="HTML5 Template">
+    <meta name="description" content="Molla - Bootstrap eCommerce Template">
+    <meta name="author" content="p-themes">
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/user/assets/images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/user/assets/images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/user/assets/images/icons/favicon-16x16.png">
+    <link rel="manifest" href="/user/assets/images/icons/site.html">
+    <link rel="mask-icon" href="/user/assets/images/icons/safari-pinned-tab.svg" color="#666666">
+    <link rel="shortcut icon" href="/user/assets/images/icons/favicon.ico">
+    <meta name="apple-mobile-web-app-title" content="Molla">
+    <meta name="application-name" content="Molla">
+    <meta name="msapplication-TileColor" content="#cc9966">
+    <meta name="msapplication-config" content="/user/assets/images/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/user/assets/css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/user/assets/css/style.css">
+
+    <style>
+        .header-right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .header-search, .wishlist, .cart-dropdown, .login {
+            margin-left: 15px;
+        }
+        .header-right a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        .header-right .icon-user, .header-right .icon-heart-o {
+            margin-right: 5px;
+            font-size: large;
+        }
+        @media (max-width: 768px) {
+            .header-right {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .header-search, .wishlist, .cart-dropdown, .login {
+                margin-left: 10px;
+                margin-right: 10px;
+                margin-bottom: 10px;
+            }
+            .header-right .login a {
+                font-size: 14px;
+            }
+        }
+        @media (max-width: 480px) {
+            .header-right .login a {
+                font-size: 12px;
+            }
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .account-address {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            position: relative;
+        }
+        .account-address .account-title {
+            margin-left: 30px;
+        }
+        .radio-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .btn-primary, .btn-danger {
+            margin-top: 10px;
+        }
+        .btn-primary:hover, .btn-danger:hover {
+            color: #ffffff;
+        }
+         /* Dropdown content (hidden by default) */
+		.dropdown-content {
+			display: none;
+			position: absolute;
+			background-color: #f9f9f9;
+			min-width: 160px;
+			box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+			z-index: 1;
+		}
+
+		/* Links inside the dropdown */
+		.dropdown-content a {
+			color: black;
+			padding: 12px 16px;
+			text-decoration: none;
+			display: block;
+		}
+
+		/* Change color of dropdown links on hover */
+		.dropdown-content a:hover {
+			background-color: #f1f1f1;
+		}
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <header class="header">
+            <div class="header-middle sticky-header">
+                <div class="container">
+                    <div class="header-left">
+                        <a href="/" class="logo">
+                            <img src="/user/assets/images/logo.png" alt="Molla Logo" width="105" height="25">
+                        </a>
+                        <nav class="main-nav">
+                            <ul class="menu sf-arrows">
+                                <li class="megamenu-container active">
+                                    <a href="/" class="">Home</a>
+                                </li>
+                                <li>
+                                    <a href="/shop" class="">Shop</a>
+                                </li>
+                                <li>
+                                    <a href="/cart" class="">Cart</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="header-right">
+                        <div class="header-search">
+                            <a href="#" class="search-toggle" role="button" title="Search"><i class="icon-search"></i></a>
+                            <form action="#" method="get">
+                                <div class="header-search-wrapper">
+                                    <label for="q" class="sr-only">Search</label>
+                                    <input type="search" class="form-control" name="q" id="q" placeholder="Search in..." required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="wishlist">
+                            <a href="wishlist.html" title="Wishlist">
+                                <i class="icon-heart-o" style="font-size:large;"></i>
+                                <span class="wishlist-count">3</span>
+                            </a>
+                        </div>
+                        <div class="cart-dropdown">
+                            <a href="/cart" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-display="static">
+                                <i class="icon-shopping-cart"></i>
+                                <span class="cart-count">0</span>
+                            </a>
+                        </div>
+                         <!-- ACCOUNTICON -->
+                         <div class="account" style="padding-left: 6px; margin-left: 4px;">
+                            <a href="#" id="accountLink" title="Account">
+                                <i class="icon-user" style="font-size: large;"></i> ACCOUNT
+                            </a>
+                            <div id="dropdownMenu" class="dropdown-content" style="display: none;">
+                                <a href="/userProfile" id="profileLink" style="display: none;">User
+                                    Profile</a>
+                                <a href="/login" id="loginLink" style="display: none;">Login</a>
+                                <a href="/logout" id="logoutLink" style="display: none;">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="page-header text-center" style="background-image: url('/user/assets/images/page-header-bg.jpg')">
+                <div class="container">
+                    <h1 class="page-title">Order Success<span>Shop</span></h1>
+                </div>
+            </div>
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Order Success</li>
+                    </ol>
+                </div>
+            </nav>
+
+            <div class="page-content">
+                <div class="container">
+                    <div class="order-success text-center">
+                        <h2>Thank You for Your Order!</h2>
+                        <p>Your order has been placed successfully. Below are the details of your order.</p>
+                    </div>
+                    <div class="order-details">
+                        <h3 class="summary-title">Order Details</h3>
+                        <table class="table table-summary">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% cartData.Products.forEach(element => { %>
+                                <tr>
+                                    <td><img src="/public/productImage/<%= element.Product.image[0]%>" alt="<%=  %>" width="50" height="50"> <a href="#"><%= element.name %></a></td>
+                                    <td style="font-family: sans-serif;">₹ <%= element.Product.price * element.quantity %></td>
+                                </tr>
+                                <% }) %>
+                                <tr class="summary-subtotal">
+                                    <td>Subtotal:</td>
+                                    <td id="subtotal" style="font-family: sans-serif;">₹ <%= cartData.totalAmount %></td>
+                                </tr>
+                                <tr class="summary-total">
+                                    <td>Total:</td>
+                                    <td id="total" style="font-family: sans-serif;">₹ <%= cartData.totalAmount %></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="address-details">
+                        <h3 class="summary-title">Shipping Address</h3>
+                        <div>
+                            <p><%= cartData.billingAddress.userName %></p>
+                            <p><%=  cartData.billingAddress.address %></p>
+                            <p><%=  cartData.billingAddress.city %>, <%=  cartData.billingAddress.state %></p>
+                            <p><%=  cartData.billingAddress.mobile %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+<script>
+    // Function to check if the user is logged in
+	function isLoggedIn() {
+		// This is a placeholder. Replace it with actual logic to check user login status.
+		return true; // For example purposes, we assume the user is logged in.
+	}
+
+	document.addEventListener("DOMContentLoaded", function () {
+		var accountLink = document.getElementById("accountLink");
+		var dropdownMenu = document.getElementById("dropdownMenu");
+		var profileLink = document.getElementById("profileLink");
+		var loginLink = document.getElementById("loginLink");
+		var logoutLink = document.getElementById("logoutLink");
+
+		// Check if the user is logged in
+		if (isLoggedIn()) {
+			profileLink.style.display = "block";
+			logoutLink.style.display = "block";
+			loginLink.style.display = "none";
+
+			// Show the dropdown menu on account link click
+			accountLink.addEventListener("click", function (event) {
+				event.preventDefault();
+				dropdownMenu.style.display = dropdownMenu.style.display === "none" ? "block" : "none";
+			});
+		} else {
+			loginLink.style.display = "block";
+			profileLink.style.display = "none";
+			logoutLink.style.display = "none";
+
+			// Direct to login page on account link click
+			accountLink.href = "/login";
+		}
+
+		// Hide the dropdown menu if clicked outside
+		window.addEventListener("click", function (event) {
+			if (!event.target.matches('#accountLink')) {
+				if (dropdownMenu.style.display === "block") {
+					dropdownMenu.style.display = "none";
+				}
+			}
+		});
+	}); 
+</script>
+</html>
