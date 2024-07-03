@@ -6,7 +6,7 @@ const { findById } = require('../models/userModel');
 const categories = async (req, res) => {
     try {
         const item = await category.find()
-        
+               
 
         res.render('categories', { item })
     } catch (error) {

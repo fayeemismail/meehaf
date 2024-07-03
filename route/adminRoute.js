@@ -69,6 +69,9 @@ admin_route.post('/statusCange', adminController.statusCange)
 
 
 admin_route.post('/coupon', couponController.addCoupon);
+admin_route.get('/editCoupon', couponController.editCoupon);
+admin_route.post('/updateCoupon', couponController.updateCoupon);
+admin_route.post('/deleteCoupon', couponController.deleteCoupon)
 
 
 
