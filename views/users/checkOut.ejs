@@ -350,7 +350,21 @@
 
 
                                 </div><!-- End .col-lg-9 -->
+                                
                                 <aside class="col-lg-3">
+                                    <div class="cart-discount">
+                                        <form  id="form">
+                                            <div id="errorMessage" class="text-danger"></div>
+                                            <div class="input-group">
+                                                <input type="text" id="couponCheck" class="form-control" required
+                                                    placeholder="coupon code">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-primary-2" style="height: 40px;" id="couponSubmit" type="submit"><i
+                                                            class="icon-long-arrow-right"></i></button>
+                                                </div><!-- .End .input-group-append -->
+                                            </div><!-- End .input-group -->
+                                        </form>
+                                    </div><!-- End .cart-discount -->
                                     <div class="summary">
                                         <h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
 
@@ -724,6 +738,37 @@
                 console.log(error);
             });
     }
+
+
+     //COUPON CHECK 
+     document.getElementById('couponSubmit').addEventListener('click' , function(event){
+        event.preventDefault()
+        const couponCode = document.getElementById('couponCheck').value
+        fetch('/checkCoupon', {
+            method:'POST',
+            headers:{
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify({couponCode:couponCode})
+        })
+        .then(response => {
+            if(!response.ok){
+                throw new Error('Network response was not okey')
+            }
+            return response.json()
+        })
+        .then(data => {
+            if(data.success){
+                console.log(couponCode)
+            }else if(data.message){
+                document.getElementById('errorMessage').innerText= data.message
+            }
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    })
+    
 
 </script>
 
