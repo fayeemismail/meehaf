@@ -83,7 +83,7 @@ user_route.get('/cart',  userAuth.is_login , cartController.showCart);
 user_route.post('/checkCart', userAuth.is_login  , cartController.checkCart)
 user_route.post('/addCart', cartController.addCart);
 user_route.post('/removeCart', cartController.removeCart);
-user_route.post('/checkCoupon', couponController.couponCheck);
+
 
 
 
@@ -118,6 +118,11 @@ user_route.post('/subTotalChange', cartController.subtotal);
 user_route.get('/checkout', userAuth.is_login, checkOutController.checkOut);
 user_route.post('/placeOrder', userAuth.is_login, checkOutController.placeOrder);
 user_route.get('/orderSuccess', userAuth.is_login, checkOutController.orderSuccess);
+user_route.post('/checkCoupon', couponController.couponCheck);
+user_route.get('/couponDetails', couponController.couponDetais);
+user_route.post('/applyCoupon', couponController.applyCoupon)
+
+
 
 user_route.post('/cancelOrder', userController.cancelOrder);
 
@@ -128,7 +133,7 @@ user_route.post('/cancelOrder', userController.cancelOrder);
 user_route.get('/wishlist', userAuth.is_login, wishlistController.wishlist);
 user_route.post('/addToWishlist' ,wishlistController.addToWishlist);
 user_route.post('/removeWishlist', wishlistController.removeWishlit);
-user_route.post('/checkWishlist', wishlistController.checkWishlist)
+user_route.post('/checkWishlist', wishlistController.checkWishlist);
 
 
 

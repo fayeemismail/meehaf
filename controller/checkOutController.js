@@ -3,7 +3,11 @@ const addressSchema = require('../models/addressModel');
 const UserSchema = require('../models/userModel');
 const orderSchema = require('../models/orderModel');
 const productSchema = require('../models/productModel')
+const couponSchema = require('../models/couponModel')
 const { ObjectId } = require('mongodb');
+
+
+
 
 const checkOut = async (req,res) => {
     try {
@@ -15,7 +19,13 @@ const checkOut = async (req,res) => {
 
         const cartData = await cartSchema.findOne({user:userId}).populate('Products.Product');
 
-        res.render('checkOut', { userData: userData, addresses: addresses, cartData: cartData.Products })
+        if(cartData){
+            res.render('checkOut', { userData: userData, addresses: addresses, cartData: cartData.Products })
+            
+        }else{
+            res.render('checkOut', { userData: userData, addresses: addresses, cartData: [] })
+        }
+
     } catch (error) {
         console.log(error)
     }
@@ -24,7 +34,8 @@ const checkOut = async (req,res) => {
 
 const placeOrder = async (req, res) => {
     try {
-        const { checkAddress } = req.body;
+        const { checkAddress, couponCode } = req.body;
+        
         const userId = req.session.user_id;
         const userData = await UserSchema.findOne({ _id: userId });
 
@@ -56,9 +67,25 @@ const placeOrder = async (req, res) => {
             await product.save();
         }
 
-        const totalAmount = productDetails.reduce((accu, val) => {
-            return accu + val.quantity * val.price;
-        }, 0);
+        let totalAmount = 0;
+        let discountAmount = 0;
+        let productPrice = 0;
+
+        if (couponCode) {
+            const couponData = await couponSchema.findOne({ couponCode });
+
+            if (couponData) {
+                discountAmount = couponData.amount;
+                productPrice = productDetails.reduce((accu, val) => {
+                    return accu + val.quantity * val.price;
+                }, 0);
+            }
+            totalAmount = productPrice - discountAmount;
+        } else {
+            totalAmount = productDetails.reduce((accu, val) => {
+                return accu + val.quantity * val.price;
+            }, 0);
+        }
 
         const newOrder = new orderSchema({
             user: userId,
@@ -80,15 +107,26 @@ const placeOrder = async (req, res) => {
         const saving = await newOrder.save();
 
         if (saving) {
+            if (couponCode) {
+                const couponData = await couponSchema.findOne({ couponCode });
+
+                if (couponData) {
+                    couponData.userList.push({ userId, couponUsed: true });
+                    await couponData.save();
+                }
+            }
+
             // Clear the cart after the order is saved
             await cartSchema.findOneAndDelete({ user: userId });
             res.json({ success: true, orderId: saving._id });  // Return order ID
+            console.log('saving new order');
         }
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
 
 
 const orderSuccess = async (req, res) => {

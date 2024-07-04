@@ -9,7 +9,7 @@ const couponSchema = new mongoose.Schema({
     amount:{
         type: Number,
         required: true
-    },
+    },  
     couponCode:{
         type: String,
         required: true

@@ -90,7 +90,6 @@ const updateProducts = async (req, res) => {
     try {
         const productData = req.body;
         const imageData = req.files;
-        console.log(imageData, 'riohdruguhdfoarei')
         const existImagePaths = req.body.existImagePaths;
 
         const findItem = await products.findOne({ _id: productData.productId });

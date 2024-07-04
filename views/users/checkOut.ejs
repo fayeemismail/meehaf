@@ -32,6 +32,207 @@
 
 
     <style>
+        /* Custom styles for the checkout page */
+.main .account-address {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+}
+
+.main .account-title {
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.main .address-block {
+    color: #666;
+    line-height: 1.5;
+}
+
+.main .radio-container {
+    margin-bottom: 10px;
+}
+
+/* Custom styles for the aside section */
+.aside .cart-discount, .aside .summary {
+    margin-bottom: 30px;
+}
+
+.aside .cart-discount form {
+    display: flex;
+    flex-direction: column;
+}
+
+.aside .cart-discount .form-group {
+    margin-bottom: 15px;
+}
+
+.aside .cart-discount .form-group.text-center {
+    margin-bottom: 20px;
+}
+
+.aside .view-coupons {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.aside .summary-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.aside .table-summary {
+    margin-bottom: 20px;
+}
+
+.aside .table-summary th, .aside .table-summary td {
+    font-size: 14px;
+    color: #333;
+    padding: 10px;
+}
+
+.aside .summary-subtotal td, .aside .summary-total td {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.aside .accordion-summary .card-header {
+    padding: 10px 15px;
+}
+
+.aside .accordion-summary .card-title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.aside .btn-order {
+    margin-top: 20px;
+}
+
+
+        /* Custom styles for the aside section */
+        .aside .cart-discount,
+        .aside .summary {
+            margin-bottom: 30px;
+        }
+
+        .aside .cart-discount form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .aside .cart-discount .form-group {
+            margin-bottom: 15px;
+        }
+
+        .aside .summary-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .aside .table-summary {
+            margin-bottom: 20px;
+        }
+
+        .aside .table-summary th,
+        .aside .table-summary td {
+            font-size: 14px;
+            color: #333;
+            padding: 10px;
+        }
+
+        .aside .summary-subtotal td,
+        .aside .summary-total td {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .aside .accordion-summary .card-header {
+            padding: 10px 15px;
+        }
+
+        .aside .accordion-summary .card-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .aside .btn-order {
+            margin-top: 20px;
+        }
+
+        /* Custom styles for the checkout page */
+        .main .account-address {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .main .account-title {
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .main .address-block {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .main .radio-container {
+            margin-bottom: 10px;
+        }
+
+        /* Custom styles for the aside section */
+        .aside .cart-discount,
+        .aside .summary {
+            margin-bottom: 30px;
+        }
+
+        .aside .summary-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .aside .table-summary {
+            margin-bottom: 20px;
+        }
+
+        .aside .table-summary th,
+        .aside .table-summary td {
+            font-size: 14px;
+            color: #333;
+            padding: 10px;
+        }
+
+        .aside .summary-subtotal td,
+        .aside .summary-total td {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .aside .accordion-summary .card-header {
+            padding: 10px 15px;
+        }
+
+        .aside .accordion-summary .card-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .aside .btn-order {
+            margin-top: 20px;
+        }
+
         .header-right {
             display: flex;
             align-items: center;
@@ -257,117 +458,112 @@
             <div class="page-content">
                 <div class="checkout">
                     <div class="container">
-
-
                         <form action="#">
                             <div class="row">
                                 <div class="col-lg-9">
                                     <h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
-                                    <% addresses.forEach((element , index)=> { %>
-
-
-                                        <div class="col-md-4 mb-1">
-                                            <div class="account-address" id="address-">
-                                                <div class="radio-container">
-                                                    <input type="radio" name="address" value="<%= element._id %>"
-                                                        id="radio-address" <%=index==0 ? 'checked' : '' %> >
+                                    <div class="row">
+                                        <% addresses.forEach((element , index)=> { %>
+                                            <div class="col-md-4 mb-1">
+                                                <div class="account-address" id="address-">
+                                                    <div class="radio-container">
+                                                        <input type="radio" name="address" value="<%= element._id %>"
+                                                            id="radio-address" <%=index==0 ? 'checked' : '' %> >
+                                                    </div>
+                                                    <h6 class="account-title">Billing address</h6>
+                                                    <p class="address-block">
+                                                        <%= element.name %><br>
+                                                            <%= element.address %><br>
+                                                                <%= element.city %>, <%= element.state %><br>
+                                                                        <%= element.mobile %>
+                                                    </p>
                                                 </div>
-                                                <h6 class="account-title" style="color: white;">Billing address</h6>
-                                                <p>
-                                                    <%= element.name %>
-                                                </p>
-                                                <p>
-                                                    <%= element.address %>
-                                                </p>
-                                                <p>
-                                                    <%= element.city %>, <%= element.state %>
-                                                </p>
-                                                <p>
-                                                    <%= element.mobile %>
-                                                </p>
-
                                             </div>
-                                        </div>
-                                        <% }) %>
+                                            <% }) %>
+                                    </div>
 
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="checkout-diff-address">
+                                        <label class="custom-control-label" for="checkout-diff-address">Ship to a
+                                            different address?</label>
+                                    </div><!-- End .custom-checkbox -->
 
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input"
-                                                    id="checkout-diff-address">
-                                                <label class="custom-control-label" for="checkout-diff-address">Ship to
-                                                    a different address?</label>
-                                            </div><!-- End .custom-checkbox -->
+                                    <div id="different-address-form" style="display: none;">
+                                        <div class="row">
+                                            <div class="col-lg-9">
+                                                <label>Name </label>
+                                                <input type="text" class="form-control" id="name" required>
+                                                <div class="error-message" id="nameError"
+                                                    style="color: red; display: none;">Invalid name. No numbers or
+                                                    spaces allowed.</div>
+                                            </div><!-- End .col-sm-6 -->
+                                        </div><!-- End .row -->
 
-                                            <div id="different-address-form" style="display: none;">
-                                                <div class="row">
-                                                    <div class="col-lg-9">
-                                                        <label>Name </label>
-                                                        <input type="text" class="form-control" id="name" required>
-                                                        <div class="error-message" id="nameError" style="color: red; display: none;">Invalid name. No numbers or spaces allowed.</div>
-                                                    </div><!-- End .col-sm-6 -->
-                                                </div><!-- End .row -->
-                                            
-                                                <label>Address </label>
-                                                <input type="text" class="form-control" id="address" placeholder="House number and Street name" required>
-                                                <div class="error-message" id="addressError" style="color: red; display: none;">Invalid address. No numbers or spaces allowed.</div>
-                                            
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <label>Town / City </label>
-                                                        <input type="text" id="city" class="form-control" required>
-                                                        <div class="error-message" id="cityError" style="color: red; display: none;">Invalid city. No numbers or spaces allowed.</div>
-                                                    </div><!-- End .col-sm-6 -->
-                                            
-                                                    <div class="col-sm-6">
-                                                        <label>State </label>
-                                                        <input type="text" id="state" class="form-control" required>
-                                                        <div class="error-message" id="stateError" style="color: red; display: none;">Invalid state. No numbers or spaces allowed.</div>
-                                                    </div><!-- End .col-sm-6 -->
-                                                </div><!-- End .row -->
-                                            
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <label>Postcode / ZIP *</label>
-                                                        <input type="text" id="pincode" class="form-control" required>
-                                                        <div class="error-message" id="pincodeError" style="color: red; display: none;">Invalid pincode. Must be 6 digits.</div>
-                                                    </div><!-- End .col-sm-6 -->
-                                            
-                                                    <div class="col-sm-6">
-                                                        <label>Phone *</label>
-                                                        <input type="tel" id="mobile" class="form-control" required>
-                                                        <div class="error-message" id="mobileError" style="color: red; display: none;">Invalid phone number. Must be 10 digits.</div>
-                                                    </div><!-- End .col-sm-6 -->
-                                                </div><!-- End .row -->
-                                                <button type="submit" class="btn btn-primary" onclick="saveAddress(event)">Submit</button>
-                                            </div><!-- End #different-address-form -->
-                                                
+                                        <label>Address </label>
+                                        <input type="text" class="form-control" id="address"
+                                            placeholder="House number and Street name" required>
+                                        <div class="error-message" id="addressError" style="color: red; display: none;">
+                                            Invalid address. No numbers or spaces allowed.</div>
 
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <label>Town / City </label>
+                                                <input type="text" id="city" class="form-control" required>
+                                                <div class="error-message" id="cityError"
+                                                    style="color: red; display: none;">Invalid city. No numbers or
+                                                    spaces allowed.</div>
+                                            </div><!-- End .col-sm-6 -->
 
+                                            <div class="col-sm-6">
+                                                <label>State </label>
+                                                <input type="text" id="state" class="form-control" required>
+                                                <div class="error-message" id="stateError"
+                                                    style="color: red; display: none;">Invalid state. No numbers or
+                                                    spaces allowed.</div>
+                                            </div><!-- End .col-sm-6 -->
+                                        </div><!-- End .row -->
 
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <label>Postcode / ZIP *</label>
+                                                <input type="text" id="pincode" class="form-control" required>
+                                                <div class="error-message" id="pincodeError"
+                                                    style="color: red; display: none;">Invalid pincode. Must be 6
+                                                    digits.</div>
+                                            </div><!-- End .col-sm-6 -->
 
-
-
-
-
+                                            <div class="col-sm-6">
+                                                <label>Phone *</label>
+                                                <input type="tel" id="mobile" class="form-control" required>
+                                                <div class="error-message" id="mobileError"
+                                                    style="color: red; display: none;">Invalid phone number. Must be 10
+                                                    digits.</div>
+                                            </div><!-- End .col-sm-6 -->
+                                        </div><!-- End .row -->
+                                        <button type="submit" class="btn btn-primary"
+                                            onclick="saveAddress(event)">Submit</button>
+                                    </div><!-- End #different-address-form -->
                                 </div><!-- End .col-lg-9 -->
-                                
+
                                 <aside class="col-lg-3">
                                     <div class="cart-discount">
-                                        <form  id="form">
+                                        <form id="form">
                                             <div id="errorMessage" class="text-danger"></div>
-                                            <div class="input-group">
-                                                <input type="text" id="couponCheck" class="form-control" required
-                                                    placeholder="coupon code">
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-outline-primary-2" style="height: 40px;" id="couponSubmit" type="submit"><i
-                                                            class="icon-long-arrow-right"></i></button>
-                                                </div><!-- .End .input-group-append -->
-                                            </div><!-- End .input-group -->
+                                            <div class="form-group">
+                                                <input type="text" id="couponCheck" class="form-control" required placeholder="Coupon code">
+                                            </div><!-- End .form-group -->
+                                            <div class="form-group text-center">
+                                                <a href="/couponDetails" class="view-coupons">View Available Coupons</a>
+                                                <button class="btn btn-outline-primary-2 btn-block" id="couponSubmit" onclick="applyCoupon()">
+                                                    <i class="icon-long-arrow-right" ></i> Apply Coupon
+                                                </button>
+                                            </div><!-- End .form-group -->
                                         </form>
                                     </div><!-- End .cart-discount -->
+                                
                                     <div class="summary">
                                         <h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
-
+                                
                                         <table class="table table-summary">
                                             <thead>
                                                 <tr>
@@ -375,72 +571,57 @@
                                                     <th>Total</th>
                                                 </tr>
                                             </thead>
-
+                                
                                             <tbody>
                                                 <% cartData.forEach(element=> { %>
-
-
                                                     <tr>
-                                                        <td><a href="#">
-                                                                <%= element.Product.name %>
-                                                            </a></td>
-                                                        <td style="font-family: sans-serif;">₹ <%= element.Product.price
-                                                                * element.quantity %>
-                                                        </td>
+                                                        <td><a href="#"><%= element.Product.name %></a></td>
+                                                        <td>₹ <%= element.Product.price * element.quantity %></td>
                                                     </tr>
-                                                    <% }) %>
-                                                        <tr class="summary-subtotal">
-                                                            <td>Subtotal:</td>
-                                                            <td id="subtotal" style="font-family: sans-serif;"></td>
-                                                        </tr><!-- End .summary-subtotal -->
-
-                                                        <tr class="summary-total">
-                                                            <td>Total:</td>
-                                                            <td id="total" style="font-family: sans-serif;"></td>
-                                                        </tr><!-- End .summary-total -->
-
+                                                <% }) %>
+                                                <tr class="summary-subtotal">
+                                                    <td>Subtotal:</td>
+                                                    <td id="subtotal"></td>
+                                                </tr><!-- End .summary-subtotal -->
+                                                <tr class="summary-total">
+                                                    <td>Total:</td>
+                                                    <td id="total"></td>
+                                                </tr><!-- End .summary-total -->
                                             </tbody>
                                         </table><!-- End .table table-summary -->
-
+                                
                                         <div class="accordion-summary" id="accordion-payment">
-
-
-
-
                                             <div class="card">
                                                 <div class="card-header" id="heading-1">
                                                     <h2 class="card-title">
-                                                        <a role="button" data-toggle="collapse" href="#collapse-1"
-                                                            aria-expanded="true" aria-controls="collapse-1">
+                                                        <a role="button" data-toggle="collapse" href="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
                                                             Cash on delivery
                                                         </a>
                                                     </h2>
                                                 </div><!-- End .card-header -->
-                                                <div id="collapse-1" class="collapse show" aria-labelledby="heading-1"
-                                                    data-parent="#accordion-payment">
+                                                <div id="collapse-1" class="collapse show" aria-labelledby="heading-1" data-parent="#accordion-payment">
                                                     <div class="card-body">
-                                                        Make your payment directly into our bank account. Please use
-                                                        your Order ID as the payment reference. Your order will not be
-                                                        shipped until the funds have cleared in our account.
+                                                        Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.
                                                     </div><!-- End .card-body -->
                                                 </div><!-- End .collapse -->
                                             </div><!-- End .card -->
-
-
-
-                                            <button type="submit" onclick="placeOrder(event)"
-                                                class="btn btn-outline-primary-2 btn-order btn-block">
+                                
+                                            <button type="submit" onclick="placeOrder(event)" class="btn btn-outline-primary-2 btn-order btn-block">
                                                 <span class="btn-text">Place Order</span>
                                                 <span class="btn-hover-text">Proceed to Checkout</span>
                                             </button>
-                                        </div><!-- End .summary -->
+                                        </div><!-- End .accordion-summary -->
+                                    </div><!-- End .summary -->
                                 </aside><!-- End .col-lg-3 -->
+                                
+
                             </div><!-- End .row -->
                         </form>
                     </div><!-- End .container -->
                 </div><!-- End .checkout -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->
+
 
         <footer class="footer">
             <div class="footer-middle">
@@ -527,7 +708,7 @@
     </div><!-- End .page-wrapper -->
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
-    
+
 
 
 
@@ -632,93 +813,95 @@
 
     //SAVE ADDRESS 
     function saveAddress(event) {
-    event.preventDefault();
+        event.preventDefault();
 
-    const name = document.getElementById('name').value.trim();
-    const mobile = document.getElementById('mobile').value.trim();
-    const address = document.getElementById('address').value.trim();
-    const pincode = document.getElementById('pincode').value.trim();
-    const city = document.getElementById('city').value.trim();
-    const state = document.getElementById('state').value.trim();
+        const name = document.getElementById('name').value.trim();
+        const mobile = document.getElementById('mobile').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const pincode = document.getElementById('pincode').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const state = document.getElementById('state').value.trim();
 
-    let isValid = true;
+        let isValid = true;
 
-    // Validate name
-    if (/[^a-zA-Z]/.test(name)) {
-        document.getElementById('nameError').style.display = 'block';
-        isValid = false;
-    } else {
-        document.getElementById('nameError').style.display = 'none';
+        // Validate name
+        if (/[^a-zA-Z]/.test(name)) {
+            document.getElementById('nameError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('nameError').style.display = 'none';
+        }
+
+        // Validate address
+        if (/[^a-zA-Z0-9\s]/.test(address)) {
+            document.getElementById('addressError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('addressError').style.display = 'none';
+        }
+
+        // Validate city
+        if (/[^a-zA-Z]/.test(city)) {
+            document.getElementById('cityError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('cityError').style.display = 'none';
+        }
+
+        // Validate state
+        if (/[^a-zA-Z]/.test(state)) {
+            document.getElementById('stateError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('stateError').style.display = 'none';
+        }
+
+        // Validate pincode
+        if (!/^\d{6}$/.test(pincode)) {
+            document.getElementById('pincodeError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('pincodeError').style.display = 'none';
+        }
+
+        // Validate phone
+        if (!/^\d{10}$/.test(mobile)) {
+            document.getElementById('mobileError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('mobileError').style.display = 'none';
+        }
+
+        if (isValid) {
+            const formData = { name, mobile, address, pincode, city, state };
+
+            fetch('/addAddress', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
     }
-
-    // Validate address
-    if (/[^a-zA-Z0-9\s]/.test(address)) {
-        document.getElementById('addressError').style.display = 'block';
-        isValid = false;
-    } else {
-        document.getElementById('addressError').style.display = 'none';
-    }
-
-    // Validate city
-    if (/[^a-zA-Z]/.test(city)) {
-        document.getElementById('cityError').style.display = 'block';
-        isValid = false;
-    } else {
-        document.getElementById('cityError').style.display = 'none';
-    }
-
-    // Validate state
-    if (/[^a-zA-Z]/.test(state)) {
-        document.getElementById('stateError').style.display = 'block';
-        isValid = false;
-    } else {
-        document.getElementById('stateError').style.display = 'none';
-    }
-
-    // Validate pincode
-    if (!/^\d{6}$/.test(pincode)) {
-        document.getElementById('pincodeError').style.display = 'block';
-        isValid = false;
-    } else {
-        document.getElementById('pincodeError').style.display = 'none';
-    }
-
-    // Validate phone
-    if (!/^\d{10}$/.test(mobile)) {
-        document.getElementById('mobileError').style.display = 'block';
-        isValid = false;
-    } else {
-        document.getElementById('mobileError').style.display = 'none';
-    }
-
-    if (isValid) {
-        const formData = { name, mobile, address, pincode, city, state };
-
-        fetch('/addAddress', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.reload();
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
-    }
-}
 
 
 
     // PLACE ORDER FUNCTION
     function placeOrder(event) {
         event.preventDefault();
-
+        let couponCode = document.getElementById('couponCheck').value
+        console.log(couponCode)
+        
         let checkAddress = document.querySelector('input[name="address"]:checked').value;
 
         fetch('/placeOrder', {
@@ -726,12 +909,13 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ checkAddress: checkAddress })
+            body: JSON.stringify({ checkAddress: checkAddress, couponCode: couponCode })
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     window.location.href = `/orderSuccess?orderId=${data.orderId}`;
+                    
                 }
             })
             .catch(error => {
@@ -740,35 +924,60 @@
     }
 
 
-     //COUPON CHECK 
-     document.getElementById('couponSubmit').addEventListener('click' , function(event){
+    //COUPON CHECK 
+    function applyCoupon(){
         event.preventDefault()
         const couponCode = document.getElementById('couponCheck').value
         fetch('/checkCoupon', {
-            method:'POST',
-            headers:{
-                'Content-Type' : 'application/json'
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({couponCode:couponCode})
+            body: JSON.stringify({ couponCode: couponCode })
         })
-        .then(response => {
-            if(!response.ok){
-                throw new Error('Network response was not okey')
-            }
-            return response.json()
-        })
-        .then(data => {
-            if(data.success){
-                console.log(couponCode)
-            }else if(data.message){
-                document.getElementById('errorMessage').innerText= data.message
-            }
-        })
-        .catch(error => {
-            console.log(error)
-        })
-    })
-    
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not okey')
+                }
+                return response.json()
+            })
+            .then(data => {
+                if (data.success) {
+                    let totalAmount = data.totalPrice
+                    fetch('/applyCoupon', {
+                        method: 'POST',
+                        headers:{
+                            'Content-Type' : 'application/json'
+                        }, 
+                        body: JSON.stringify({totalAmount: totalAmount, couponCode:couponCode})
+                    })
+                    .then(response => {
+                        if(!response.ok){
+                            throw new Error('Network response was not okey')
+                        }
+                        return response.json()
+                    })
+                    .then(data => {
+                        if(data.success){
+                            let totalAmount = data.discountAmount
+                            document.getElementById('subtotal').innerText = `₹ ${totalAmount}`;
+                            document.getElementById('total').innerText = `₹ ${totalAmount}`;
+                            
+                        }else if (data.fail){
+                            document.getElementById('errorMessage').innerText = data.fail
+                        }
+                    })
+                } else if (data.message) {
+                    document.getElementById('errorMessage').innerText = data.message
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
+}
+
+
+
 
 </script>
 
