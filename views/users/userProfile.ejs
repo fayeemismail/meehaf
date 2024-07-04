@@ -154,14 +154,14 @@
     </div>
     <!-- Header End -->
 
-   
 
- 
- 
 
-      
 
-        
+
+
+
+
+
     </div>
     <!-- off Canvas End -->
 
@@ -217,6 +217,12 @@
                                     Details</a>
                             </li>
                             <li>
+                                <a data-bs-toggle="pill" href="#pills-wallet"><i class="fa fa-wallet"></i> Wallet</a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="pill" href="#pills-coupons"><i class="fa fa-ticket"></i> Coupons</a>
+                            </li>
+                            <li>
                                 <a href="/logout"><i class="fa fa-sign-out"></i>
                                     Logout</a>
                             </li>
@@ -267,21 +273,28 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <% orderList.forEach((element, index) => { %>
-                                             
-                                           
-                                            <tr>
-                                                <td><%= index + 1 %></td>
-                                                <td><%= element.billingAddress.userName %></td>
-                                                <td><%= element.createdAt.toLocaleDateString() %></td>
-                                                <td><%= element.orderStatus %></td>
-                                                <td><%= element.totalAmount %></td>
-                                                <td>
-                                                    <a href="/orderDetails?id=<%= element._id %>">View</a>
-                                                </td>
-                                            </tr>
-                                            <% }) %> 
-
+                                            <% orderList.forEach((element, index)=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= index + 1 %>
+                                                    </td>
+                                                    <td>
+                                                        <%= element.billingAddress.userName %>
+                                                    </td>
+                                                    <td>
+                                                        <%= element.createdAt.toLocaleDateString() %>
+                                                    </td>
+                                                    <td>
+                                                        <%= element.orderStatus %>
+                                                    </td>
+                                                    <td>
+                                                        <%= element.totalAmount %>
+                                                    </td>
+                                                    <td>
+                                                        <a href="/orderDetails?id=<%= element._id %>">View</a>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
                                         </tbody>
                                     </table>
                                 </div>
@@ -341,25 +354,34 @@
                             </div>
                         </div>
 
-
                         <!-- ADDRESS DETAILS -->
                         <div class="tab-pane fade" id="pills-address">
                             <div class="my-account-address account-wrapper">
                                 <div class="row">
-                                    <% addresses.forEach(details => { %>
-                                    <div class="col-md-12">
-                                        
+                                    <% addresses.forEach(details=> { %>
+                                        <div class="col-md-12">
                                             <div class="account-address" id="address-<%= details._id %>">
                                                 <h4 class="account-title">Billing address</h4>
-                                                <h6 class="name"><%= details.name %></h6>
-                                                <p><%= details.address %><br /><%= details.city %>, <%= details.state %> <%= details.pincode %></p>
-                                                <p>Mobile: <%= details.mobile %></p>
-                                                <a class="btn btn-primary btn-hover-dark" href="/editAddress?id=<%= details._id %>" id="edit-address-btn"><i class="fa fa-edit"></i> Edit Address</a>
-                                                <a class="btn btn-danger btn-hover-dark" onclick="removeAddress('<%= details._id %>')" id="delete-address-btn"><i class="fa fa-trash"></i>Delete Address</a>
+                                                <h6 class="name">
+                                                    <%= details.name %>
+                                                </h6>
+                                                <p>
+                                                    <%= details.address %><br />
+                                                        <%= details.city %>, <%= details.state %>
+                                                                <%= details.pincode %>
+                                                </p>
+                                                <p>Mobile: <%= details.mobile %>
+                                                </p>
+                                                <a class="btn btn-primary btn-hover-dark"
+                                                    href="/editAddress?id=<%= details._id %>" id="edit-address-btn"><i
+                                                        class="fa fa-edit"></i> Edit Address</a>
+                                                <a class="btn btn-danger btn-hover-dark"
+                                                    onclick="removeAddress('<%= details._id %>')"
+                                                    id="delete-address-btn"><i class="fa fa-trash"></i>Delete
+                                                    Address</a>
                                             </div>
-                                       
-                                    </div>
-                                    <% }) %>
+                                        </div>
+                                        <% }) %>
                                 </div>
                             </div>
                             <hr>
@@ -368,12 +390,8 @@
                                 <i class="fa fa-plus"></i> Add New Address
                             </a>
                         </div>
-                        
 
-
-
-
-
+                        <!-- ACCOUNT DETAILS -->
                         <div class="tab-pane fade" id="pills-account">
                             <div class="my-account-details account-wrapper">
                                 <h4 class="account-title">
@@ -458,6 +476,68 @@
                                 </form>
                             </div>
                         </div>
+
+                        <!-- WALLET DETAILS -->
+                        <div class="tab-pane fade" id="pills-wallet">
+                            <div class="my-account-wallet account-wrapper">
+                                <h4 class="account-title">Wallet</h4>
+                                <div class="wallet-balance">
+                                    <p>Current Balance: <strong> walletData.balance</strong></p>
+                                </div>
+                                <div class="wallet-transactions account-table text-center table-responsive">
+                                    <h5>Transaction History</h5>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th class="date">Date</th>
+                                                <th class="description">Description</th>
+                                                <th class="amount">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- COUPON DETAILS -->
+                        <div class="tab-pane fade" id="pills-coupons">
+                            <div class="my-account-coupons account-wrapper">
+                                <h4 class="account-title">Coupons</h4>
+                                <div class="row">
+                                    <% coupons.forEach(coupon=> { %>
+                                        <div class="col-md-6 col-lg-4 mb-3">
+                                            <div class="card account-coupon" id="coupon-<%= coupon._id %>">
+                                                <div class="card-body">
+                                                    <h5 class="card-title coupon-title">
+                                                        <%= coupon.name %>
+                                                    </h5>
+                                                    <p class="card-text">Code: <%= coupon.couponCode %>
+                                                    </p>
+                                                    <p class="card-text">Discount: <%= coupon.amount %></p>
+                                                    <p class="card-text">Expires: <%= new
+                                                            Date(coupon.expires).toLocaleDateString() %>
+                                                    </p>
+                                                    <p class="card-text">
+                                                        Status:
+                                                        <% if (coupon.used) { %>
+                                                            <span class="badge bg-danger">Claimed</span>
+                                                            <% } else { %>
+                                                                <span class="badge bg-success">Coupon available</span>
+                                                                <% } %>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% }) %>
+                                </div>
+                            </div>
+                        </div>
+
+
+
                     </div>
                     <!-- Tab content End -->
                 </div>
@@ -465,6 +545,7 @@
         </div>
     </div>
     <!-- My Account Section End -->
+
 
 
 
@@ -796,48 +877,48 @@
 
     //DELETE ADDRESS
     function removeAddress(detailsId) {
-    // Show SweetAlert confirmation dialog
-    Swal.fire({
-        title: 'Are you sure?',
-        text: 'You are about to delete this address. This action cannot be undone.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // User confirmed, proceed with delete
-            fetch('/removeAddress', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ detailsId: detailsId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Remove the address element from the DOM
-                    const addressElement = document.getElementById(`address-${detailsId}`);
-                    if (addressElement) {
-                        addressElement.remove();
-                        // Show success message if needed
-                        Swal.fire('Deleted!', 'The address has been deleted.', 'success');
-                    } else {
-                        Swal.fire('Error!', 'Failed to find address element.', 'error');
-                    }
-                } else {
-                    Swal.fire('Error!', 'Failed to delete address.', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error!', 'An error occurred while deleting the address.', 'error');
-            });
-        }
-    });
-}
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You are about to delete this address. This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, proceed with delete
+                fetch('/removeAddress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ detailsId: detailsId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the address element from the DOM
+                            const addressElement = document.getElementById(`address-${detailsId}`);
+                            if (addressElement) {
+                                addressElement.remove();
+                                // Show success message if needed
+                                Swal.fire('Deleted!', 'The address has been deleted.', 'success');
+                            } else {
+                                Swal.fire('Error!', 'Failed to find address element.', 'error');
+                            }
+                        } else {
+                            Swal.fire('Error!', 'Failed to delete address.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Error!', 'An error occurred while deleting the address.', 'error');
+                    });
+            }
+        });
+    }
 </script>
 
 

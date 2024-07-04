@@ -8,12 +8,16 @@ const showCart = async (req, res) => {
     try {
         const userData = req.session.user_id;
         const cartData = await cart.findOne({ user: userData }).populate('Products.Product');
+        
+        const ProductStatus = cartData.Products.forEach(item => console.log(item.Product.status))
+        console.log(Productst)
+        
 
         if (!cartData || !cartData.Products || cartData.Products.length === 0) {
-            // Cart is empty or no cart data found
-            res.render('cart', { cartData: { Products: [] } }); // Sending an empty array as Products
-        } else {
-            // Cart data found, render the cart view with cartData
+           
+            res.render('cart', { cartData: { Products: [] } }); 
+        } else if (cartData) {
+          
             res.render('cart', { cartData: cartData });
         }
     } catch (error) {

@@ -79,15 +79,19 @@ const placeOrder = async (req, res) => {
                 productPrice = productDetails.reduce((accu, val) => {
                     return accu + val.quantity * val.price;
                 }, 0);
+                totalAmount = productPrice - discountAmount;
+            } else {
+                totalAmount = productDetails.reduce((accu, val) => {
+                    return accu + val.quantity * val.price;
+                }, 0);
             }
-            totalAmount = productPrice - discountAmount;
         } else {
             totalAmount = productDetails.reduce((accu, val) => {
                 return accu + val.quantity * val.price;
             }, 0);
         }
 
-        const newOrder = new orderSchema({
+        const newOrderData = {
             user: userId,
             Products: productDetails,
             billingAddress: {
@@ -99,23 +103,27 @@ const placeOrder = async (req, res) => {
                 pincode: correctAddress.pincode,
                 mobile: correctAddress.mobile
             },
-            paymenMethod: 'COD',
+            paymentMethod: 'COD',
             totalAmount: totalAmount,
             orderStatus: 'Pending'
-        });
+        };
 
+        if (couponCode) {
+            const couponData = await couponSchema.findOne({ couponCode });
+
+            if (couponData) {
+                couponData.userList.push({ userId, couponUsed: true });
+                await couponData.save();
+
+                // Add the claimedAmount field only if a coupon is used
+                newOrderData.claimedAmount = discountAmount;
+            }
+        }
+
+        const newOrder = new orderSchema(newOrderData);
         const saving = await newOrder.save();
 
         if (saving) {
-            if (couponCode) {
-                const couponData = await couponSchema.findOne({ couponCode });
-
-                if (couponData) {
-                    couponData.userList.push({ userId, couponUsed: true });
-                    await couponData.save();
-                }
-            }
-
             // Clear the cart after the order is saved
             await cartSchema.findOneAndDelete({ user: userId });
             res.json({ success: true, orderId: saving._id });  // Return order ID
@@ -126,6 +134,7 @@ const placeOrder = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
 
 
 

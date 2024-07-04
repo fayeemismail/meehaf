@@ -105,13 +105,16 @@ const couponCheck = async (req, res) => {
         if (!couponData) {
             return res.send({ message: 'The coupon code is invalid' });
         }
+        if(couponData.status == true){
+            return res.send({ message: 'the coupon is not available for this moment'})
+        }
 
         const userId = req.session.user_id;
 
         // Check if the user has already used the coupon
-        const hasUsedCoupon = couponData.userList.some(user => user.userId.toString() === userId);
+        const usedCoupon = couponData.userList.find(user => user.userId.toString() === userId);
 
-        if (hasUsedCoupon) {
+        if (usedCoupon) {
             return res.send({ message: 'You have already used this coupon' });
         }
 

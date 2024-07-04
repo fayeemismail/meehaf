@@ -6,7 +6,8 @@ const products = require('../models/productModel');
 const category = require('../models/categoryModel')
 const Address = require('../models/addressModel');
 const orderSchema = require('../models/orderModel')
-const cartSchema = require('../models/cartModel')
+const cartSchema = require('../models/cartModel');
+const couponSchema = require('../models/couponModel')
 
 
 
@@ -44,16 +45,27 @@ const home = async (req, res) => {
 
 const shop = async (req, res) => {
     try {
-        const allProduct = await products.find();
+        const page = parseInt(req.query.page) || 1;
+        const limit = 12;
+        const skip = (page - 1) * limit;
 
-        const falseCategories = await category.find({status:false});
+        const allProduct = await products.find().skip(skip).limit(limit);
+
+        const falseCategories = await category.find({ status: false });
 
         const falseCategoryName = falseCategories.map(category => category.name);
 
-        const productsInFalseCategory = allProduct.filter(product => !falseCategoryName.includes(product.category))
+        const productsInFalseCategory = allProduct.filter(product => !falseCategoryName.includes(product.category));
 
-        res.render('shop', {Products:productsInFalseCategory});
-      
+        const totalProducts = await products.countDocuments();
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        res.render('shop', {
+            Products: productsInFalseCategory,
+            currentPage: page,
+            totalPages: totalPages
+        });
+
     } catch (error) {
         console.log(error);
     }
@@ -335,16 +347,28 @@ const userProfile = async (req, res) => {
         const userData = await user.findOne({ _id: userId });
         const userAddress = await Address.findOne({ user_id: userId });
 
-        const orderList = await orderSchema.find({user:userId});
+        const orderList = await orderSchema.find({ user: userId });
 
         const addresses = userAddress && userAddress.address ? userAddress.address : [];
 
-        res.render('userProfile', { userData: userData, addresses: addresses, orderList:orderList });
+        let coupons = await couponSchema.find({});
+        if (!coupons) {
+            coupons = [];
+        }
+
+        // Check if the user has used each coupon and add the 'used' property
+        coupons.forEach(coupon => {
+            const userCoupon = coupon.userList.find(userCoupon => userCoupon.userId.toString() === userId);
+            coupon.used = userCoupon ? userCoupon.couponUsed : false;
+        });
+
+        res.render('userProfile', { userData, addresses, orderList, coupons });
     } catch (error) {
         console.log(error);
         res.render('error', { message: "An error occurred while fetching the user profile." });
     }
 };
+
 
 
 
