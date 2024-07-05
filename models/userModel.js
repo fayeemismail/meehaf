@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
     is_blocked: {
         type: Boolean,
         default: false
+    },
+    balance:{
+        type: Number,
+        default: 0
     }
 }, {
     timestamps: true

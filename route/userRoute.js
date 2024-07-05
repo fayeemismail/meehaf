@@ -120,7 +120,8 @@ user_route.post('/placeOrder', userAuth.is_login, checkOutController.placeOrder)
 user_route.get('/orderSuccess', userAuth.is_login, checkOutController.orderSuccess);
 user_route.post('/checkCoupon', couponController.couponCheck);
 user_route.get('/couponDetails', couponController.couponDetais);
-user_route.post('/applyCoupon', couponController.applyCoupon)
+user_route.post('/applyCoupon', couponController.applyCoupon);
+user_route.post('/confirm-payment', checkOutController.confirmPayment);
 
 
 

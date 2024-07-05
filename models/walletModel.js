@@ -6,30 +6,17 @@ const walletSchema = new mongoose.Schema({
         ref:'Users',
         required:true
     },
-    balance:{
+    amount:{
         type:Number,
         required: true
     },
-    transactions:[{
-        amount:{
-            type:Number,
-            required: true
-        },
-        transactionMethod:{
-            type: String,
-            required:true,
-            enum:[ 'RazorPay', 'Refund', 'Purchase' ]
-        },
-        date:{
-            type:Date,
-            default:Date.now
-        }
-    }]
+    paymet_type:{
+        type:String,
+        required:true
+    }
 },{
     timestamps: true
 });
-
-
 
 
 module.exports = mongoose.model('wallet' , walletSchema);

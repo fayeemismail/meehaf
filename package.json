@@ -3,6 +3,7 @@
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cookie-session": "^2.1.0",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
@@ -15,7 +16,8 @@
     "nodemon": "^3.1.0",
     "otp-generator": "^4.0.1",
     "passport": "^0.7.0",
-    "passport-oauth2": "^1.8.0"
+    "passport-oauth2": "^1.8.0",
+    "razorpay": "^2.9.4"
   },
   "name": "week-8",
   "version": "1.0.0",

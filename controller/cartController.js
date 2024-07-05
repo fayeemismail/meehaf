@@ -9,9 +9,20 @@ const showCart = async (req, res) => {
         const userData = req.session.user_id;
         const cartData = await cart.findOne({ user: userData }).populate('Products.Product');
         
-        const ProductStatus = cartData.Products.forEach(item => console.log(item.Product.status))
-        console.log(Productst)
-        
+        // Find all unlisted products (where status is true)
+        const unlistedProducts = await Products.find({ status: true })
+        const unlistedProductIds = unlistedProducts.map(product => product._id.toString());
+
+        if (cartData && cartData.Products && cartData.Products.length > 0) {
+            // Filter out the unlisted products from the cart
+            const filteredProducts = cartData.Products.filter(cartItem => {
+                return !unlistedProductIds.includes(cartItem.Product._id.toString());
+            });
+
+            // Update the cart with filtered products
+            cartData.Products = filteredProducts;
+            await cartData.save();
+        }
 
         if (!cartData || !cartData.Products || cartData.Products.length === 0) {
            

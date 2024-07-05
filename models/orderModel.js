@@ -31,7 +31,8 @@ const orderSchema = new mongoose.Schema({
     totalAmount: { type: Number, required: true },
     orderStatus: { type: String, required: true },
     claimedAmount: { type: Number, default: 0 },  // Add claimedAmount field here
-    offerAmount: { type: Number, default: 0 }
+    offerAmount: { type: Number, default: 0 },
+    paymetStatus: { type:String, required:true}
 }, {
     timestamps: true
 });

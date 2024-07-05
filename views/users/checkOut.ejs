@@ -594,17 +594,32 @@
                                             <div class="card">
                                                 <div class="card-header" id="heading-1">
                                                     <h2 class="card-title">
-                                                        <a role="button" data-toggle="collapse" href="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
-                                                            Cash on delivery
-                                                        </a>
+                                                        <input type="radio" name="paymentMethod" value="Cash on delivery" id="paymentMethod1">
+                                                        <label for="paymentMethod1">Cash on delivery</label>
                                                     </h2>
-                                                </div><!-- End .card-header -->
+                                                </div>
                                                 <div id="collapse-1" class="collapse show" aria-labelledby="heading-1" data-parent="#accordion-payment">
                                                     <div class="card-body">
                                                         Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.
-                                                    </div><!-- End .card-body -->
-                                                </div><!-- End .collapse -->
-                                            </div><!-- End .card -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card">
+                                                <div class="card-header" id="heading-2">
+                                                    <h2 class="card-title">
+                                                        <input type="radio" name="paymentMethod" value="Razor Pay" id="paymentMethod2">
+                                                        <label for="paymentMethod2">Razor Pay</label>
+                                                    </h2>
+                                                </div>
+                                                <div id="collapse-2" class="collapse" aria-labelledby="heading-2" data-parent="#accordion-payment">
+                                                    <div class="card-body">
+                                                        Ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            
                                 
                                             <button type="submit" onclick="placeOrder(event)" class="btn btn-outline-primary-2 btn-order btn-block">
                                                 <span class="btn-text">Place Order</span>
@@ -896,32 +911,119 @@
 
 
 
-    // PLACE ORDER FUNCTION
-    function placeOrder(event) {
-        event.preventDefault();
-        let couponCode = document.getElementById('couponCheck').value
-        console.log(couponCode)
-        
-        let checkAddress = document.querySelector('input[name="address"]:checked').value;
+ // PLACE ORDER FUNCTION
+function placeOrder(event) {
+    event.preventDefault();
+    let couponCode = document.getElementById('couponCheck').value;
+    let checkAddress = document.querySelector('input[name="address"]:checked').value;
+    let paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value; // Get the selected payment method
 
-        fetch('/placeOrder', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ checkAddress: checkAddress, couponCode: couponCode })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = `/orderSuccess?orderId=${data.orderId}`;
+    fetch('/placeOrder', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ checkAddress: checkAddress, couponCode: couponCode, paymentMethod: paymentMethod }) // Include payment method
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.message === 'Razorpay order created'){
+            const options = {
+                key: data.key,
+                amount: data.amount * 100,
+                name: 'meehaf',
+                order_id: data.razorpayOrderId,
+                handler: function (response) {
+                    fetch('/confirm-payment', {
+                        method: 'POST',
+                        headers:{
+                            'Content-Type' : 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderId: data.orderId,
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            razorpayOrderId: response.razorpay_order_id,
+                            razorpaySignature: response.razorpay_signature
+                        })
+                    })
+                    .then(response =>{
+                        if(!response.ok){
+                            throw new Error('Network response was not okey')
+                        }
+                        return response.json()
+                    })
+                    .then(data => {
+                        if(data.message === 'Success'){
+                            Swal.fire({
+                            icon: 'success',
+                            title: 'Order Confirmed!',
+                            text: 'Your order has been successfully placed.',
+                            confirmButtonText: 'OK'
+                            })
+                            .then(() => {
+                                console.log('Order Confirmed');
+                                window.location.href = `/orderSuccess?orderId=${data.orderId}`;
+                            });
+                        }else if(data.message === 'Payment not confirmed'){
+                            Swal.fire({
+                            icon: 'error',
+                            title: 'Payment not confirmed!',
+                            text: 'Payment not confirmed. Please contact support.',
+                            confirmButtonText: 'OK'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Payment Failed!',
+                                text: 'Your payment was successful but order placement failed. Please contact support.',
+                                confirmButtonText: 'OK'
+                            });
+
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
                     
+                },
+                prefill: {
+                    name : 'fayeem',
+                    email: 'email@email.com',
+                    contact:'9867876598'
+                },
+                theme:{
+                    color: "#3399cc"
                 }
-            })
-            .catch(error => {
-                console.log(error);
+            }
+            const rzpl = new Razorpay(options);
+            rzpl.on('payment.failed', function (response) {
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Payment Failed!',
+                    text: 'There was an issue with your payment. Please try again.',
+                    confirmButtonText: 'OK'
+                });
             });
-    }
+            rzpl.open();
+        }else if (data.success) {
+            Swal.fire({
+                icon:'success',
+                title: 'order confirmed with cod',
+                text: 'your order has been successfully placed',
+                confirmButtonText:  'OK'
+            })
+            .then(()=>{
+                window.location.href = `/orderSuccess?orderId=${data.orderId}`;
+            })
+                
+        }
+    })
+    .catch(error => {
+        console.log(error);
+    });
+}
+
 
 
     //COUPON CHECK 
@@ -981,6 +1083,17 @@
 
 </script>
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!--   For linking the razor pay     -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
 <!-- molla/checkout.html  22 Nov 2019 09:55:06 GMT -->
 
 </html>
+
+
+
+
