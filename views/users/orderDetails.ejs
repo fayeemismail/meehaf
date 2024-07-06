@@ -65,10 +65,24 @@
                             <i class="fas fa-undo"></i> Return Order
                         </button>
                     </aside>
-                <% } else { %>
+                <% } else if (order.orderStatus == 'Pending') { %>
                     <div class="d-flex justify-content-between align-items-center">
                         <button type="submit" onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">Cancel Order</button>
                     </div>
+                    <% } else if(order.orderStatus == 'returned') { %>
+                     <p class="text-danger">The order is Returned</p>
+                    <a href="/userProfile" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+
+                    <% } else if (order.orderStatus == 'cannot return') { %>
+                        <p class="text-danger">This order cannot return</p>
+                        <a href="/userProfile" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+
+
+
                 <% } %>
             </div>
         </div>
@@ -83,17 +97,11 @@
 
     <script>
         function cancelOrder(orderId) {
-            console.log(orderId);
             Swal.fire({
                 title: "Do you want to cancel the order?",
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
-                customClass: {
-                    title: 'swal2-title',
-                    htmlContainer: 'swal2-html-container'
-                }
-            })
-            .then((result) => {
+            }).then((result) => {
                 if (result.isConfirmed) {
                     axios.post(`/cancelOrder?id=${orderId}`)
                         .then((response) => {
@@ -104,8 +112,7 @@
                                     icon: 'success',
                                     title: 'Amount added to the Wallet',
                                     confirmButtonText: 'OK'
-                                })
-                                .then(result => {
+                                }).then(result => {
                                     if (result.isConfirmed) {
                                         window.location.href = '/userProfile#pills-order';
                                     }
@@ -123,17 +130,12 @@
         }
 
         function returnOrder(orderId) {
-            console.log(orderId);
             Swal.fire({
                 icon: 'question',
                 title: 'Do you want to return the order?',
                 text: 'Are you sure you want to return the order?',
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
-                customClass: {
-                    title: 'swal2-title',
-                    htmlContainer: 'swal2-html-container'
-                }
             }).then(result => {
                 if (result.isConfirmed) {
                     Swal.fire({
@@ -142,10 +144,6 @@
                         inputPlaceholder: 'Enter your reason for returning the order...',
                         showCancelButton: true,
                         confirmButtonText: 'Submit',
-                        customClass: {
-                            title: 'swal2-title',
-                            htmlContainer: 'swal2-html-container'
-                        },
                         preConfirm: (reason) => {
                             if (!reason) {
                                 Swal.showValidationMessage('Please enter a reason for returning the order');
@@ -172,26 +170,14 @@
                                 if (data.success) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Order returned',
-                                        text: 'Order returned successfully',
+                                        title: 'Request sent successfully',
+                                        text: 'Your return request has been sent successfully. The order will be returned after admin acceptance.',
                                         confirmButtonText: 'OK'
                                     }).then(response => {
                                         if (response.isConfirmed) {
                                             window.location.href = '/userProfile#pills-order';
                                         }
                                     });
-                                }else if (data.cancel){
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'order returned and amount added to the Wallet',
-                                        text: 'amount added to the wallet and the order returned successfully',
-                                        confirmButtonText: 'OK'
-                                    })
-                                    .then(response => {
-                                        if(response.isConfirmed){
-                                            window.location.href = '/userProfile#pills-order'
-                                        }
-                                    })
                                 }
                             })
                             .catch(error => {
@@ -204,4 +190,5 @@
         }
     </script>
 </body>
+
 </html>

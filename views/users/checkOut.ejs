@@ -618,7 +618,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            
                                             <div class="card">
                                                 <div class="card-header" id="heading-3">
                                                     <h2 class="card-title">
@@ -631,7 +631,7 @@
                                                         Ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis.
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>                                            
                                             
                                             
                                 
@@ -925,8 +925,8 @@
 
 
 
- // PLACE ORDER FUNCTION
-function placeOrder(event) {
+    //PLACE ORDER 
+    function placeOrder(event) {
     event.preventDefault();
     let couponCode = document.getElementById('couponCheck').value;
     let checkAddress = document.querySelector('input[name="address"]:checked').value;
@@ -962,7 +962,7 @@ function placeOrder(event) {
                     })
                     .then(response =>{
                         if(!response.ok){
-                            throw new Error('Network response was not okey')
+                            throw new Error('Network response was not ok')
                         }
                         return response.json()
                     })
@@ -1020,35 +1020,50 @@ function placeOrder(event) {
                 });
             });
             rzpl.open();
-        }else if (data.success) {
+        } else if (data.success && data.paymentMethod === 'Cash on delivery') {
             Swal.fire({
                 icon:'success',
-                title: 'order confirmed with cod',
-                text: 'your order has been successfully placed',
+                title: 'Order Confirmed with COD',
+                text: 'Your order has been successfully placed',
                 confirmButtonText:  'OK'
             })
             .then(()=>{
                 window.location.href = `/orderSuccess?orderId=${data.orderId}`;
-            })
+            });
                 
-        }else if(data.message1){
+        } else if (data.success && data.wallet) {
             Swal.fire({
-                icon:'warning',
-                title:'insuffient balance in your wallet',
+                icon:'success',
+                title:'Payment with Wallet',
+                text: 'Your payment was successful using your wallet balance.',
                 confirmButtonText: 'OK'
             })
-        }else if (data.message2){
+            .then(result => {
+                if(result.isConfirmed){
+                    window.location.href = `/orderSuccess?orderId=${data.orderId}`;
+                }
+            });
+        } else if(data.message1){
             Swal.fire({
                 icon:'warning',
-                title:'there is no wallet found in this user',
+                title:'Insufficient Balance in Your Wallet',
                 confirmButtonText: 'OK'
-            })
+            });
+        } else if (data.message2){
+            Swal.fire({
+                icon:'warning',
+                title:'No Wallet Found for This User',
+                confirmButtonText: 'OK'
+            });
         }
     })
     .catch(error => {
         console.log(error);
     });
 }
+
+
+
 
 
 

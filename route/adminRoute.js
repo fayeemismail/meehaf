@@ -65,7 +65,8 @@ admin_route.post('/productBlock', productController.productBlock);
 admin_route.get('/orderDetails', adminController.orderDetails);
 admin_route.post('/cancelOrder', adminController.cancelOrder);
 admin_route.post('/statusCange', adminController.statusCange)
-
+admin_route.post('/acceptReturn', adminController.acceptReturn)
+admin_route.post('/denyReturn', adminController.denyReturn);
 
 
 admin_route.post('/coupon', couponController.addCoupon);

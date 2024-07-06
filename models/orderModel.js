@@ -30,9 +30,9 @@ const orderSchema = new mongoose.Schema({
     paymentMethod: { type: String },
     totalAmount: { type: Number, required: true },
     orderStatus: { type: String, required: true },
-    claimedAmount: { type: Number, default: 0 },  // Add claimedAmount field here
+    claimedAmount: { type: Number, default: 0 },
     offerAmount: { type: Number, default: 0 },
-    paymetStatus: { type:String, required:true}
+    paymentStatus: { type: String, required: true, default: 'Pending' }  // Corrected and added default value
 }, {
     timestamps: true
 });

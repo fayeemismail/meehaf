@@ -10,7 +10,7 @@ const walletSchema = new mongoose.Schema({
         type:Number,
         required: true
     },
-    paymet_type:{
+    payment_type:{
         type:String,
         required:true
     }

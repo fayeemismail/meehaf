@@ -2,6 +2,8 @@ const user = require('../models/userModel');
 const category = require('../models/categoryModel');
 const products = require('../models/productModel');
 const orderSchema = require('../models/orderModel');
+const returnSchema = require('../models/returnModel')
+const walletSchema = require('../models/walletModel')
 require('dotenv').config();
 
 
@@ -176,6 +178,72 @@ const statusCange = async (req,res) => {
 }
 
 
+const acceptReturn = async (req, res) => {
+    try {
+        const orderId = req.query.id;
+        const returnData = await returnSchema.findOne({ orderData: orderId });
+        const orderData = await orderSchema.findOne({ _id: orderId });
+
+        if (returnData) {
+            const userId = returnData.user;
+
+            if (orderData.paymentMethod === 'Razor Pay' || orderData.paymentMethod === 'Wallet') {
+                const newWallet = new walletSchema({
+                    user: userId,
+                    amount: orderData.totalAmount,
+                    payment_type: 'Credited'
+                });
+
+                const saving = await newWallet.save();
+                if (saving) {
+                    const creditedAmount = await user.findOne({ _id: userId });
+                    creditedAmount.balance += orderData.totalAmount;
+                    orderData.orderStatus = 'returned';
+                    await orderData.save();
+                    await creditedAmount.save();
+                    res.status(200).send('Return accepted and amount credited to the wallet');
+                }
+            } else {
+                // If payment method is not 'Razor Pay' or 'Wallet'
+                orderData.orderStatus = 'returned';
+                await orderData.save();
+                res.status(200).send('Return request accepted');
+            }
+        } else {
+            res.status(404).send('Return request not found');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('An error occurred while processing the return');
+    }
+};
+
+
+
+
+const denyReturn = async (req, res) => {
+    try {
+        const orderId = req.query.id;
+        const orderData = await orderSchema.findOne({ _id: orderId });
+
+        if (orderData) {
+            orderData.orderStatus = 'cannot return';
+            await orderData.save();
+
+            res.status(200).send('Return request denied');
+        } else {
+            res.status(404).send('Order not found');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('An error occurred while denying the return');
+    }
+};
+
+
+
+
+
 
 
 
@@ -192,6 +260,9 @@ module.exports = {
     orderDetails,
     cancelOrder,
     statusCange,
+    acceptReturn,
+    denyReturn,
+
     
 
 }

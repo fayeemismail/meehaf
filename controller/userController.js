@@ -355,9 +355,7 @@ const userProfile = async (req, res) => {
         const userId = req.session.user_id;
         const userData = await user.findOne({ _id: userId });
         const userAddress = await Address.findOne({ user_id: userId });
-
         const orderList = await orderSchema.find({ user: userId });
-
         const addresses = userAddress && userAddress.address ? userAddress.address : [];
 
         let coupons = await couponSchema.find({});
@@ -365,13 +363,15 @@ const userProfile = async (req, res) => {
             coupons = [];
         }
 
+        const walletData = await walletSchema.find({ user: userId }); // Use find to get an array of wallet entries
+
         // Check if the user has used each coupon and add the 'used' property
         coupons.forEach(coupon => {
             const userCoupon = coupon.userList.find(userCoupon => userCoupon.userId.toString() === userId);
             coupon.used = userCoupon ? userCoupon.couponUsed : false;
         });
 
-        res.render('userProfile', { userData, addresses, orderList, coupons });
+        res.render('userProfile', { userData, addresses, orderList, coupons, walletData });
     } catch (error) {
         console.log(error);
         res.render('error', { message: "An error occurred while fetching the user profile." });
@@ -635,45 +635,35 @@ const cancelOrder = async (req,res) => {
 
 
 
-const returnOrder = async (req,res) => {
+const returnOrder = async (req, res) => {
     try {
-        const orderId = req.query.id
-        const userId = req.session.user_id
-        const orderData = await orderSchema.findOne({_id: orderId});
+        const { orderId, reason } = req.body;
+        const userId = req.session.user_id;
+        const orderData = await orderSchema.findOne({ _id: orderId });
 
-        if(orderData.paymentMethod == 'Razor Pay' || orderData.paymentMethod == 'Wallet'){
+        if (!orderData) {
+            return res.status(404).send({ success: false, message: 'Order not found' });
+        }
 
-            const newWallet = new walletSchema({
-                user:userId,
-                amount:orderData.totalAmount,
-                paymet_type: 'Credited'
-            });
+        const newReturnRequest = new returnSchema({
+            user: userId,
+            reason: reason,
+            orderData: orderId
+        });
 
-            const saving = await newWallet.save()
-            if(saving){
-                const creditedAmount = await user.findOne({_id:userId})
-                console.log('trheisdofikasdfuakjdesc;iaksdf',creditedAmount)
-                creditedAmount.balance += orderData.totalAmount
-                orderData.orderStatus = 'returned'
-                await creditedAmount.save()
-                await orderData.save()
-                res.send({cancel:true})
-            }
-        
-        res.send({message:true})
-    }
-    orderData.orderStatus = 'returned'
-    const saving = await orderData.save();
-    if(saving){
-        res.send({success: 1})
-        console.log('canceling the order in 561')
-    }else{
-        res.send({success: 0})
-    }
+        await newReturnRequest.save();
+
+        orderData.orderStatus = 'Return Requested';
+        await orderData.save();
+
+        res.send({ success: true });
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        res.status(500).send({ success: false, message: 'Server error' });
     }
-}
+};
+
+
 
 
 module.exports = {
