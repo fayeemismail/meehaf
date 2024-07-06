@@ -7,7 +7,9 @@ const category = require('../models/categoryModel')
 const Address = require('../models/addressModel');
 const orderSchema = require('../models/orderModel')
 const cartSchema = require('../models/cartModel');
-const couponSchema = require('../models/couponModel')
+const couponSchema = require('../models/couponModel');
+const walletSchema = require('../models/walletModel');
+const returnSchema = require('../models/returnModel')
 
 
 
@@ -49,7 +51,13 @@ const shop = async (req, res) => {
         const limit = 12;
         const skip = (page - 1) * limit;
 
-        const allProduct = await products.find().skip(skip).limit(limit);
+        // Get the search query
+        const searchQuery = req.query.searchInShop || '';
+
+        // Find products that match the search query
+        const query = searchQuery ? { name: { $regex: searchQuery, $options: 'i' } } : {};
+
+        const allProduct = await products.find(query).skip(skip).limit(limit);
 
         const falseCategories = await category.find({ status: false });
 
@@ -57,7 +65,7 @@ const shop = async (req, res) => {
 
         const productsInFalseCategory = allProduct.filter(product => !falseCategoryName.includes(product.category));
 
-        const totalProducts = await products.countDocuments();
+        const totalProducts = await products.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / limit);
 
         res.render('shop', {
@@ -70,6 +78,7 @@ const shop = async (req, res) => {
         console.log(error);
     }
 };
+
 
 const login = async (req, res) => {
     try {
@@ -588,8 +597,29 @@ const orderDetails = async (req,res) => {
 const cancelOrder = async (req,res) => {
     try {
         const orderId = req.query.id
-        const orderData = await orderSchema.findOne({_id:orderId})
+        const orderData = await orderSchema.findOne({_id:orderId});
+        const userId = req.session.user_id
         console.log(orderData)
+        if(orderData.paymentMethod == 'Razor Pay' || orderData.paymentMethod == 'Wallet'){
+
+                const newWallet = new walletSchema({
+                    user:userId,
+                    amount:orderData.totalAmount,
+                    paymet_type: 'Credited'
+                });
+
+                const saving = await newWallet.save()
+                if(saving){
+                    const creditedAmount = await user.findOne({_id:userId})
+                    creditedAmount.balance += orderData.totalAmount
+                    orderData.orderStatus = 'canceled'
+                    await orderData.save()
+                    await creditedAmount.save()
+                    res.send({cancel:true})
+                }
+            
+            res.send({message:true})
+        }
         orderData.orderStatus = 'canceled'
         const saving = await orderData.save();
         if(saving){
@@ -603,6 +633,47 @@ const cancelOrder = async (req,res) => {
     }
 }
 
+
+
+const returnOrder = async (req,res) => {
+    try {
+        const orderId = req.query.id
+        const userId = req.session.user_id
+        const orderData = await orderSchema.findOne({_id: orderId});
+
+        if(orderData.paymentMethod == 'Razor Pay' || orderData.paymentMethod == 'Wallet'){
+
+            const newWallet = new walletSchema({
+                user:userId,
+                amount:orderData.totalAmount,
+                paymet_type: 'Credited'
+            });
+
+            const saving = await newWallet.save()
+            if(saving){
+                const creditedAmount = await user.findOne({_id:userId})
+                console.log('trheisdofikasdfuakjdesc;iaksdf',creditedAmount)
+                creditedAmount.balance += orderData.totalAmount
+                orderData.orderStatus = 'returned'
+                await creditedAmount.save()
+                await orderData.save()
+                res.send({cancel:true})
+            }
+        
+        res.send({message:true})
+    }
+    orderData.orderStatus = 'returned'
+    const saving = await orderData.save();
+    if(saving){
+        res.send({success: 1})
+        console.log('canceling the order in 561')
+    }else{
+        res.send({success: 0})
+    }
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 module.exports = {
@@ -628,6 +699,7 @@ module.exports = {
     removeAddress,
     orderDetails,
     cancelOrder,
+    returnOrder
     
 
 };

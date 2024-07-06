@@ -618,6 +618,20 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div class="card">
+                                                <div class="card-header" id="heading-3">
+                                                    <h2 class="card-title">
+                                                        <input type="radio" name="paymentMethod" value="Wallet" id="paymentMethod3">
+                                                        <label for="paymentMethod3">Wallet</label>
+                                                    </h2>
+                                                </div>
+                                                <div id="collapse-3" class="collapse" aria-labelledby="heading-3" data-parent="#accordion-payment">
+                                                    <div class="card-body">
+                                                        Ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis.
+                                                    </div>
+                                                </div>
+                                            </div>
                                             
                                             
                                 
@@ -1017,6 +1031,18 @@ function placeOrder(event) {
                 window.location.href = `/orderSuccess?orderId=${data.orderId}`;
             })
                 
+        }else if(data.message1){
+            Swal.fire({
+                icon:'warning',
+                title:'insuffient balance in your wallet',
+                confirmButtonText: 'OK'
+            })
+        }else if (data.message2){
+            Swal.fire({
+                icon:'warning',
+                title:'there is no wallet found in this user',
+                confirmButtonText: 'OK'
+            })
         }
     })
     .catch(error => {

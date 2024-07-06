@@ -13,33 +13,17 @@
         <div class="card">
             <div class="card-header">
                 <% order.Products.forEach(element=> { %>
-
-
-                    <h1>Order Details for Order #<%= element.name %>
-                    </h1>
-                    <% }) %>
+                    <h1>Order Details for Order #<%= element.name %></h1>
+                <% }) %>
             </div>
             <div class="card-body">
                 <h4 class="card-title">Billing Information</h4>
-                <p><strong>Name:</strong>
-                    <%= order.billingAddress.userName %>
-                </p>
-                <p><strong>Email:</strong>
-                    <%= order.billingAddress.email %>
-                </p>
-                <p><strong>Address:</strong>
-                    <%= order.billingAddress.address %>, <%= order.billingAddress.city %>, <%=
-                                order.billingAddress.state %>, <%= order.billingAddress.pincode %>
-                </p>
-                <p><strong>Mobile:</strong>
-                    <%= order.billingAddress.mobile %>
-                </p>
-                <p><strong>Date:</strong>
-                    <%= new Date(order.createdAt).toLocaleDateString() %>
-                </p>
-                <p class="text-danger"><strong class="text-dark">Status:</strong>
-                    <%= order.orderStatus %>
-                </p>
+                <p><strong>Name:</strong> <%= order.billingAddress.userName %></p>
+                <p><strong>Email:</strong> <%= order.billingAddress.email %></p>
+                <p><strong>Address:</strong> <%= order.billingAddress.address %>, <%= order.billingAddress.city %>, <%= order.billingAddress.state %>, <%= order.billingAddress.pincode %></p>
+                <p><strong>Mobile:</strong> <%= order.billingAddress.mobile %></p>
+                <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                <p class="text-danger"><strong class="text-dark">Status:</strong> <%= order.orderStatus %></p>
                 <p><strong>Total:</strong> ₹<%= order.totalAmount %>.00</p>
 
                 <h4 class="card-title mt-4">Items</h4>
@@ -58,35 +42,34 @@
                                 <tr>
                                     <td>
                                         <% if(item.Product.image) { %>
-                                            <img src="/public/productImage/<%= item.Product.image[0] %>"
-                                                alt="<%= item.name %> photo" width="100">
-                                            <% } %>
+                                            <img src="/public/productImage/<%= item.Product.image[0] %>" alt="<%= item.name %> photo" width="100">
+                                        <% } %>
                                     </td>
-                                    <td>
-                                        <%= item.name %>
-                                    </td>
-                                    <td>₹ <%= item.price %>
-                                    </td>
-                                    <td>
-                                        <%= item.quantity %>
-                                    </td>
+                                    <td><%= item.name %></td>
+                                    <td>₹ <%= item.price %></td>
+                                    <td><%= item.quantity %></td>
                                 </tr>
-                                <% }) %>
+                            <% }) %>
                         </tbody>
                     </table>
                 </div>
 
                 <% if (order.orderStatus == 'canceled') { %>
-
                     <p class="text-danger">The order is canceled</p>
-                 
-                    <% } else { %>
-                        <button type="submit" onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">Cancel
-                            Order</button>
-
+                    <a href="/userProfile" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                <% } else if (order.orderStatus == 'Delivered') { %>
+                    <aside>
+                        <button type="button" onclick="returnOrder('<%= order._id %>')" class="btn btn-secondary">
+                            <i class="fas fa-undo"></i> Return Order
+                        </button>
+                    </aside>
+                <% } else { %>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="submit" onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">Cancel Order</button>
+                    </div>
                 <% } %>
-               
-
             </div>
         </div>
     </div>
@@ -94,42 +77,131 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-    function cancelOrder(orderId) {
-        console.log(orderId)
-        Swal.fire({
-            title: "Do you want to cancel the order?",
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            customClass: {
-                title: 'swal2-title',
-                htmlContainer: 'swal2-html-container'
-            }
-
-        })
+    <script>
+        function cancelOrder(orderId) {
+            console.log(orderId);
+            Swal.fire({
+                title: "Do you want to cancel the order?",
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                customClass: {
+                    title: 'swal2-title',
+                    htmlContainer: 'swal2-html-container'
+                }
+            })
             .then((result) => {
                 if (result.isConfirmed) {
                     axios.post(`/cancelOrder?id=${orderId}`)
                         .then((response) => {
                             if (response.data.success == 1) {
-                                window.location.href = '/userProfile'
+                                window.location.href = '/userProfile';
+                            } else if (response.data.cancel) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Amount added to the Wallet',
+                                    confirmButtonText: 'OK'
+                                })
+                                .then(result => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = '/userProfile#pills-order';
+                                    }
+                                });
                             }
                         })
                         .catch((error) => {
-                            console.log(error)
-                        })
-                    Swal.fire("changed!", "", "success")
+                            console.log(error);
+                        });
+                    Swal.fire("changed!", "", "success");
                 } else if (result.isDenied) {
-                    Swal.fire("Changes are not Saved", "", "info")
+                    Swal.fire("Changes are not Saved", "", "info");
                 }
-            })
-    }
-</script>
+            });
+        }
 
-
+        function returnOrder(orderId) {
+            console.log(orderId);
+            Swal.fire({
+                icon: 'question',
+                title: 'Do you want to return the order?',
+                text: 'Are you sure you want to return the order?',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                customClass: {
+                    title: 'swal2-title',
+                    htmlContainer: 'swal2-html-container'
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Reason for Return',
+                        input: 'textarea',
+                        inputPlaceholder: 'Enter your reason for returning the order...',
+                        showCancelButton: true,
+                        confirmButtonText: 'Submit',
+                        customClass: {
+                            title: 'swal2-title',
+                            htmlContainer: 'swal2-html-container'
+                        },
+                        preConfirm: (reason) => {
+                            if (!reason) {
+                                Swal.showValidationMessage('Please enter a reason for returning the order');
+                            }
+                            return reason;
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const reason = result.value;
+                            fetch(`/returnOrder?id=${orderId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ orderId: orderId, reason: reason })
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not okay');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Order returned',
+                                        text: 'Order returned successfully',
+                                        confirmButtonText: 'OK'
+                                    }).then(response => {
+                                        if (response.isConfirmed) {
+                                            window.location.href = '/userProfile#pills-order';
+                                        }
+                                    });
+                                }else if (data.cancel){
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'order returned and amount added to the Wallet',
+                                        text: 'amount added to the wallet and the order returned successfully',
+                                        confirmButtonText: 'OK'
+                                    })
+                                    .then(response => {
+                                        if(response.isConfirmed){
+                                            window.location.href = '/userProfile#pills-order'
+                                        }
+                                    })
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error);
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+</body>
 </html>

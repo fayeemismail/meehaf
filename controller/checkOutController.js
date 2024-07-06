@@ -3,7 +3,8 @@ const addressSchema = require('../models/addressModel');
 const UserSchema = require('../models/userModel');
 const orderSchema = require('../models/orderModel');
 const productSchema = require('../models/productModel')
-const couponSchema = require('../models/couponModel')
+const couponSchema = require('../models/couponModel');
+const walletSchema = require('../models/walletModel');
 const { ObjectId } = require('mongodb');
 require('dotenv').config();
 const crypto = require('crypto')
@@ -180,6 +181,35 @@ const placeOrder = async (req, res) => {
                 });
             }
 
+        }else if( newOrderData.paymentMethod === 'Wallet'){
+            const walletData = await walletSchema.findOne({user: userId});
+            if(walletData){
+                const userData = await UserSchema.findOne({_id: userId});
+                if(userData.balance >= totalAmount){
+                    if (couponCode) {
+                        const couponData = await couponSchema.findOne({ couponCode });
+            
+                        if (couponData) {
+                            couponData.userList.push({ userId, couponUsed: true });
+                            await couponData.save();
+            
+                            // Add the claimedAmount field only if a coupon is used
+                            newOrderData.claimedAmount = discountAmount;
+                        }
+                    }
+                        const newOrder = new orderSchema(newOrderData);
+                        const saving = await newOrder.save();
+
+                        if(saving){
+                            console.log('order saving using wallet money')
+                        }
+
+                }else{
+                    res.send({message1:true})
+                }
+            }else{
+                res.send({message2: true})
+            }
         }
 
 
