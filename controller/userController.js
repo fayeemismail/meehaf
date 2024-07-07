@@ -18,6 +18,9 @@ const returnSchema = require('../models/returnModel')
 const home = async (req, res) => {
     try {
         const userData = req.session;
+        if(userData.is_blocked == true){
+            req.session.destroy()
+        }
         const allProduct = await products.find();
 
         const falseCategories = await category.find({status:false});
@@ -47,6 +50,12 @@ const home = async (req, res) => {
 
 const shop = async (req, res) => {
     try {
+
+        const userId = req.session.user_id;
+        const userData = await user.findOne({_id:userId})
+        if(userData.is_blocked == true){
+            req.session.destroy()
+        }
         const page = parseInt(req.query.page) || 1;
         const limit = 12;
         const skip = (page - 1) * limit;
@@ -371,6 +380,7 @@ const userProfile = async (req, res) => {
             coupon.used = userCoupon ? userCoupon.couponUsed : false;
         });
 
+        console.log(coupons)
         res.render('userProfile', { userData, addresses, orderList, coupons, walletData });
     } catch (error) {
         console.log(error);

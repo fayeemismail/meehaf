@@ -7,6 +7,9 @@ const { product } = require('./adminController');
 const showCart = async (req, res) => {
     try {
         const userData = req.session.user_id;
+        if(userData.is_blocked == true){
+            req.session.destroy()
+        }
         const cartData = await cart.findOne({ user: userData }).populate('Products.Product');
         
         // Find all unlisted products (where status is true)

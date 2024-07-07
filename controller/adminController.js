@@ -3,7 +3,13 @@ const category = require('../models/categoryModel');
 const products = require('../models/productModel');
 const orderSchema = require('../models/orderModel');
 const returnSchema = require('../models/returnModel')
-const walletSchema = require('../models/walletModel')
+const walletSchema = require('../models/walletModel');
+const PDFDocument = require('pdfkit');
+const ExcelJS = require('exceljs');
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
+const htmlToPdf = require('html-pdf');
 require('dotenv').config();
 
 
@@ -98,15 +104,23 @@ const adminVeify = async (req, res) => {
 
 const usersList = async (req, res) => {
     try {
+        const limit = 5; // Number of users per page
+        const page = req.query.page ? parseInt(req.query.page) : 1; // Current page number
+        const totalUsers = await user.countDocuments({}); // Total number of users
+        const totalPages = Math.ceil(totalUsers / limit); // Total number of pages
 
         const data = await user.find({})
+            .skip((page - 1) * limit)
+            .limit(limit);
 
-        res.render('usersList', { data })
+        res.render('usersList', { data, page, totalPages });
 
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        res.status(500).send('Server Error');
     }
 }
+
 
 const userBlock = async (req, res) => {
     try {
@@ -242,9 +256,172 @@ const denyReturn = async (req, res) => {
 
 
 
+const salesReport = async (req, res) => {
+    try {
+        const { page = 1, limit = 10, dateRange, startDate, endDate } = req.query;
+        const skip = (page - 1) * limit;
+
+        // Create a date filter based on the selected date range
+        let dateFilter = {};
+        if (dateRange === 'daily') {
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                    $lt: new Date(new Date().setHours(23, 59, 59, 999))
+                }
+            };
+        } else if (dateRange === 'weekly') {
+            const startOfWeek = new Date();
+            startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(startOfWeek.setHours(0, 0, 0, 0)),
+                    $lt: new Date(endOfWeek.setHours(23, 59, 59, 999))
+                }
+            };
+        } else if (dateRange === 'yearly') {
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(new Date().getFullYear(), 0, 1),
+                    $lt: new Date(new Date().getFullYear() + 1, 0, 1)
+                }
+            };
+        } else if (dateRange === 'custom' && startDate && endDate) {
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(new Date(startDate).setHours(0, 0, 0, 0)),
+                    $lt: new Date(new Date(endDate).setHours(23, 59, 59, 999))
+                }
+            };
+        }
+
+        // Fetch orders with pagination and date filter
+        const orderList = await orderSchema.find(dateFilter).skip(skip).limit(limit);
+
+        // Calculate total statistics
+        const totalOrders = await orderSchema.countDocuments({ ...dateFilter, orderStatus: 'Delivered' });
+        const totalSalesCount = totalOrders;
+        const totalOrderAmount = await orderSchema.aggregate([
+            { $match: { ...dateFilter, orderStatus: 'Delivered' } },
+            { $group: { _id: null, total: { $sum: "$totalAmount" } } }
+        ]);
+        const totalDiscount = await orderSchema.aggregate([
+            { $match: { ...dateFilter, orderStatus: 'Delivered' } },
+            { $group: { _id: null, total: { $sum: "$claimedAmount" } } }
+        ]);
+
+        // Render the view with fetched data and calculated statistics
+        res.render('salesReport', {
+            orderList: orderList,
+            totalSalesCount: totalSalesCount,
+            totalOrderAmount: totalOrderAmount.length > 0 ? totalOrderAmount[0].total : 0,
+            totalDiscount: totalDiscount.length > 0 ? totalDiscount[0].total : 0,
+            currentPage: page,
+            totalPages: Math.ceil(totalOrders / limit),
+            limit: limit,
+            dateRange: dateRange || '',
+            startDate: startDate || '',
+            endDate: endDate || ''
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Internal Server Error");
+    }
+};
 
 
 
+
+
+
+const downloadWithPdf = async () => {
+    // try {
+    //     // Absolute path to the HTML file
+    //     const htmlFilePath = path.join(os.homedir(), 'Desktop', 'Meehaff', 'sales_report.html');
+
+    //     // Read the HTML content from file
+    //     const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+
+    //     // Set options for html-pdf
+    //     const options = {
+    //         format: 'A4',
+    //         border: {
+    //             top: '1cm',
+    //             right: '1cm',
+    //             bottom: '1cm',
+    //             left: '1cm'
+    //         }
+    //     };
+
+    //     // Output path for the PDF file
+    //     const outputPath = 'C:/Users/hp/OneDrive/Desktop/PROJECTS/WEEK 8-FI/sales_report.pdf';
+
+    //     // Generate PDF from HTML content
+    //     htmlToPdf.create(htmlContent, options).toFile(outputPath, (err, res) => {
+    //         if (err) {
+    //             console.error('Error generating PDF:', err);
+    //             return;
+    //         }
+    //         console.log('PDF generated successfully:', res.filename);
+    //     });
+    // } catch (error) {
+    //     console.error('Error generating PDF:', error);
+    // } 
+};
+
+// Call the function to generate PDF
+downloadWithPdf();
+
+
+const downloadWithExcel = async (req, res) => {
+    try {
+        const orderList = await orderSchema.find({});
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Sales Report');
+
+        worksheet.columns = [
+            { header: 'Order Number', key: 'orderNumber' },
+            { header: 'Name', key: 'userName' },
+            { header: 'Email', key: 'email' },
+            { header: 'Total Amount', key: 'totalAmount' },
+            { header: 'Discount', key: 'discount' },
+            { header: 'Status', key: 'orderStatus' },
+            { header: 'Date', key: 'createdAt' },
+            { header: 'Payment Method', key: 'paymentMethod' },
+        ];
+
+        orderList.forEach((order, index) => {
+            worksheet.addRow({
+                orderNumber: index + 1,
+                userName: order.billingAddress.userName,
+                email: order.billingAddress.email,
+                totalAmount: `₹${order.totalAmount.toFixed(2)}`,
+                discount: `₹${order.claimedAmount ? order.claimedAmount.toFixed(2) : '0.00'}`,
+                orderStatus: order.orderStatus,
+                createdAt: new Date(order.createdAt).toDateString(),
+                paymentMethod: order.paymentMethod,
+            });
+        });
+
+        const filePath = path.join(__dirname, 'sales_report.xlsx');
+        
+        // Ensure the directory exists
+        const directoryPath = path.dirname(filePath);
+        if (!fs.existsSync(directoryPath)) {
+            fs.mkdirSync(directoryPath, { recursive: true });
+        }
+
+        await workbook.xlsx.writeFile(filePath);
+        res.download(filePath, 'sales_report.xlsx');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
+};
 
 
 
@@ -262,7 +439,9 @@ module.exports = {
     statusCange,
     acceptReturn,
     denyReturn,
-
+    salesReport,
+    downloadWithPdf,
+    downloadWithExcel
     
 
 }

@@ -76,4 +76,9 @@ admin_route.post('/deleteCoupon', couponController.deleteCoupon)
 
 
 
+admin_route.get('/salesReport', adminController.salesReport);
+admin_route.get('/downloadReport/pdf', adminController.downloadWithPdf);
+admin_route.get('/downloadReport/excel', adminController.downloadWithExcel);
+
+
 module.exports = admin_route;

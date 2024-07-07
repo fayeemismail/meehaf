@@ -1,0 +1,234 @@
+<%- include('../partials/adminHeader') %>
+
+<body class="dark">
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="/admin" class="brand-wrap">
+                <div class="logo">
+                    <span>M</span>
+                    <span>E</span>
+                    <span>E</span>
+                    <span>'</span>
+                    <span>H</span>
+                    <span>A</span>
+                    <span>F</span>
+                </div>
+            </a>
+            <div>
+                <button class="btn btn-icon btn-aside-minimize"><i class="text-muted material-icons md-menu_open"></i></button>
+            </div>
+        </div>
+
+        <!-- INCLUDING ADMIN NAV BAR -->
+        <%- include('../partials/adminNavbar') %>
+
+    </aside>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                        <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products"></option>
+                        <option value="New orders"></option>
+                        <option value="Apple iphone"></option>
+                        <option value="Ahmed Hassan"></option>
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i class="material-icons md-apps"></i></button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png" alt="English" />English</a>
+                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png" alt="Français" />Français</a>
+                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png" alt="Français" />日本語</a>
+                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png" alt="Français" />中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="assets/imgs/people/avatar-2.png" alt="User" /></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="content-header">
+                <h2 class="content-title">Sales Report</h2>
+                <div>
+                    <a href="#" class="btn btn-primary"><i class="material-icons md-plus"></i> Generate new report</a>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <header class="card-header">
+                    <div class="row gx-3">
+                        <div class="col-lg-4 col-md-6 me-auto">
+                            <input type="text" placeholder="Search..." class="form-control" />
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <select id="dateRange" class="form-select" onchange="updateDateRange()">
+                                <option value="">Select Date Range</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="yearly">Yearly</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-4 col-md-6 d-none" id="customDateRange">
+                            <input type="date" id="startDate" class="form-control" />
+                            <input type="date" id="endDate" class="form-control" />
+                        </div>
+                    </div>
+                </header>
+        
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order Number</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Total Amount</th>
+                                    <th>Discount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Payment Method</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% orderList.forEach((order, index) => { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td><%= order.billingAddress.userName %></td>
+                                        <td><%= order.billingAddress.email %></td>
+                                        <td>₹<%= order.totalAmount.toFixed(2) %></td>
+                                        <td>₹<%= order.claimedAmount ? order.claimedAmount.toFixed(2) : '0.00' %></td>
+                                        <td>
+                                            <span class="badge rounded-pill 
+                                                <% if (order.orderStatus === 'Delivered') { %>
+                                                    badge-success
+                                                <% } else if (order.orderStatus === 'returned') { %>
+                                                    badge-info
+                                                <% } else if (order.orderStatus === 'Pending') { %>
+                                                    badge-warning
+                                                <% } else { %>
+                                                    badge-danger
+                                                <% } %>">
+                                                <%= order.orderStatus %>
+                                            </span>
+                                        </td>
+                                        
+                                        
+                                        
+                                        <td><%= new Date(order.createdAt).toDateString() %></td>
+                                        <td><%= order.paymentMethod %></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="pagination-area mt-15 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= limit %>">
+                                    <i class="material-icons md-chevron_left"></i>
+                                </a>
+                            </li>
+                        <% } %>
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>&limit=<%= limit %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= limit %>">
+                                    <i class="material-icons md-chevron_right"></i>
+                                </a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            </div>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Overall Summary</h5>
+                    <p>Total Sales Count: <%= totalSalesCount %></p>
+                    <p>Total Order Amount: ₹<%= totalOrderAmount.toFixed(2) %></p>
+                    <p>Total Discount: ₹<%= totalDiscount.toFixed(2) %></p>
+                    <button class="btn btn-secondary" onclick="downloadReport('pdf')">Download as PDF</button>
+                    <button class="btn btn-secondary" onclick="downloadReport('excel')">Download as Excel</button>
+                </div>
+            </div>
+        </section>
+        <script>
+            function updateDateRange() {
+                const dateRange = document.getElementById('dateRange').value;
+                const customDateRange = document.getElementById('customDateRange');
+                if (dateRange === 'custom') {
+                    customDateRange.classList.remove('d-none');
+                } else {
+                    customDateRange.classList.add('d-none');
+                }
+            }
+        
+            // Add event listener to generate report based on selected date range
+            document.getElementById('dateRange').addEventListener('change', function() {
+                const dateRange = this.value;
+                let url = `/admin/salesReport?dateRange=${dateRange}`;
+        
+                if (dateRange === 'custom') {
+                    const startDate = document.getElementById('startDate').value;
+                    const endDate = document.getElementById('endDate').value;
+                    if (startDate && endDate) {
+                        url += `&startDate=${startDate}&endDate=${endDate}`;
+                    }
+                }
+        
+                window.location.href = url;
+            });
+
+
+
+
+            //FOR DOWNLOAD THE SALES REPORT
+            function downloadReport(format) {
+                window.location.href = `/admin/downloadReport/${format}`;
+            }
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+        <%- include('../partials/adminFooter') %>
+    </main>
+</body>

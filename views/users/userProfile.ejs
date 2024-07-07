@@ -510,39 +510,41 @@
                         </div>
     
 
-                        <!-- COUPON DETAILS -->
-                        <div class="tab-pane fade" id="pills-coupons">
-                            <div class="my-account-coupons account-wrapper">
-                                <h4 class="account-title">Coupons</h4>
-                                <div class="row">
-                                    <% coupons.forEach(coupon=> { %>
-                                        <div class="col-md-6 col-lg-4 mb-3">
-                                            <div class="card account-coupon" id="coupon-<%= coupon._id %>">
-                                                <div class="card-body">
-                                                    <h5 class="card-title coupon-title">
-                                                        <%= coupon.name %>
-                                                    </h5>
-                                                    <p class="card-text">Code: <%= coupon.couponCode %>
-                                                    </p>
-                                                    <p class="card-text">Discount: <%= coupon.amount %></p>
-                                                    <p class="card-text">Expires: <%= new
-                                                            Date(coupon.expires).toLocaleDateString() %>
-                                                    </p>
-                                                    <p class="card-text">
-                                                        Status:
-                                                        <% if (coupon.used) { %>
-                                                            <span class="badge bg-danger">Claimed</span>
-                                                            <% } else { %>
-                                                                <span class="badge bg-success">Coupon available</span>
-                                                                <% } %>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <% }) %>
-                                </div>
-                            </div>
-                        </div>
+                       <!-- COUPON DETAILS -->
+<div class="tab-pane fade" id="pills-coupons">
+    <div class="my-account-coupons account-wrapper">
+        <h4 class="account-title">Coupons</h4>
+        <div class="row">
+            <% coupons.forEach(coupon => { %>
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card account-coupon" id="coupon-<%= coupon._id %>">
+                    <div class="card-body">
+                        <h5 class="card-title coupon-title">
+                            <%= coupon.name %>
+                        </h5>
+                        <p class="card-text">Code: <%= coupon.couponCode %></p>
+                        <p class="card-text">Discount: <%= coupon.amount %></p>
+                        <p class="card-text">Expires: <%= new Date(coupon.expires).toLocaleDateString() %></p>
+                        <p class="card-text">
+                            Status:
+                            <% if (coupon.status == true) { %>
+                            <span class="badge bg-warning">not available</span>
+                            <% } else { %>
+                            <% if (coupon.used) { %>
+                            <span class="badge bg-danger">Claimed</span>
+                            <% } else { %>
+                            <span class="badge bg-success">Coupon available</span>
+                            <% } %>
+                            <% } %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+</div>
+
 
 
 
@@ -702,6 +704,7 @@
     <script src="/account/assets/js/plugins/select2.min.js"></script>
     <script src="/account/assets/js/plugins/ion.rangeSlider.min.js"></script>
     <script src="/account/assets/js/plugins/jquery.zoom.min.js"></script>
+    
 
     <!-- Main JS -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
