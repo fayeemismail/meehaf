@@ -337,43 +337,7 @@ const salesReport = async (req, res) => {
 
 
 
-const downloadWithPdf = async () => {
-    // try {
-    //     // Absolute path to the HTML file
-    //     const htmlFilePath = path.join(os.homedir(), 'Desktop', 'Meehaff', 'sales_report.html');
 
-    //     // Read the HTML content from file
-    //     const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-
-    //     // Set options for html-pdf
-    //     const options = {
-    //         format: 'A4',
-    //         border: {
-    //             top: '1cm',
-    //             right: '1cm',
-    //             bottom: '1cm',
-    //             left: '1cm'
-    //         }
-    //     };
-
-    //     // Output path for the PDF file
-    //     const outputPath = 'C:/Users/hp/OneDrive/Desktop/PROJECTS/WEEK 8-FI/sales_report.pdf';
-
-    //     // Generate PDF from HTML content
-    //     htmlToPdf.create(htmlContent, options).toFile(outputPath, (err, res) => {
-    //         if (err) {
-    //             console.error('Error generating PDF:', err);
-    //             return;
-    //         }
-    //         console.log('PDF generated successfully:', res.filename);
-    //     });
-    // } catch (error) {
-    //     console.error('Error generating PDF:', error);
-    // } 
-};
-
-// Call the function to generate PDF
-downloadWithPdf();
 
 
 const downloadWithExcel = async (req, res) => {
@@ -407,7 +371,7 @@ const downloadWithExcel = async (req, res) => {
             });
         });
 
-        const filePath = path.join(__dirname, 'sales_report.xlsx');
+        const filePath = path.join(__dirname, '..', 'public', 'sales_report.xlsx');
         
         // Ensure the directory exists
         const directoryPath = path.dirname(filePath);
@@ -439,9 +403,9 @@ module.exports = {
     statusCange,
     acceptReturn,
     denyReturn,
-    salesReport,
-    downloadWithPdf,
-    downloadWithExcel
-    
+    salesReport,   
+    downloadWithExcel,
 
+
+    
 }
