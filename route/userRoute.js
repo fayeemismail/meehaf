@@ -31,6 +31,7 @@ const cartController = require('../controller/cartController');
 const checkOutController = require('../controller/checkOutController');
 const wishlistController = require('../controller/wishlistController');
 const couponController = require('../controller/couponController');
+const walletController = require('../controller/walletCountroller')
 
 // REQUIRING AUTH MIDDELEWARE
 const userAuth = require('../middlewares/userAuth');
@@ -141,8 +142,10 @@ user_route.post('/checkWishlist', wishlistController.checkWishlist);
 
 
 user_route.get('/orderPage', userAuth.is_login, userController.orderPage);
-user_route.get('/walletPage', userAuth.is_login, userController.walletPage)
 
+
+user_route.get('/walletPage', userAuth.is_login, userController.walletPage);
+user_route.post('/addMoneyWallet', userAuth.is_login, walletController.addMoneyWallet);
 
 
 module.exports = user_route;

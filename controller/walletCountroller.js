@@ -13,3 +13,21 @@ const showWallet = async (req,res) => {
         console.log(error)
     }
 }
+
+
+
+const addMoneyWallet = async (req,res) => {
+    try {
+        const amount = req.body.amount; // Ensure you are accessing the correct field
+        console.log(amount);
+        res.status(200).json({ message: 'Amount received', amount: amount });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+
+module.exports = {
+    addMoneyWallet
+}
