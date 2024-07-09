@@ -197,21 +197,13 @@
                                 <a href="/logout" id="logoutLink" style="display: none;">Logout</a>
                             </div>
                         </div>
-
-
-
-
-
-
-
                     </div><!-- End .header-right -->
                 </div><!-- End .container -->
             </div><!-- End .header-middle -->
         </header><!-- End .header -->
 
         <main class="main">
-            <div class="page-header text-center"
-                style="background-image: url('/user/assets/images/page-header-bg.jpg')">
+            <div class="page-header text-center" style="background-image: url('/user/assets/images/page-header-bg.jpg')">
                 <div class="container">
                     <h1 class="page-title">Wishlist<span>Shop</span></h1>
                 </div><!-- End .container -->
@@ -225,7 +217,7 @@
                     </ol>
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
-
+        
             <div class="page-content">
                 <div class="container">
                     <table class="table table-wishlist table-mobile">
@@ -238,84 +230,74 @@
                                 <th></th>
                             </tr>
                         </thead>
-
+        
                         <tbody>
                             <% if (wishlistData.Products.length === 0) { %>
-                             
                                 <tr>
                                     <td colspan="5" style="text-align: center;">Your wishlist is empty</td>
                                 </tr>
-
-                                <% } else { %>
-
-                                    <% wishlistData.Products.forEach(element=> { %>
-                                        <tr>
-                                           
-            
-            
-                                                <td class="product-col">
-                                                    <div class="product">
-                                                        <figure class="product-media">
-                                                            <a href="#">
-                                                                <img src="/public/productImage/<%= element.Product.image[0] %>"
-                                                                    alt="Product image">
-                                                            </a>
-                                                        </figure>
-            
-                                                        <h3 class="product-title">
-                                                            <a href="">
-                                                                <%= element.Product.name %>
-                                                            </a>
-                                                        </h3><!-- End .product-title -->
-                                                    </div><!-- End .product -->
-                                                </td>
-                                                <td class="price-col">
-                                                    <%= element.Product.price %>
-                                                </td>
-                                                <% if (element.Product.stock>= 1) { %>
-                                                    <td class="stock-col"><span class="in-stock">In stock</span></td>
-                                                    <td class="action-col">
-                                                        <button class="btn btn-block btn-outline-primary-2"
-                                                            onclick="addToCart('<%= element.Product._id %>')">Add To Cart</button>
-                                                    </td>
-                                                    <% } else { %>
-                                                        <td class="stock-col"><span class="out-of-stock">Out of Stock</span></td>
-                                                        <td class="action-col">
-                                                            <button class="btn btn-block btn-outline-primary-2 disabled">Out of
-                                                                Stock</button>
-                                                        </td>
-                                                        <% } %>
-            
-            
-                                                            <td class="remove-col"><button class="btn-remove"
-                                                                    onclick="removeProduct('<%= element.Product._id %>')"><i
-                                                                        class="icon-close"></i></button></td>
-                                        </tr>
-                                        <% }) %>
-            
-
+                            <% } else { %>
+                                <% wishlistData.Products.forEach(element => { %>
+                                    <tr>
+                                        <td class="product-col">
+                                            <div class="product">
+                                                <figure class="product-media">
+                                                    <a href="#">
+                                                        <img src="/public/productImage/<%= element.Product.image[0] %>" alt="Product image">
+                                                    </a>
+                                                </figure>
+                                                <h3 class="product-title">
+                                                    <a href=""><%= element.Product.name %></a>
+                                                </h3><!-- End .product-title -->
+                                            </div><!-- End .product -->
+                                        </td>
+                                        <td class="price-col"><%= element.Product.price %></td>
+                                        <% if (element.Product.stock >= 1) { %>
+                                            <td class="stock-col"><span class="in-stock">In stock</span></td>
+                                            <td class="action-col">
+                                                <button class="btn btn-block btn-outline-primary-2" onclick="addToCart('<%= element.Product._id %>')">Add To Cart</button>
+                                            </td>
+                                        <% } else { %>
+                                            <td class="stock-col"><span class="out-of-stock">Out of Stock</span></td>
+                                            <td class="action-col">
+                                                <button class="btn btn-block btn-outline-primary-2 disabled">Out of Stock</button>
+                                            </td>
+                                        <% } %>
+                                        <td class="remove-col">
+                                            <button class="btn-remove" onclick="removeProduct('<%= element.Product._id %>')"><i class="icon-close"></i></button>
+                                        </td>
+                                    </tr>
+                                <% }) %>
                             <% } %>
-                           
                         </tbody>
                     </table><!-- End .table table-wishlist -->
-                    <div class="wishlist-share">
-                        <div class="social-icons social-icons-sm mb-2">
-                            <label class="social-label">Share on:</label>
-                            <a href="#" class="social-icon" title="Facebook" target="_blank"><i
-                                    class="icon-facebook-f"></i></a>
-                            <a href="#" class="social-icon" title="Twitter" target="_blank"><i
-                                    class="icon-twitter"></i></a>
-                            <a href="#" class="social-icon" title="Instagram" target="_blank"><i
-                                    class="icon-instagram"></i></a>
-                            <a href="#" class="social-icon" title="Youtube" target="_blank"><i
-                                    class="icon-youtube"></i></a>
-                            <a href="#" class="social-icon" title="Pinterest" target="_blank"><i
-                                    class="icon-pinterest"></i></a>
-                        </div><!-- End .soial-icons -->
-                    </div><!-- End .wishlist-share -->
+        
+                    <!-- Pagination controls -->
+                    <% if (totalPages > 1) { %>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                <% if (currentPage > 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                                    </li>
+                                <% } %>
+                                <% for (let i = 1; i <= totalPages; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                    </li>
+                                <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    <% } %>
                 </div><!-- End .container -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->
+        
 
         <footer class="footer">
             <div class="footer-middle">

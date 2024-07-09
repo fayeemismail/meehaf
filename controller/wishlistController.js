@@ -3,22 +3,34 @@ const productSchema = require('../models/productModel');
 const wishlistSchema = require('../models/wishlistSchema');
 
 
-const wishlist = async (req,res) => {
+const wishlist = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        const wishlistData = await wishlistSchema.findOne({user:userId}).populate('Products.Product');
+        const page = parseInt(req.query.page) || 1; // Current page number, default to 1
+        const limit = 5; // Number of products per page
 
-        if(!wishlistData || !wishlistData.Products || !wishlistData.Products.length === 0){
-            res.render('wishlist', { wishlistData: { Products: [] } })
-        }else{
-            res.render('wishlist', {wishlistData});
+        const wishlistData = await wishlistSchema.findOne({ user: userId }).populate('Products.Product');
 
+        if (!wishlistData || !wishlistData.Products || wishlistData.Products.length === 0) {
+            res.render('wishlist', { wishlistData: { Products: [] }, currentPage: 1, totalPages: 1 });
+        } else {
+            const totalProducts = wishlistData.Products.length;
+            const totalPages = Math.ceil(totalProducts / limit);
+
+            // Get products for the current page
+            const products = wishlistData.Products.slice((page - 1) * limit, page * limit);
+
+            res.render('wishlist', {
+                wishlistData: { Products: products },
+                currentPage: page,
+                totalPages: totalPages
+            });
         }
-        
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
-}
+};
+
 
 const checkWishlist = async (req, res) => {
     try {

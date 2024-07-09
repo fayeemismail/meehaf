@@ -119,9 +119,10 @@ user_route.get('/checkout', userAuth.is_login, checkOutController.checkOut);
 user_route.post('/placeOrder', userAuth.is_login, checkOutController.placeOrder);
 user_route.get('/orderSuccess', userAuth.is_login, checkOutController.orderSuccess);
 user_route.post('/checkCoupon', couponController.couponCheck);
-user_route.get('/couponDetails', couponController.couponDetais);
 user_route.post('/applyCoupon', couponController.applyCoupon);
+user_route.get('/couponPage', userAuth.is_login, couponController.couponPage);
 user_route.post('/confirm-payment', checkOutController.confirmPayment);
+user_route.get('/getAvailableCoupons', userAuth.is_login, couponController.getCoupon);
 
 
 
@@ -138,6 +139,9 @@ user_route.post('/removeWishlist', wishlistController.removeWishlit);
 user_route.post('/checkWishlist', wishlistController.checkWishlist);
 
 
+
+user_route.get('/orderPage', userAuth.is_login, userController.orderPage);
+user_route.get('/walletPage', userAuth.is_login, userController.walletPage)
 
 
 

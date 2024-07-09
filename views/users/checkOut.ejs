@@ -423,7 +423,7 @@
                                 <a href="/userProfile" id="profileLink" style="display: none;">User
                                     Profile</a>
                                 <a href="/login" id="loginLink" style="display: none;">Login</a>
-                                <a href="/login" id="logoutLink" style="display: none;">Logout</a>
+                                <a href="/logout" id="logoutLink" style="display: none;">Logout</a>
                             </div>
                         </div>
 
@@ -439,8 +439,7 @@
         </header><!-- End .header -->
 
         <main class="main">
-            <div class="page-header text-center"
-                style="background-image: url('/user/assets/images/page-header-bg.jpg')">
+            <div class="page-header text-center" style="background-image: url('/user/assets/images/page-header-bg.jpg')">
                 <div class="container">
                     <h1 class="page-title">Checkout<span>Shop</span></h1>
                 </div><!-- End .container -->
@@ -454,7 +453,7 @@
                     </ol>
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
-
+        
             <div class="page-content">
                 <div class="checkout">
                     <div class="container">
@@ -473,21 +472,21 @@
                                                     <h6 class="account-title">Billing address</h6>
                                                     <p class="address-block">
                                                         <%= element.name %><br>
-                                                            <%= element.address %><br>
-                                                                <%= element.city %>, <%= element.state %><br>
-                                                                        <%= element.mobile %>
+                                                        <%= element.address %><br>
+                                                        <%= element.city %>, <%= element.state %><br>
+                                                        <%= element.mobile %>
                                                     </p>
                                                 </div>
                                             </div>
-                                            <% }) %>
+                                        <% }) %>
                                     </div>
-
+        
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input" id="checkout-diff-address">
                                         <label class="custom-control-label" for="checkout-diff-address">Ship to a
                                             different address?</label>
                                     </div><!-- End .custom-checkbox -->
-
+        
                                     <div id="different-address-form" style="display: none;">
                                         <div class="row">
                                             <div class="col-lg-9">
@@ -498,13 +497,13 @@
                                                     spaces allowed.</div>
                                             </div><!-- End .col-sm-6 -->
                                         </div><!-- End .row -->
-
+        
                                         <label>Address </label>
                                         <input type="text" class="form-control" id="address"
                                             placeholder="House number and Street name" required>
                                         <div class="error-message" id="addressError" style="color: red; display: none;">
                                             Invalid address. No numbers or spaces allowed.</div>
-
+        
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <label>Town / City </label>
@@ -513,7 +512,7 @@
                                                     style="color: red; display: none;">Invalid city. No numbers or
                                                     spaces allowed.</div>
                                             </div><!-- End .col-sm-6 -->
-
+        
                                             <div class="col-sm-6">
                                                 <label>State </label>
                                                 <input type="text" id="state" class="form-control" required>
@@ -522,7 +521,7 @@
                                                     spaces allowed.</div>
                                             </div><!-- End .col-sm-6 -->
                                         </div><!-- End .row -->
-
+        
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <label>Postcode / ZIP *</label>
@@ -531,7 +530,7 @@
                                                     style="color: red; display: none;">Invalid pincode. Must be 6
                                                     digits.</div>
                                             </div><!-- End .col-sm-6 -->
-
+        
                                             <div class="col-sm-6">
                                                 <label>Phone *</label>
                                                 <input type="tel" id="mobile" class="form-control" required>
@@ -544,7 +543,7 @@
                                             onclick="saveAddress(event)">Submit</button>
                                     </div><!-- End #different-address-form -->
                                 </div><!-- End .col-lg-9 -->
-
+        
                                 <aside class="col-lg-3">
                                     <div class="cart-discount">
                                         <form id="form">
@@ -553,9 +552,9 @@
                                                 <input type="text" id="couponCheck" class="form-control" required placeholder="Coupon code">
                                             </div><!-- End .form-group -->
                                             <div class="form-group text-center">
-                                                <a href="/userProfile#pills-coupons" class="view-coupons">View Available Coupons</a>
+                                                <a href="#" class="view-coupons" data-toggle="modal" data-target="#couponModal">View Available Coupons</a>
                                                 <button class="btn btn-outline-primary-2 btn-block" id="couponSubmit" onclick="applyCoupon()">
-                                                    <i class="icon-long-arrow-right" ></i> Apply Coupon
+                                                    <i class="icon-long-arrow-right"></i> Apply Coupon
                                                 </button>
                                             </div><!-- End .form-group -->
                                         </form>
@@ -633,8 +632,6 @@
                                                 </div>
                                             </div>                                            
                                             
-                                            
-                                
                                             <button type="submit" onclick="placeOrder(event)" class="btn btn-outline-primary-2 btn-order btn-block">
                                                 <span class="btn-text">Place Order</span>
                                                 <span class="btn-hover-text">Proceed to Checkout</span>
@@ -642,13 +639,31 @@
                                         </div><!-- End .accordion-summary -->
                                     </div><!-- End .summary -->
                                 </aside><!-- End .col-lg-3 -->
-                                
-
                             </div><!-- End .row -->
                         </form>
                     </div><!-- End .container -->
                 </div><!-- End .checkout -->
             </div><!-- End .page-content -->
+        
+            <!-- Modal -->
+            <div class="modal fade" id="couponModal" tabindex="-1" role="dialog" aria-labelledby="couponModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="couponModalLabel">Available Coupons</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="couponModalBody">
+                            <!-- Coupons will be dynamically loaded here -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main><!-- End .main -->
 
 
@@ -931,6 +946,7 @@
     let couponCode = document.getElementById('couponCheck').value;
     let checkAddress = document.querySelector('input[name="address"]:checked').value;
     let paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value; // Get the selected payment method
+    console.log(paymentMethod)
 
     fetch('/placeOrder', {
         method: 'POST',
@@ -942,6 +958,7 @@
     .then(response => response.json())
     .then(data => {
         if(data.message === 'Razorpay order created'){
+            
             const options = {
                 key: data.key,
                 amount: data.amount * 100,
@@ -1020,7 +1037,8 @@
                 });
             });
             rzpl.open();
-        } else if (data.success && data.paymentMethod === 'Cash on delivery') {
+        } else if (data.puskas && data.cashOnDelivary) {
+            console.log(data)
             Swal.fire({
                 icon:'success',
                 title: 'Order Confirmed with COD',
@@ -1118,6 +1136,66 @@
                 console.log(error)
             })
 }
+
+
+
+
+
+
+
+    //FOR COUPON MODAL
+    document.querySelector('.view-coupons').addEventListener('click', function() {
+    fetch('/getAvailableCoupons')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Check console for correct data structure
+            const couponModalBody = document.getElementById('couponModalBody');
+            couponModalBody.innerHTML = ''; // Clear existing content
+
+            if (data.couponData.length > 0) {
+                data.couponData.forEach(coupon => {
+                    const couponDiv = document.createElement('div');
+                    couponDiv.classList.add('card', 'mb-3', 'shadow-sm', 'coupon-item');
+                    
+                    // Determine status text based on coupon status and usage
+                    let statusText = '';
+                    const userId = data.userId; // Get userId from response data
+                    if (coupon.status) {
+                        statusText = 'Not Available';
+                    } else {
+                        const userCoupon = coupon.userList.find(userCoupon => userCoupon.userId === userId);
+                        if (userCoupon && userCoupon.couponUsed) {
+                            console.log(userCoupon)
+                            statusText = 'Not Available';
+                        } else {
+                            statusText = 'Available';
+                        }
+                    }
+
+                    couponDiv.innerHTML = `
+                        <div class="card-body">
+                            <h5 class="card-title text-danger">${coupon.couponCode}</h5>
+                            <h6 class="card-subtitle mb-2">${coupon.name}</h6>
+                            <p class="card-text">Discount: ${coupon.amount}.00</p>
+                            <p class="card-text">Status: ${statusText}</p>
+                            <p class="card-text">Expires on: ${new Date(coupon.expires).toLocaleDateString()}</p>
+                        </div>
+                    `;
+                    couponModalBody.appendChild(couponDiv);
+                });
+            } else {
+                couponModalBody.innerHTML = '<p class="text-center">No available coupons at the moment.</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching coupons:', error);
+            const couponModalBody = document.getElementById('couponModalBody');
+            couponModalBody.innerHTML = '<p class="text-center text-danger">Failed to load coupons. Please try again later.</p>';
+        });
+});
+
+
+
 
 
 

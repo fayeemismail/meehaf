@@ -7,13 +7,19 @@ const { product } = require('./adminController');
 const showCart = async (req, res) => {
     try {
         const userData = req.session.user_id;
-        if(userData.is_blocked == true){
-            req.session.destroy()
+        if(userData.is_blocked) {
+            req.session.destroy();
+            return res.redirect('/login'); // Redirect to login if user is blocked
         }
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = 3;
+        const skip = (page - 1) * limit;
+
         const cartData = await cart.findOne({ user: userData }).populate('Products.Product');
         
         // Find all unlisted products (where status is true)
-        const unlistedProducts = await Products.find({ status: true })
+        const unlistedProducts = await Products.find({ status: true });
         const unlistedProductIds = unlistedProducts.map(product => product._id.toString());
 
         if (cartData && cartData.Products && cartData.Products.length > 0) {
@@ -22,24 +28,35 @@ const showCart = async (req, res) => {
                 return !unlistedProductIds.includes(cartItem.Product._id.toString());
             });
 
-            // Update the cart with filtered products
-            cartData.Products = filteredProducts;
-            await cartData.save();
-        }
+            // Pagination logic
+            const totalProducts = filteredProducts.length;
+            const totalPages = Math.ceil(totalProducts / limit);
+            const paginatedProducts = filteredProducts.slice(skip, skip + limit);
 
-        if (!cartData || !cartData.Products || cartData.Products.length === 0) {
-           
-            res.render('cart', { cartData: { Products: [] } }); 
-        } else if (cartData) {
-          
-            res.render('cart', { cartData: cartData });
+            // Set paginated products to cartData
+            cartData.Products = paginatedProducts;
+
+            // Render the cart template with pagination data
+            res.render('cart', { 
+                cartData: cartData, 
+                currentPage: page, 
+                totalPages: totalPages 
+            });
+        } else {
+            // Render the cart template with empty products
+            res.render('cart', { 
+                cartData: { Products: [] }, 
+                currentPage: 1, 
+                totalPages: 1 
+            });
         }
     } catch (error) {
         console.log(error);
-        // Handle other errors as needed
         res.status(500).send('Error fetching cart data');
     }
 };
+
+
 
 
 

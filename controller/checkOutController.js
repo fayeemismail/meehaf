@@ -137,8 +137,8 @@ const placeOrder = async (req, res) => {
             if (saving) {
                 // Clear the cart after the order is saved
                 await cartSchema.findOneAndDelete({ user: userId });
-                res.json({ success: true, orderId: saving._id });  // Return order ID
-                console.log('saving new order');
+                res.json({ puskas: true, orderId: saving._id, cashOnDelivary: true  });  // Return order ID
+                
             }
         } else if (newOrderData.paymentMethod === 'Razor Pay') {
             if (couponCode) {
@@ -217,7 +217,6 @@ const placeOrder = async (req, res) => {
                         await newOrder.save();
 
                         res.json({ success: true, orderId: saving._id, wallet: true });
-                        console.log('order saving using wallet money');
                     }
                 } else {
                     res.send({ message1: true });

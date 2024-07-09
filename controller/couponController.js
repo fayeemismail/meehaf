@@ -141,18 +141,26 @@ const couponCheck = async (req, res) => {
 
 
 
-
-const couponDetais = async (req,res) => {
+const couponPage = async (req,res) => {
+    const page = parseInt(req.query.page) || 1;
     try {
-        const couponData = await couponSchema.find({});
-        
-        if(coupon){
-            res.render('couponDetails', {couponData:couponData})
+        const userId = req.session.user_id
+        let coupons = await couponSchema.find();
+        if(!coupons){
+            coupons = [];
         }
-    } catch (error) {
-        console.log(error)
+        // Check if the user has used each coupon and add the 'used' property
+        coupons.forEach(coupon => {
+            const userCoupon = coupon.userList.find(userCoupon => userCoupon.userId.toString() === userId);
+            coupon.used = userCoupon ? userCoupon.couponUsed : false;
+        });
+        res.render('couponPage', { coupons, page });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
     }
 }
+
 
 
 
@@ -184,6 +192,21 @@ const applyCoupon = async (req,res) => {
     }
 }
 
+
+
+const getCoupon = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const couponData = await couponSchema.find({});
+        res.json({ couponData, userId }); // Send userId along with couponData
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Failed to fetch coupons' });
+    }
+};
+
+
+
 module.exports = {
     addCoupon,
     coupon,
@@ -191,8 +214,9 @@ module.exports = {
     updateCoupon,
     deleteCoupon,
     couponCheck,
-    couponDetais,
-    applyCoupon
+    applyCoupon,
+    couponPage,
+    getCoupon
 
 
 

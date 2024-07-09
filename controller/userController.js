@@ -235,14 +235,12 @@ const authUser = async (req, res) => {
 const logout = async (req, res) => {
     try {
         let userId = req.session.user_id;
-        console.log(`User ${userId} logging out`);
 
         req.session.destroy((err) => {
             if (err) {
                 console.log(err);
                 return res.status(500).send("Failed to destroy session");
             }
-            console.log('Session destroyed');
             res.redirect('/login');
         });
     } catch (error) {
@@ -364,7 +362,7 @@ const userProfile = async (req, res) => {
         const userId = req.session.user_id;
         const userData = await user.findOne({ _id: userId });
         const userAddress = await Address.findOne({ user_id: userId });
-        const orderList = await orderSchema.find({ user: userId });
+        const orderList = await orderSchema.find({ user: userId }).sort({ createdAt: -1 }); // Sort by createdAt in ascending order
         const addresses = userAddress && userAddress.address ? userAddress.address : [];
 
         let coupons = await couponSchema.find({});
@@ -380,13 +378,13 @@ const userProfile = async (req, res) => {
             coupon.used = userCoupon ? userCoupon.couponUsed : false;
         });
 
-        console.log(coupons)
         res.render('userProfile', { userData, addresses, orderList, coupons, walletData });
     } catch (error) {
         console.log(error);
         res.render('error', { message: "An error occurred while fetching the user profile." });
     }
 };
+
 
 
 
@@ -604,44 +602,48 @@ const orderDetails = async (req,res) => {
 }
 
 
-const cancelOrder = async (req,res) => {
+const cancelOrder = async (req, res) => {
     try {
-        const orderId = req.query.id
-        const orderData = await orderSchema.findOne({_id:orderId});
-        const userId = req.session.user_id
-        console.log(orderData)
-        if(orderData.paymentMethod == 'Razor Pay' || orderData.paymentMethod == 'Wallet'){
+        const orderId = req.query.id;
+        const orderData = await orderSchema.findOne({ _id: orderId });
+        const userId = req.session.user_id;
+        console.log(orderData);
 
-                const newWallet = new walletSchema({
-                    user:userId,
-                    amount:orderData.totalAmount,
-                    paymet_type: 'Credited'
-                });
+        if (orderData.paymentMethod == 'Razor Pay' || orderData.paymentMethod == 'Wallet') {
+            const newWallet = new walletSchema({
+                user: userId,
+                amount: orderData.totalAmount,
+                payment_type: 'Credited' // corrected field name
+            });
 
-                const saving = await newWallet.save()
-                if(saving){
-                    const creditedAmount = await user.findOne({_id:userId})
-                    creditedAmount.balance += orderData.totalAmount
-                    orderData.orderStatus = 'canceled'
-                    await orderData.save()
-                    await creditedAmount.save()
-                    res.send({cancel:true})
-                }
-            
-            res.send({message:true})
-        }
-        orderData.orderStatus = 'canceled'
-        const saving = await orderData.save();
-        if(saving){
-            res.send({success: 1})
-            console.log('canceling the order in 561')
-        }else{
-            res.send({success: 0})
+            const saving = await newWallet.save();
+            if (saving) {
+                const creditedAmount = await user.findOne({ _id: userId });
+                creditedAmount.balance += orderData.totalAmount;
+                orderData.orderStatus = 'canceled';
+
+                await orderData.save();
+                await creditedAmount.save();
+                res.send({ cancel: true });
+            } else {
+                res.send({ message: false });
+            }
+        } else {
+            orderData.orderStatus = 'canceled';
+            const saving = await orderData.save();
+            if (saving) {
+                res.send({ success: 1 });
+                console.log('canceling the order in 561');
+            } else {
+                res.send({ success: 0 });
+            }
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        res.status(500).send({ error: 'An error occurred while canceling the order' });
     }
-}
+};
+
 
 
 
@@ -676,6 +678,67 @@ const returnOrder = async (req, res) => {
 
 
 
+
+const orderPage = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const totalOrders = await orderSchema.countDocuments();
+        const orders = await orderSchema.find()
+            .populate('user')
+            .populate('Products.Product')
+            .sort({ _id: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        res.render('orderPage', {
+            orders: orders,
+            totalOrders: totalOrders,
+            page: page,
+            limit: limit
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+};
+
+
+const walletPage = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const userData = await user.findOne({ _id: userId });
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = 5;
+        const skip = (page - 1) * limit;
+
+        const wallet = await walletSchema.find({ user: userId })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const totalTransactions = await walletSchema.countDocuments({ user: userId });
+        const totalPages = Math.ceil(totalTransactions / limit);
+
+        res.render('walletPage', {
+            currentBalance: userData.balance,
+            wallet,
+            userData,
+            currentPage: page,
+            totalPages
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+    
+
+
+
+
 module.exports = {
     home,
     shop,
@@ -699,7 +762,9 @@ module.exports = {
     removeAddress,
     orderDetails,
     cancelOrder,
-    returnOrder
+    returnOrder,
+    orderPage,
+    walletPage,
     
 
 };
