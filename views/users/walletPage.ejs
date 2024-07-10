@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,23 +16,26 @@
                 -ms-overflow-style: -ms-autohiding-scrollbar;
             }
         }
-         /* Remove increase/decrease icons from number input */
-    input[type=number]::-webkit-outer-spin-button,
-    input[type=number]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
 
-    input[type=number] {
-        -moz-appearance: textfield;
-    }
+        /* Remove increase/decrease icons from number input */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-dark">
         <a class="navbar-brand" href="#">Brand</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -57,14 +61,15 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <h4>Current Balance: $<%= userData.balance.toFixed(2) %></h4>
+                                <h4>Current Balance: $<%= userData.balance.toFixed(2) %>
+                                </h4>
                             </div>
                             <div class="col-md-6">
-                                <form action="/add-money" method="POST">
+                                <form id="form">
                                     <div class="input-group">
                                         <input type="number" class="form-control" name="amount" placeholder="Enter amount">
                                         <div class="input-group-append">
-                                            <button type="submit" class="btn btn-primary">Add Money</button>
+                                            <button id="moneySubmit" class="btn btn-primary">Add Money</button>
                                         </div>
                                     </div>
                                 </form>
@@ -83,13 +88,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% wallet.forEach(transaction => { %>
+                            <% wallet.forEach(transaction=> { %>
                                 <tr>
-                                    <td><%= new Date(transaction.createdAt).toLocaleDateString() %></td>
-                                    <td><%= transaction.payment_type %></td>
-                                    <td>$<%= transaction.amount.toFixed(2) %></td>
+                                    <td>
+                                        <%= new Date(transaction.createdAt).toLocaleDateString() %>
+                                    </td>
+                                    <td>
+                                        <%= transaction.payment_type %>
+                                    </td>
+                                    <td>$<%= transaction.amount.toFixed(2) %>
+                                    </td>
                                 </tr>
-                            <% }) %>
+                                <% }) %>
                         </tbody>
                     </table>
                 </div>
@@ -97,25 +107,28 @@
                 <!-- Pagination Controls -->
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
-                        <% if (currentPage > 1) { %>
+                        <% if (currentPage> 1) { %>
                             <li class="page-item">
                                 <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
-                        <% } %>
-                        <% for (let i = 1; i <= totalPages; i++) { %>
-                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                            </li>
-                        <% } %>
-                        <% if (currentPage < totalPages) { %>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        <% } %>
+                            <% } %>
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                    <% } %>
+                                        <% if (currentPage < totalPages) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=<%= currentPage + 1 %>"
+                                                    aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                            <% } %>
                     </ul>
                 </nav>
             </div>
@@ -125,4 +138,124 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+    document.getElementById('moneySubmit').addEventListener('click', function (event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+    let amount = document.querySelector('input[name="amount"]').value;
+
+    if (!amount) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please enter a valid amount.',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    fetch('/addMoney', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ amount: amount })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.message === 'adding money') {
+            const options = {
+                key: data.key,
+                amount: data.amount * 100,
+                order_id: data.razorpayOrderId,
+                handler: function (response) {
+                    fetch('/confirm-addMoney', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            walletId: data.walletId,
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            razorpayOrderId: response.razorpay_order_id,
+                            razorpaySignature: response.razorpay_signature,
+                            amount: data.amount // Ensure amount is included in the confirmation
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.message === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Money added to the wallet',
+                                text: 'Money has been successfully added to your wallet.',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = `/walletPage`;
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot add the money',
+                                text: 'Transaction failed, please try again.',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'There was an issue processing your request. Please try again.',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                },
+                prefill: {
+                    name: 'fayeem',
+                    email: 'email@email.com',
+                    contact: '9867876598'
+                },
+                theme: {
+                    color: "#3399cc"
+                }
+            };
+            const rzpl = new Razorpay(options);
+            rzpl.on('payment.failed', function (response) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Payment Failed!',
+                    text: 'There was an issue with your payment. Please try again.',
+                    confirmButtonText: 'OK'
+                });
+            });
+            rzpl.open();
+        }
+    })
+    .catch(error => {
+        console.log(error);
+    });
+});
+
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!--   For linking the razor pay     -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 </html>

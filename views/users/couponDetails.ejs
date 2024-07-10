@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Coupons</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/user/assets/css/styles.css">
+    <style>
+        /* Custom styles for the available coupons page */
+        .main .page-header {
+            background-size: cover;
+            padding: 50px 0;
+        }
+
+        .main .breadcrumb-nav .breadcrumb {
+            background: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .main .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .coupon-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .coupon-card .radio-container {
+            margin-bottom: 10px;
+        }
+
+        .coupon-card .coupon-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .coupon-card .coupon-description {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .coupon-card .coupon-discount, .coupon-card .coupon-expiry {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .coupon-card .coupon-expiry {
+            margin-top: 10px;
+        }
+
+        @media (max-width: 767.98px) {
+            .coupon-card {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="main">
+        <div class="page-header text-center" style="background-image: url('/user/assets/images/page-header-bg.jpg')">
+            <div class="container">
+                <h1 class="page-title">Available Coupons<span>Shop</span></h1>
+            </div><!-- End .container -->
+        </div><!-- End .page-header -->
+        <nav aria-label="breadcrumb" class="breadcrumb-nav">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Available Coupons</li>
+                </ol>
+            </div><!-- End .container -->
+        </nav><!-- End .breadcrumb-nav -->
+
+        <div class="page-content">
+            <div class="container">
+                <h2 class="section-title">Available Coupons</h2><!-- End .section-title -->
+                <div class="row">
+                    <% couponData.forEach((coupon, index) => { %>
+                    <div class="col-md-4 mb-4">
+                        <div class="coupon-card">
+                            <div class="container">
+                               <a href=""><span><%= index + 1 %></span></a>
+                            </div>
+                            <h6 class="coupon-title">Coupon Code: <%= coupon.couponCode %></h6>
+                            <p class="coupon-title">
+                            Coupon Name:    <%= coupon.name %>
+                            </p>
+                            <p class="coupon-discount">
+                                Discount: <%= coupon.amount %>
+                            </p>
+                            <p class="coupon-expiry">
+                                Expiry Date: <%= coupon.expires.toLocaleDateString() %>
+                            </p>
+                            <p class="text-important"> The coupon you can apply only when you purchase <span class="text-danger">"<%= coupon.minimumAmount %>"</span> </p>
+                        </div><!-- End .coupon-card -->
+                    </div><!-- End .col-md-4 -->
+                    <% }) %>
+                </div><!-- End .row -->
+            </div><!-- End .container -->
+        </div><!-- End .page-content -->
+    </main><!-- End .main -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

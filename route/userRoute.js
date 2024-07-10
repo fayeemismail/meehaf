@@ -145,7 +145,7 @@ user_route.get('/orderPage', userAuth.is_login, userController.orderPage);
 
 
 user_route.get('/walletPage', userAuth.is_login, userController.walletPage);
-user_route.post('/addMoneyWallet', userAuth.is_login, walletController.addMoneyWallet);
-
+user_route.post('/addMoney', userAuth.is_login, walletController.addMoneyWallet);
+user_route.post('/confirm-addMoney', userAuth.is_login, walletController.confirmAddMoney)
 
 module.exports = user_route;
