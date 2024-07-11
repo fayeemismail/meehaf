@@ -683,9 +683,13 @@ const orderPage = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
+        const userId = req.session.user_id;
 
-        const totalOrders = await orderSchema.countDocuments();
-        const orders = await orderSchema.find()
+        // Count the total orders for the logged-in user
+        const totalOrders = await orderSchema.countDocuments({ user: userId });
+
+        // Fetch the orders for the logged-in user with pagination
+        const orders = await orderSchema.find({ user: userId })
             .populate('user')
             .populate('Products.Product')
             .sort({ _id: -1 })
@@ -703,6 +707,7 @@ const orderPage = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
 
 
 const walletPage = async (req, res) => {

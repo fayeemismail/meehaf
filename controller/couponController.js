@@ -105,8 +105,17 @@ const couponCheck = async (req, res) => {
         if (!couponData) {
             return res.send({ message: 'The coupon code is invalid' });
         }
+
+        // Check if the coupon is expired
+        const currentDate = new Date();
+        if (currentDate > couponData.expires) {
+            couponData.status = true;
+            await couponData.save();
+            return res.send({ message: 'The coupon has expired' });
+        }
+
         if(couponData.status == true){
-            return res.send({ message: 'the coupon is not available for this moment'})
+            return res.send({ message: 'The coupon is not available at this moment' });
         }
 
         const userId = req.session.user_id;
@@ -137,6 +146,7 @@ const couponCheck = async (req, res) => {
         res.status(500).send({ message: 'Internal server error' });
     }
 };
+
 
 
 

@@ -23,12 +23,7 @@ const addMoneyWallet = async (req, res) => {
 
         if (!walletData) {
             // Create a new wallet entry if not exists
-            walletData = new walletSchema({
-                user: userId,
-                amount: 0,
-                payment_type: 'Initial'
-            });
-            await walletData.save();
+            walletData = []
         }
 
         // Create a Razorpay order

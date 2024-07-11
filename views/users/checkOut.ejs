@@ -1086,9 +1086,9 @@
 
 
     //COUPON CHECK 
-    function applyCoupon(){
-        event.preventDefault()
-        const couponCode = document.getElementById('couponCheck').value
+    function applyCoupon() {
+        event.preventDefault();
+        const couponCode = document.getElementById('couponCheck').value;
         fetch('/checkCoupon', {
             method: 'POST',
             headers: {
@@ -1096,46 +1096,45 @@
             },
             body: JSON.stringify({ couponCode: couponCode })
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not okey')
-                }
-                return response.json()
-            })
-            .then(data => {
-                if (data.success) {
-                    let totalAmount = data.totalPrice
-                    fetch('/applyCoupon', {
-                        method: 'POST',
-                        headers:{
-                            'Content-Type' : 'application/json'
-                        }, 
-                        body: JSON.stringify({totalAmount: totalAmount, couponCode:couponCode})
-                    })
-                    .then(response => {
-                        if(!response.ok){
-                            throw new Error('Network response was not okey')
-                        }
-                        return response.json()
-                    })
-                    .then(data => {
-                        if(data.success){
-                            let totalAmount = data.discountAmount
-                            document.getElementById('subtotal').innerText = `₹ ${totalAmount}`;
-                            document.getElementById('total').innerText = `₹ ${totalAmount}`;
-                            
-                        }else if (data.fail){
-                            document.getElementById('errorMessage').innerText = data.fail
-                        }
-                    })
-                } else if (data.message) {
-                    document.getElementById('errorMessage').innerText = data.message
-                }
-            })
-            .catch(error => {
-                console.log(error)
-            })
-}
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                let totalAmount = data.totalPrice;
+                fetch('/applyCoupon', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ totalAmount: totalAmount, couponCode: couponCode })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        let totalAmount = data.discountAmount;
+                        document.getElementById('subtotal').innerText = `₹ ${totalAmount}`;
+                        document.getElementById('total').innerText = `₹ ${totalAmount}`;
+                    } else if (data.fail) {
+                        document.getElementById('errorMessage').innerText = data.fail;
+                    }
+                });
+            } else if (data.message) {
+                document.getElementById('errorMessage').innerText = data.message;
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
 
 
 

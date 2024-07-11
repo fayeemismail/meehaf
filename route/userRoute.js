@@ -31,11 +31,39 @@ const cartController = require('../controller/cartController');
 const checkOutController = require('../controller/checkOutController');
 const wishlistController = require('../controller/wishlistController');
 const couponController = require('../controller/couponController');
-const walletController = require('../controller/walletCountroller')
+const walletController = require('../controller/walletCountroller');
+const passportController = require('../controller/passportController')
+
+
+
+//REQUIRING PASSPORT
+const passport = require('passport')
+require('../passport')
+user_route.use(passport.initialize())
+user_route.use(passport.session())
+
 
 // REQUIRING AUTH MIDDELEWARE
 const userAuth = require('../middlewares/userAuth');
 const { productBlock } = require('../controller/productCantroller');
+
+// AUTHENTICATE GOOGLE
+user_route.get('/auth/google' , passport.authenticate('google' , { scope:
+  ['email', 'profile']
+}));
+
+
+// AUTHENTICATE CALLBACK
+user_route.get('/auth/google/callback', 
+  passport.authenticate( 'google', {
+    successRedirect: '/success',
+    failureRedirect: '/failure'
+  })
+)
+
+
+user_route.get('/success', passportController.successGoogleLogin);
+user_route.get('/failure', passportController.failureGoogleLogin);
 
 
 
@@ -146,6 +174,10 @@ user_route.get('/orderPage', userAuth.is_login, userController.orderPage);
 
 user_route.get('/walletPage', userAuth.is_login, userController.walletPage);
 user_route.post('/addMoney', userAuth.is_login, walletController.addMoneyWallet);
-user_route.post('/confirm-addMoney', userAuth.is_login, walletController.confirmAddMoney)
+user_route.post('/confirm-addMoney', userAuth.is_login, walletController.confirmAddMoney);
+
+
+
+
 
 module.exports = user_route;

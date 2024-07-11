@@ -18,27 +18,44 @@ const razorpayInstance = new razorpay({
 })
 
 
-const checkOut = async (req,res) => {
+const checkOut = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        const userData = await UserSchema.findOne({_id:userId});
-        const userAddress = await addressSchema.findOne({ user_id: userId});
+        const userData = await UserSchema.findOne({ _id: userId });
+        const userAddress = await addressSchema.findOne({ user_id: userId });
 
         const addresses = userAddress && userAddress.address ? userAddress.address : [];
+        let couponData = await couponSchema.find();
 
-        const cartData = await cartSchema.findOne({user:userId}).populate('Products.Product');
+        if (!couponData) {
+            couponData = [];
+        }
 
-        if(cartData){
-            res.render('checkOut', { userData: userData, addresses: addresses, cartData: cartData.Products })
-            
-        }else{
-            res.render('checkOut', { userData: userData, addresses: addresses, cartData: [] })
+        const currentDate = new Date();
+        for (let coupon of couponData) {
+            if (coupon.expires < currentDate && !coupon.status) {
+                coupon.status = true;
+                try {
+                    await coupon.save();
+                    console.log(`Coupon ${coupon.couponCode} status updated to true.`);
+                } catch (err) {
+                    console.log(`Failed to update coupon ${coupon.couponCode}: ${err}`);
+                }
+            }
+        }
+
+        const cartData = await cartSchema.findOne({ user: userId }).populate('Products.Product');
+
+        if (cartData) {
+            res.render('checkOut', { userData: userData, addresses: addresses, cartData: cartData.Products, couponData: couponData });
+        } else {
+            res.render('checkOut', { userData: userData, addresses: addresses, cartData: [], couponData: couponData });
         }
 
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
-}
+};
 
 
 const placeOrder = async (req, res) => {

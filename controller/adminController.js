@@ -55,8 +55,8 @@ const order = async (req, res) => {
         const limit = parseInt(req.query.limit) || 5; // Default to 5 orders per page
         const skip = (page - 1) * limit;
 
-        const orderList = await orderSchema.find().skip(skip).limit(limit);
-        const totalOrders = await orderSchema.countDocuments();
+        const orderList = await orderSchema.find().skip(skip).limit(limit).sort({_id: -1});
+        const totalOrders = await orderSchema.countDocuments().sort({_id: -1});
 
         res.render('order', {
             orderList: orderList,
@@ -111,7 +111,8 @@ const usersList = async (req, res) => {
 
         const data = await user.find({})
             .skip((page - 1) * limit)
-            .limit(limit);
+            .limit(limit)
+            .sort({_id:-1});
 
         res.render('usersList', { data, page, totalPages });
 
@@ -270,12 +271,12 @@ const salesReport = async (req, res) => {
                     $lt: new Date(new Date().setHours(23, 59, 59, 999))
                 }
             };
-        } else if (dateRange === 'weekly') {
-            const startOfWeek = new Date();
-            startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-            const endOfWeek = new Date(startOfWeek);
-            endOfWeek.setDate(endOfWeek.getDate() + 6);
-
+        } else if (dateRange === 'LastWeek') {
+            const today = new Date();
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - 6); // Start of the last 7 days (inclusive)
+            const endOfWeek = new Date(today);
+        
             dateFilter = {
                 createdAt: {
                     $gte: new Date(startOfWeek.setHours(0, 0, 0, 0)),
@@ -299,11 +300,11 @@ const salesReport = async (req, res) => {
         }
 
         // Fetch orders with pagination and date filter
-        const orderList = await orderSchema.find(dateFilter).skip(skip).limit(limit);
+        const orderList = await orderSchema.find(dateFilter).skip(skip).limit(limit).sort({_id:-1});
 
         // Calculate total statistics
-        const totalOrders = await orderSchema.countDocuments({ ...dateFilter, orderStatus: 'Delivered' });
-        const totalSalesCount = totalOrders;
+        const totalOrders = await orderSchema.countDocuments(dateFilter);
+        const totalSalesCount = await orderSchema.countDocuments({ ...dateFilter, orderStatus: 'Delivered' });
         const totalOrderAmount = await orderSchema.aggregate([
             { $match: { ...dateFilter, orderStatus: 'Delivered' } },
             { $group: { _id: null, total: { $sum: "$totalAmount" } } }
@@ -319,9 +320,9 @@ const salesReport = async (req, res) => {
             totalSalesCount: totalSalesCount,
             totalOrderAmount: totalOrderAmount.length > 0 ? totalOrderAmount[0].total : 0,
             totalDiscount: totalDiscount.length > 0 ? totalDiscount[0].total : 0,
-            currentPage: page,
+            currentPage: parseInt(page),
             totalPages: Math.ceil(totalOrders / limit),
-            limit: limit,
+            limit: parseInt(limit),
             dateRange: dateRange || '',
             startDate: startDate || '',
             endDate: endDate || ''
@@ -331,6 +332,8 @@ const salesReport = async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 };
+
+
 
 
 

@@ -9,6 +9,15 @@ const path = require('path');
 const session = require('express-session');
 const env = require('dotenv');
 const nocache = require('nocache');
+require('dotenv').config();
+
+
+app.use(session({
+    resave:false,
+    saveUninitialized: true,
+    secret: process.env.SESSION_SECRET
+}))
+
 
 //CONNECTING DATABASE
 mongoose.connect("mongodb://127.0.0.1:27017/usersData");
