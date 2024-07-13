@@ -66,13 +66,18 @@ const shop = async (req, res) => {
         // Find products that match the search query
         const query = searchQuery ? { name: { $regex: searchQuery, $options: 'i' } } : {};
 
+        const categoryData = await category.find()
+        
+        
         const allProduct = await products.find(query).skip(skip).limit(limit);
 
         const falseCategories = await category.find({ status: false });
-
+        
         const falseCategoryName = falseCategories.map(category => category.name);
+        
 
         const productsInFalseCategory = allProduct.filter(product => !falseCategoryName.includes(product.category));
+        
 
         const totalProducts = await products.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / limit);
@@ -80,7 +85,8 @@ const shop = async (req, res) => {
         res.render('shop', {
             Products: productsInFalseCategory,
             currentPage: page,
-            totalPages: totalPages
+            totalPages: totalPages,
+            categoryData:categoryData
         });
 
     } catch (error) {

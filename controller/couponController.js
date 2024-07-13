@@ -114,7 +114,7 @@ const couponCheck = async (req, res) => {
             return res.send({ message: 'The coupon has expired' });
         }
 
-        if(couponData.status == true){
+        if (couponData.status === true) {
             return res.send({ message: 'The coupon is not available at this moment' });
         }
 
@@ -134,11 +134,13 @@ const couponCheck = async (req, res) => {
             return res.status(404).send({ message: 'Cart not found' });
         }
 
-        // Calculate the total price of the products in the cart
+        // Calculate the total price of the products in the cart, considering offers
         let totalPrice = 0;
-        cartData.Products.forEach(item => {
-            totalPrice += item.Product.price * item.quantity;
-        });
+        for (const item of cartData.Products) {
+            const product = item.Product;
+            const price = product.offer > 0 ? product.offer : product.price; // Use offer price if available
+            totalPrice += price * item.quantity;
+        }
 
         res.send({ success: true, totalPrice });
     } catch (error) {
@@ -146,6 +148,7 @@ const couponCheck = async (req, res) => {
         res.status(500).send({ message: 'Internal server error' });
     }
 };
+
 
 
 

@@ -572,10 +572,16 @@
                                             </thead>
                                 
                                             <tbody>
-                                                <% cartData.forEach(element=> { %>
+                                                <% cartData.forEach(element => { %>
                                                     <tr>
                                                         <td><a href="#"><%= element.Product.name %></a></td>
-                                                        <td>₹ <%= element.Product.price * element.quantity %></td>
+                                                        <td>
+                                                            <% if (element.Product.offer > 0) { %>
+                                                                ₹ <%= element.Product.offer * element.quantity %>
+                                                            <% } else { %>
+                                                                ₹ <%= element.Product.price * element.quantity %>
+                                                            <% } %>
+                                                        </td>
                                                     </tr>
                                                 <% }) %>
                                                 <tr class="summary-subtotal">
@@ -828,10 +834,16 @@
             .then(response => response.json())
             .then(data => {
                 const productData = data.productData
-                let subtotal = 0
-                productData.forEach(element => {
-                    subtotal += element.Product.price * element.quantity
-                });
+                let subtotal = 0;
+        productData.forEach(element => {
+            let price;
+            if (element.Product.offer > 0) {
+                price = element.Product.offer;
+            } else {
+                price = element.Product.price;
+            }
+            subtotal += price * element.quantity;
+        });
                 document.getElementById('subtotal').innerText = `₹${subtotal}`;
                 document.getElementById('total').innerText = `₹${subtotal}`;
             })

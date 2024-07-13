@@ -28,7 +28,11 @@ const productSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true
+    },
+    offer:{
+        type:Number
     }
+
 }, {
     timestamps: true
 }

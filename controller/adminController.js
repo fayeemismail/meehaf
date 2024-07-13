@@ -262,7 +262,7 @@ const salesReport = async (req, res) => {
         const { page = 1, limit = 10, dateRange, startDate, endDate } = req.query;
         const skip = (page - 1) * limit;
 
-        // Create a date filter based on the selected date range
+        // FILTERING DATE BASED ON IN FROTEND 
         let dateFilter = {};
         if (dateRange === 'daily') {
             dateFilter = {
@@ -274,9 +274,9 @@ const salesReport = async (req, res) => {
         } else if (dateRange === 'LastWeek') {
             const today = new Date();
             const startOfWeek = new Date(today);
-            startOfWeek.setDate(today.getDate() - 6); // Start of the last 7 days (inclusive)
+            startOfWeek.setDate(today.getDate() - 6); // START THE DATE FROM LAST 7 DAYS
             const endOfWeek = new Date(today);
-        
+
             dateFilter = {
                 createdAt: {
                     $gte: new Date(startOfWeek.setHours(0, 0, 0, 0)),
@@ -299,22 +299,25 @@ const salesReport = async (req, res) => {
             };
         }
 
-        // Fetch orders with pagination and date filter
-        const orderList = await orderSchema.find(dateFilter).skip(skip).limit(limit).sort({_id:-1});
+        // FILTERING THE ORERS ONLY DELIVERED
+        const orderFilter = { ...dateFilter, orderStatus: 'Delivered' };
 
-        // Calculate total statistics
-        const totalOrders = await orderSchema.countDocuments(dateFilter);
-        const totalSalesCount = await orderSchema.countDocuments({ ...dateFilter, orderStatus: 'Delivered' });
+        // Fetch orders with pagination and filters
+        const orderList = await orderSchema.find(orderFilter).skip(skip).limit(limit).sort({ _id: -1 });
+
+        // COUNTING EVERY DELIVERED DOCUMENTS
+        const totalOrders = await orderSchema.countDocuments(orderFilter);
+        const totalSalesCount = totalOrders; 
         const totalOrderAmount = await orderSchema.aggregate([
-            { $match: { ...dateFilter, orderStatus: 'Delivered' } },
+            { $match: orderFilter },
             { $group: { _id: null, total: { $sum: "$totalAmount" } } }
         ]);
         const totalDiscount = await orderSchema.aggregate([
-            { $match: { ...dateFilter, orderStatus: 'Delivered' } },
+            { $match: orderFilter },
             { $group: { _id: null, total: { $sum: "$claimedAmount" } } }
         ]);
 
-        // Render the view with fetched data and calculated statistics
+        
         res.render('salesReport', {
             orderList: orderList,
             totalSalesCount: totalSalesCount,
@@ -332,6 +335,7 @@ const salesReport = async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 };
+
 
 
 
@@ -393,6 +397,9 @@ const downloadWithExcel = async (req, res) => {
 
 
 
+
+
+
 module.exports = {
     home,
     login,
@@ -408,7 +415,7 @@ module.exports = {
     denyReturn,
     salesReport,   
     downloadWithExcel,
-
+    
 
     
 }

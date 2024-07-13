@@ -210,23 +210,52 @@
                                                             </h3>
                                                         </div>
                                                     </td>
-                                                    <td class="price-col" id="price-<%= element.Product._id %>" style="font-family: sans-serif;">₹ <%= element.Product.price %></td>
-                                                    <td class="quantity-col">
-                                                        <div class="cart-product-quantity">
-                                                            <button class="btn-decrement stylish-btn"
-                                                                data-product-id="<%= element.Product._id %>"
-                                                                onclick="decreamentStock(event, '<%= element.Product._id %>')"
-                                                                data-product-price="<%= element.Product.price %>">-</button>
-                                                            <span id="quantity-<%= element.Product._id %>" class="quantity-display">
-                                                                <%= element.quantity %>
-                                                            </span>
-                                                            <button class="btn-increment stylish-btn"
-                                                                data-product-id="<%= element.Product._id %>"
-                                                                onclick="increamentStock(event, '<%= element.Product._id %>')"
-                                                                data-product-price="<%= element.Product.price %>">+</button>
-                                                        </div>
-                                                    </td>
-                                                    <td class="total-col" id="total-<%= element.Product._id %>" style="font-family: sans-serif;">₹ <%= element.Product.price * element.quantity %></td>
+
+                                                    <% if (element.Product.offer > 0) { %>
+                                                        <td class="price-col" id="price-<%= element.Product._id %>" style="font-family: sans-serif;">₹ <%= element.Product.offer %></td>
+                                                        <td class="quantity-col">
+                                                            <div class="cart-product-quantity">
+                                                                <button class="btn-decrement stylish-btn"
+                                                                    data-product-id="<%= element.Product._id %>"
+                                                                    onclick="decreamentStock(event, '<%= element.Product._id %>')"
+                                                                    data-product-price="<%= element.Product.offer %>">-</button>
+                                                                <span id="quantity-<%= element.Product._id %>" class="quantity-display">
+                                                                    <%= element.quantity %>
+                                                                </span>
+                                                                <button class="btn-increment stylish-btn"
+                                                                    data-product-id="<%= element.Product._id %>"
+                                                                    onclick="increamentStock(event, '<%= element.Product._id %>')"
+                                                                    data-product-price="<%= element.Product.offer %>">+</button>
+                                                            </div>
+                                                        </td>
+                                                        <td class="total-col" id="total-<%= element.Product._id %>" style="font-family: sans-serif;">₹ <%= element.Product.offer * element.quantity %></td>  
+
+                                                        <% } else { %>
+
+                                                            <td class="price-col" id="price-<%= element.Product._id %>" style="font-family: sans-serif;">₹ <%= element.Product.price %></td>
+                                                            <td class="quantity-col">
+                                                                <div class="cart-product-quantity">
+                                                                    <button class="btn-decrement stylish-btn"
+                                                                        data-product-id="<%= element.Product._id %>"
+                                                                        onclick="decreamentStock(event, '<%= element.Product._id %>')"
+                                                                        data-product-price="<%= element.Product.price %>">-</button>
+                                                                    <span id="quantity-<%= element.Product._id %>" class="quantity-display">
+                                                                        <%= element.quantity %>
+                                                                    </span>
+                                                                    <button class="btn-increment stylish-btn"
+                                                                        data-product-id="<%= element.Product._id %>"
+                                                                        onclick="increamentStock(event, '<%= element.Product._id %>')"
+                                                                        data-product-price="<%= element.Product.price %>">+</button>
+                                                                </div>
+                                                            </td>
+                                                            <td class="total-col" id="total-<%= element.Product._id %>" style="font-family: sans-serif;">₹ <%= element.Product.price * element.quantity %></td>
+                                                         
+                                                    <% } %>
+
+                                                    
+                                                    
+                                                    
+                                                    
                                                     <td class="remove-col">
                                                         <button class="btn-remove" onclick="removeProduct('<%= element.Product._id %>')">
                                                             <i class="icon-close"></i>
@@ -267,14 +296,36 @@
                                         <h3 class="summary-title">Cart Total</h3>
                                         <table class="table table-summary">
                                             <tbody>
+                                               
                                                 <tr class="summary-subtotal">
                                                     <td>Subtotal:</td>
-                                                    <td id="subtotal" style="font-family: sans-serif;">₹ <%= cartData.Products.reduce((sum, product) => sum + product.Product.price * product.quantity, 0) %></td>
+                                                    <td id="subtotal" style="font-family: sans-serif;">₹ 
+                                                        <%= cartData.Products.reduce((sum, product) => {
+                                                            let price;
+                                                            if (product.Product.offer > 0) {
+                                                                price = product.Product.offer;
+                                                            } else {
+                                                                price = product.Product.price;
+                                                            }
+                                                            return sum + price * product.quantity;
+                                                        }, 0) %>
+                                                    </td>
                                                 </tr>
                                                 <tr class="summary-total">
                                                     <td>Total:</td>
-                                                    <td id="total" style="font-family: sans-serif;">₹ <%= cartData.Products.reduce((sum, product) => sum + product.Product.price * product.quantity, 0) %></td>
+                                                    <td id="total" style="font-family: sans-serif;">₹ 
+                                                        <%= cartData.Products.reduce((sum, product) => {
+                                                            let price;
+                                                            if (product.Product.offer > 0) {
+                                                                price = product.Product.offer;
+                                                            } else {
+                                                                price = product.Product.price;
+                                                            }
+                                                            return sum + price * product.quantity;
+                                                        }, 0) %>
+                                                    </td>
                                                 </tr>
+                                                
                                             </tbody>
                                         </table>
                                         <a href="/checkout" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
@@ -509,6 +560,7 @@
             });
             document.getElementById('subtotal').innerText = `₹${subtotal}`;
             document.getElementById('total').innerText = `₹${subtotal}`
+            window.location.reload()
         })
         .catch(error => {
             console.log(error)
@@ -579,6 +631,7 @@
             });
             document.getElementById('subtotal').innerText = `₹${subtotal}`;
             document.getElementById('total').innerText = `₹${subtotal}`;
+            window.location.reload()
         })
         .catch(error => {
             console.log(error)
@@ -596,27 +649,36 @@
 
     //SUBTOTAL
     document.addEventListener('DOMContentLoaded', () => {
-        fetch('/subTotalChange', {
-            method:'POST',
-            headers:{
-                'Content-Type' : 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            const productData = data.productData
-            let subtotal = 0
-            productData.forEach(element => {
-                subtotal += element.Product.price * element.quantity
-            });
-            document.getElementById('subtotal').innerText = `₹${subtotal}`;
-            document.getElementById('total').innerText = `₹${subtotal}`;
-        })
-        .catch(error => {
-            console.log(error)
-        })
-        
+    fetch('/subTotalChange', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
     })
+    .then(response => response.json())
+    .then(data => {
+        const productData = data.productData;
+        let subtotal = 0;
+        productData.forEach(element => {
+            let price;
+            if (element.Product.offer > 0) {
+                price = element.Product.offer;
+            } else {
+                price = element.Product.price;
+            }
+            subtotal += price * element.quantity;
+        });
+        document.getElementById('subtotal').innerText = `₹${subtotal}`;
+        document.getElementById('total').innerText = `₹${subtotal}`;
+    })
+    .catch(error => {
+        console.log(error);
+    });
+});
+
+
+
+
 
 
 

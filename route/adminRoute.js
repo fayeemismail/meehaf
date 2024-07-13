@@ -11,6 +11,7 @@ admin_route.set('views', './views/admin');
 
 //SETTING BODYPARSER IN ADMIN_ROUTE
 admin_route.use(bodyParser.json());
+admin_route.use(express.json())
 admin_route.use(bodyParser.urlencoded({extended:true}));
 
 //REQUIRING ADMIN CONTROLLER IN ADMIN ROUTE 
@@ -19,7 +20,8 @@ const categoryController = require('../controller/categoryController')
 const productController = require('../controller/productCantroller');
 const usercontroller = require('../controller/userController');
 const upload = require('../middlewares/multer');
-const couponController = require('../controller/couponController')
+const couponController = require('../controller/couponController');
+const offerController = require('../controller/offerController')
 
 
 
@@ -79,6 +81,15 @@ admin_route.post('/deleteCoupon', couponController.deleteCoupon)
 
 admin_route.get('/salesReport', adminController.salesReport);
 admin_route.get('/downloadReport/excel', adminController.downloadWithExcel);
+
+
+
+admin_route.get('/offer', offerController.offer);
+admin_route.get('/offerProduct', offerController.offerProduct);
+admin_route.get('/categoryOffer', offerController.categoryOffer)
+admin_route.post('/addCategoryOffer', offerController.addCategoryOffer)
+admin_route.post('/addProductOffer', offerController.addProductOffer);
+admin_route.post('/deleteOffer', offerController.deleteOffer)
 
 
 module.exports = admin_route;

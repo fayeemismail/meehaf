@@ -108,6 +108,13 @@
         .dropdown-content a:hover {
             background-color: #f1f1f1;
         }
+        .label-off {
+        background-color: red;
+        color: white; /* Ensures the text is visible */
+        padding: 5px;
+        border-radius: 3px;
+        font-weight: medium;
+        }
     </style>
 
 
@@ -226,15 +233,26 @@
                 <div class="container-fluid">
                     <div class="toolbox">
                         <div class="toolbox-left">
-                            <a href="#" class="sidebar-toggler"><i class="icon-bars"></i>Filters</a>
+                            <a href="#" class="btn btn-primary"><i class="icon-apply"></i>Filters</a>
+                            <div class="toolbox-sort" >
+                                <label for="category">Category:</label>
+                                <div class="select-custom">
+                                    <select name="category" id="category" class="form-control" onchange="filterByCategory(this.value)">
+                                        <option value="all">All Categories</option>
+                                        <% categoryData.forEach(category => { %>
+                                            <option value="<%= category %>"><%= category.name %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
                         </div><!-- End .toolbox-left -->
-        
+            
                         <div class="toolbox-center">
                             <div class="toolbox-info">
                                 Showing <span>1 of 1 </span> Products
                             </div><!-- End .toolbox-info -->
                         </div><!-- End .toolbox-center -->
-        
+            
                         <div class="toolbox-right">
                             <div class="toolbox-sort">
                                 <label for="sortby">Sort by:</label>
@@ -250,7 +268,7 @@
                             </div><!-- End .toolbox-sort -->
                         </div><!-- End .toolbox-right -->
                     </div><!-- End .toolbox -->
-        
+            
                     <div class="products">
                         <div class="row" id="allProducts">
                             <% Products.forEach((item) => { %>
@@ -258,7 +276,11 @@
                                     <div class="col-6 col-md-4 col-lg-4 col-xl-3 col-xxl-2">
                                         <div class="product">
                                             <figure class="product-media">
-                                                <span class="product-label label-new">New</span>
+                                                <% if (item.offer > 0) { %>
+                                                    <span class="product-label label-off">Off</span>
+                                                 <% } else { %>
+                                                    <span class="product-label label-new">New</span>
+                                                <% } %>
                                                 <a href="/singleProduct/?id=<%= item.id %>">
                                                     <img src="/public/productImage/<%= item.image[0] %>" alt="Product image" class="product-image">
                                                 </a>
@@ -276,16 +298,28 @@
                                                     <a href="#"><%= item.category %></a>
                                                 </div><!-- End .product-cat -->
                                                 <h3 class="product-title"><a href="/singleProduct"><%= item.name %></a></h3>
-                                                <div class="product-price" style="font-family: sans-serif;">
-                                                    ₹<%= item.price %>
-                                                </div><!-- End .product-price -->
+                                                <% if (item.offer > 0) { %>
+                                                    <div class="product-price" style="font-family: sans-serif;">
+                                                        <span class="original-price" style="text-decoration: line-through; color: maroon;">
+                                                            ₹<%= item.price %>
+                                                        </span>
+                                                        <span class="offer-price" style="margin-left: 5px;">
+                                                            ₹<%= item.offer %>
+                                                        </span>
+                                                    </div><!-- End .product-price -->
+                                                <% } else { %>
+                                                    <div class="product-price" style="font-family: sans-serif;">
+                                                        ₹<%= item.price %>
+                                                    </div><!-- End .product-price -->
+                                                <% } %>
+                                                
                                             </div><!-- End .product-body -->
                                         </div><!-- End .product -->
                                     </div><!-- End .col-sm-6 col-lg-4 col-xl-3 -->
                                 <% } %>
                             <% }) %>
                         </div><!-- End .row -->
-        
+            
                         <% if (totalPages > 1) { %>
                             <nav aria-label="Page navigation">
                                 <ul class="pagination justify-content-center">
@@ -298,17 +332,7 @@
                             </nav>
                         <% } %>
                     </div><!-- End .products -->
-        
-                    <div class="sidebar-filter-overlay"></div><!-- End .sidebar-filter-overlay -->
-                    <aside class="sidebar-shop sidebar-filter">
-                        <div class="sidebar-filter-wrapper">
-                            <div class="widget widget-clean">
-                                <label><i class="icon-close"></i>Filters</label>
-                                <a href="#" class="sidebar-filter-clear">Clean All</a>
-                            </div><!-- End .widget -->
-                            <!-- ... other widgets ... -->
-                        </div><!-- End .sidebar-filter-wrapper -->
-                    </aside><!-- End .sidebar-filter -->
+            
                 </div><!-- End .container-fluid -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->

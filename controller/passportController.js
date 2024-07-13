@@ -19,7 +19,7 @@ const successGoogleLogin = async (req, res) => {
 
             let existingUser = await userSchema.findOne({ email: req.user.email });
 
-               console.log('existing user id ' , existingUser)
+
             if(existingUser){
                 req.session.user_id = existingUser.id;
                 console.log(existingUser.id, 'this is 654646545')
@@ -36,7 +36,7 @@ const successGoogleLogin = async (req, res) => {
 
             await data.save()
 
-            console.log("session user"+req.session.userData)
+
             res.redirect('/')
             }
             

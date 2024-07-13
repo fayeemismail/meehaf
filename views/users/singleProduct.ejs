@@ -176,8 +176,15 @@
                                         </div>
                                         <a class="ratings-text" id="review-link">The Product that you'll never want to miss</a>
                                     </div>
-                            
-                                    <div class="product-price"><%= Product.price %></div>
+                                    <% if (Product.offer > 0) { %>
+                                        <div class="product-price">
+                                            <span class="original-price" style="color: maroon; margin-right: 5px;">Off =</span>
+                                            <span class="offer-price" style="font-family: sans-serif;">₹ <%= Product.offer %></span>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="product-price" style="font-family: sans-serif;">₹ <%= Product.price %></div>
+                                    <% } %>
+                                    
                             
                                     <div class="product-content">
                                         <p><%= Product.description %></p>
