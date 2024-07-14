@@ -194,12 +194,51 @@ const deleteOffer = async (req,res) => {
 }
 
 
+
+
+
+const reffrel = async (req,res) => {
+    try {
+        const userDetail = await userSchema.findOne({_id:req.session.user_id})
+        if(userDetail.refferel){
+            const refferelCode = userDetail.refferel
+            const exampleUrl = `http://localhost:3000/register`;
+            const refferelLink = exampleUrl + '?refferel=' + refferelCode;
+            res.json({refferelLink:refferelLink})
+
+        }else{
+        const userId = req.session.user_id;
+        const exampleUrl = `http://localhost:3000/register`;
+        const refferelCode = generateRfferrel(userId);
+        const userData = await userSchema.updateOne(
+            {_id:userId},
+            {$set: { refferel: refferelCode} },
+            { upsert: true }
+        )
+        const refferelLink = exampleUrl + '?refferel=' + refferelCode;
+
+
+        res.json({refferelLink:refferelLink})
+    }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+function generateRfferrel(userId){
+    return userId + '_' + Math.random().toString(36).substring(2,8)
+}
+
+
 module.exports = {
     offer,
     offerProduct,
     addProductOffer,
     deleteOffer,
     categoryOffer,
-    addCategoryOffer
+    addCategoryOffer,
+    reffrel
     
 }

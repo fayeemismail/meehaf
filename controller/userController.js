@@ -98,6 +98,9 @@ const shop = async (req, res) => {
 };
 
 
+
+
+
 const login = async (req, res) => {
     try {
         res.render('login');
@@ -108,6 +111,9 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
     try {
+        req.session.refferel = req.query.refferel
+        console.log(req.query.refferel)
+        console.log(req.session.refferel, 'session')
         res.render('register');
         
     } catch (error) {
@@ -148,6 +154,9 @@ const addUser = async (req, res) => {
                 password: hashedPassword
             };
             req.session.email = email;
+            // req.query.refferel = req.session.refferel
+            console.log(req.session.refferel, 'this is query refferel')
+
 
             req.session.userData = userData;
             
@@ -162,11 +171,13 @@ const addUser = async (req, res) => {
             const existingData = await OTP.findOneAndDelete({email:email})
 
 
-            await data.save();
-            setTimeout(async () => {
-                await OTP.deleteOne({email:data.email});
-                console.log('the otp is deleted after 120 sec')
-            },120000)
+            const save = await data.save();
+            if(save){
+                setTimeout(async () => {
+                    await OTP.deleteOne({email:data.email});
+                    console.log('the otp is deleted after 120 sec')
+                },120000)
+            }
             
 
             res.render('otp');
@@ -189,7 +200,54 @@ const verifyOtp = async (req, res) => {
         if (OTPData && OTPData.otp === otpp) {
             const newUser = new user(userData);
             await newUser.save();
-            console.log('User registered successfully');
+
+            // Create a wallet for the new user
+            const walletData = await walletSchema.create({
+                user: newUser._id,
+                amount: 301, // Initialize with the credited amount
+                payment_type: 'Credited'
+            });
+
+            // If there's a referral, update the wallet of the referrer
+            
+            const userDetail = await user.findOne({ refferel: req.session.refferel });
+            console.log(userDetail)
+            if (userDetail) {
+                // Check if the referrer already has a wallet
+                let referrerWalletData = await walletSchema.findOne({ user: userDetail._id });
+                
+
+                if (referrerWalletData) {
+                    // If the wallet exists, update the amount
+                    userDetail.balance = 301 + userDetail.balance
+                    const save = await userDetail.save()
+                    const newWallet = {
+                        user: userDetail._id,
+                        amount:301,
+                        payment_type: 'Credited'
+                    }
+
+                    const newWalletData = new walletSchema(newWallet);
+                    await newWalletData.save()
+
+                } else {
+                    userDetail.balance = 301 + userDetail.balance 
+                    await userDetail.save()
+                    // If the wallet does not exist, create a new wallet
+                    const newWallet = {
+                        user: userDetail._id,
+                        amount:301,
+                        payment_type: 'Credited'
+                    }
+
+                    const newWalletData = new walletSchema(newWallet);
+                    await newWalletData.save()
+                }
+            }
+
+
+            
+
             res.render('login');
         } else {
             console.log('OTP verification failed');

@@ -206,6 +206,9 @@
                                 <a href="/couponPage" ><i class="fa fa-ticket"></i> Coupons</a>
                             </li>
                             <li>
+                                <a data-bs-toggle="pill" href="#pill-refferel"><i class="fa fa-share"></i>Refferel</a>
+                            </li>
+                            <li>
                                 <a href="/logout"><i class="fa fa-sign-out"></i>
                                     Logout</a>
                             </li>
@@ -405,6 +408,21 @@
                             </div>
                         </div>
 
+                        <!-- REFFEREL DETAILS -->
+                        
+                            <div id="pill-refferel" class="tab-pane fade">
+                                <div class="container">
+                                    <h3>Referral Program</h3>
+                                    <p>Invite your friends and earn rewards!</p>
+                                    <div id="refferelDiv">
+                                    <a href="" onclick="getRefferl(event)"  class="clickable-div" style="display: block; padding: 15px; border: 1px solid #ccc; border-radius: 5px; text-align: center; text-decoration: none; color: inherit;">
+                                        <h5>Click here to learn more about our Referral Program!</h5>
+                                    </a>
+                                </div>
+                                </div>
+                            </div>
+                        
+                        
 
 
 
@@ -772,6 +790,43 @@
                     });
             }
         });
+    }
+
+
+
+
+    function getRefferl(event){
+        event.preventDefault()
+        fetch('/refferlLink' , {
+            method: 'GET',
+            headers:{
+                'Content-Type' : 'application/json'
+            }
+        })
+        .then(response => {
+            if(!response.ok){
+                throw new Error('Network response was not okey')
+            }
+            return response.json()
+        })
+        .then(data => {
+
+            const divContent = document.getElementById('refferelDiv')
+
+            let exampleDiv = ''
+
+            exampleDiv += 
+            ` <div id="refferelDiv">
+                                    <a href="" onclick="getRefferl(event)"  class="clickable-div" style="display: block; padding: 15px; border: 1px solid #ccc; border-radius: 5px; text-align: center; text-decoration: none; color: inherit;">
+                                        <h5>${data.refferelLink}</h5>
+                                    </a>
+                                </div>`
+
+            divContent.innerHTML = exampleDiv;
+        })
+        .catch(error => {
+            console.log(error)
+        })
     }
 </script>
 
