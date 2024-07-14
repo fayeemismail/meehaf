@@ -36,12 +36,7 @@
                             <button class="btn btn-light bg" type="button"><i
                                     class="material-icons md-search"></i></button>
                         </div>
-                        <datalist id="search_terms">
-                            <option value="Products"></option>
-                            <option value="New orders"></option>
-                            <option value="Apple iphone"></option>
-                            <option value="Ahmed Hassan"></option>
-                        </datalist>
+                        
                     </form>
                 </div>
                 <div class="col-nav">
@@ -108,7 +103,7 @@
                     <header class="card-header">
                         <div class="row gx-3">
                             <div class="col-lg-4 col-md-6 me-auto">
-                                <input type="text" placeholder="Search..." class="form-control" />
+                                <input type="text" placeholder="Search..." class="form-control" hidden />
                             </div>
                             <div class="col-lg-2 col-6 col-md-3" hidden>
                                 <select class="form-select">
@@ -129,99 +124,64 @@
                     </header>
                     <!-- card-header end// -->
                     <div class="card-body">
-
-
-
                         <div class="row gx-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 row-cols-xxl-5">
-                            <% item.forEach(element=> { %>
+                            <% item.forEach(element => { %>
                                 <div class="col">
-
                                     <div class="card card-product-grid">
-                                        <a href="#" class="img-wrap"><img
-                                                src="/public/productImage/<%= element.image[0] %>" alt="Product" /></a>
+                                        <a href="#" class="img-wrap"><img src="/public/productImage/<%= element.image[0] %>" alt="Product" /></a>
                                         <div class="info-wrap">
                                             <a href="#" class="title text-truncate">
-                                                <p>Name: <%= element.name %>
-                                                </p>
+                                                <p>Name: <%= element.name %></p>
                                             </a>
                                             <div class="price mb-2">
-                                                <p>₹ <%= element.price %>
-                                                </p>
+                                                <p>₹ <%= element.price %></p>
                                             </div>
-                                            <p class="stocks">
-                                                Stock: <%= element.stock %>
-                                            </p> <!-- Paragraph for stocks -->
-                                            <button class="btn btn-secondary justify-content-center" type="button"
-                                                data-toggle="collapse" data-target="#collapseExample" 
-                                                aria-expanded="false" aria-controls="collapseExample" style="height: 30px; width: 8px;">
+                                            <p class="stocks">Stock: <%= element.stock %></p>
+                                            <button class="btn btn-secondary justify-content-center" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" style="height: 30px; width: 8px;">
                                                 Description:
                                             </button>
-
-                                            <!-- Collapsible paragraph -->
-                                            <p class="collapse" id="collapseExample">
-                                                <%= element.description %>
-                                            </p>
-                                            <p class="category">
-                                                Category: <%= element.category %>
-                                            </p>
+                                            <p class="collapse" id="collapseExample"><%= element.description %></p>
+                                            <p class="category">Category: <%= element.category %></p>
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <a href="/admin/editProducts?id=<%= element._id %>"
-                                                        class="btn btn-sm font-sm rounded btn-brand"><i
-                                                            class="material-icons md-edit"></i> Edit</a>
+                                                    <a href="/admin/editProducts?id=<%= element._id %>" class="btn btn-sm font-sm rounded btn-brand"><i class="material-icons md-edit"></i> Edit</a>
                                                 </div>
                                                 <div>
-
-                                                    <% if (element.status==true) { %>
-
-                                                        <button class="btn btn-sm font-sm btn-danger rounded"
-                                                            id="productBlock-<%= element.id %>"
-                                                            onclick="productBlock('<%= element.id %>', 'UnList')">UnList</button>
-
-                                                        <% } else { %>
-
-                                                            <button class="btn btn-sm font-sm btn-brand rounded"
-                                                                id="productBlock-<%= element.id %>"
-                                                                onclick="productBlock('<%= element.id %>', 'List')">List</button>
-
-                                                            <% } %>
-
-
-
+                                                    <% if (element.status) { %>
+                                                        <button class="btn btn-sm font-sm btn-danger rounded" id="productBlock-<%= element._id %>" onclick="productBlock('<%= element._id %>', 'UnList')">UnList</button>
+                                                    <% } else { %>
+                                                        <button class="btn btn-sm font-sm btn-brand rounded" id="productBlock-<%= element._id %>" onclick="productBlock('<%= element._id %>', 'List')">List</button>
+                                                    <% } %>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- card-product end// -->
                                 </div>
-                                <% }) %>
+                            <% }) %>
                         </div>
                         <!-- row.// -->
-
-
-
                     </div>
-
-
                     <!-- card-body end// -->
                 </div>
                 <!-- card end// -->
                 <div class="pagination-area mt-30 mb-50">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-start">
-                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                            <li class="page-item"><a class="page-link" href="#">02</a></li>
-                            <li class="page-item"><a class="page-link" href="#">03</a></li>
-                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                            <li class="page-item"><a class="page-link" href="#">16</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
-                            </li>
+                            <% for(let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>"><i class="material-icons md-chevron_right"></i></a>
+                                </li>
+                            <% } %>
                         </ul>
                     </nav>
                 </div>
             </section>
+            
             <!-- content-main end// -->
 
 

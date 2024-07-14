@@ -9,7 +9,8 @@ const orderSchema = require('../models/orderModel')
 const cartSchema = require('../models/cartModel');
 const couponSchema = require('../models/couponModel');
 const walletSchema = require('../models/walletModel');
-const returnSchema = require('../models/returnModel')
+const returnSchema = require('../models/returnModel');
+const wishlistSchema = require('../models/wishlistSchema')
 
 
 
@@ -24,6 +25,8 @@ const home = async (req, res) => {
         const allProduct = await products.find();
 
         const falseCategories = await category.find({status:false});
+       
+        
 
         
         if(userData.user_id !== 'undefined'){
@@ -747,6 +750,48 @@ const walletPage = async (req, res) => {
 };
     
 
+const filterProduct = async(req,res)=>{
+    try {
+        const price = req.query.sortByPrice
+        const category = req.query.sortByCategory
+
+        
+
+        let query = { status: false };
+        let sort;
+
+        if (price !== 'allPrice') {
+            switch (price) {
+                case 'lowToHigh':
+                    sort = { price: 1 };
+                    break;
+                case 'highToLow':
+                    sort = { price: -1 };
+                    break;
+                case 'sortAZ': 
+                    sort = { name: 1 };
+                    break;
+                case 'sortZA': 
+                    sort = { name: -1 };
+                    break;
+                default:
+                    sort = { price: -1 }
+            }
+        }
+
+        if (category !== 'allCategories') {
+            query = { ...query, category: category };
+        }
+
+
+        const Products = await products.find(query).sort(sort)
+        res.status(200).json({ products:Products });
+
+    } catch (error) {
+        
+    }
+}
+
 
 
 
@@ -776,7 +821,7 @@ module.exports = {
     returnOrder,
     orderPage,
     walletPage,
-    
+    filterProduct
 
 };
 

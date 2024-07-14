@@ -34,18 +34,32 @@ const login = async (req, res) => {
 
 const product = async (req, res) => {
     try {
+        const limit = 8; // Number of products per page
+        const page = parseInt(req.query.page) || 1; // Current page number, default is 1
+
         const allProducts = await products.find();
-        const falseCategories = await category.find({status:false});
-
+        const falseCategories = await category.find({status: false});
         const falseCategoryName = falseCategories.map(categories => categories.name);
+        const filteredProducts = allProducts.filter(product => !falseCategoryName.includes(product.category));
 
-        const filteredProdcts = allProducts.filter(product => !falseCategoryName.includes(product.category));
-        res.render('product', {item:filteredProdcts});
+        const totalProducts = filteredProducts.length;
+        const totalPages = Math.ceil(totalProducts / limit);
 
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+
+        const productsToShow = filteredProducts.slice(startIndex, endIndex);
+
+        res.render('product', {
+            item: productsToShow,
+            currentPage: page,
+            totalPages: totalPages
+        });
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 }
+
 
 
 

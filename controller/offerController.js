@@ -7,12 +7,8 @@ const { disconnect } = require('mongoose');
 
 const offer = async (req, res) => {
     try {
-        const offerData = await offerSchema.find();
-
-        // If no offers are found, initialize an empty array
-        if (!offerData) {
-            offerData = [];
-        }
+        // Fetch all offers from the database
+        const offerData = await offerSchema.find().sort({_id:-1})
 
         // Array to hold offers with non-zero amounts
         const remainingOffers = [];
@@ -22,8 +18,11 @@ const offer = async (req, res) => {
 
         // Iterate through the offers
         for (const offer of offerData) {
+            // Convert the endDate to the same format as currentDate
+            const offerEndDate = new Date(offer.endDate).toISOString().split('T')[0];
+
             // Check if the offer amount is 0 or if the offer is expired
-            if (offer.amount === 0 || offer.endDate < currentDate) {
+            if (offer.amount === 0 || offerEndDate < currentDate) {
                 // If expired, delete the offer and update the product's offer field to 0
                 await offerSchema.deleteOne({ _id: offer._id });
                 await productSchema.updateOne(
@@ -36,12 +35,14 @@ const offer = async (req, res) => {
             }
         }
 
+        // Render the offer page with the remaining offers
         res.render('offerPage', { offerData: remainingOffers });
     } catch (error) {
         console.log(error);
         res.status(500).send("Server Error");
     }
 };
+
 
 
 const offerProduct = async (req, res) => {

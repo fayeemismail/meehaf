@@ -5,14 +5,23 @@ const { findById } = require('../models/userModel');
 
 const categories = async (req, res) => {
     try {
-        const item = await category.find()
-               
+        const perPage = 10; // Number of categories per page
+        const page = parseInt(req.query.page) || 1; // Current page, default to 1 if not provided
 
-        res.render('categories', { item })
+        const totalCategories = await category.countDocuments(); // Total number of categories
+        const totalPages = Math.ceil(totalCategories / perPage); // Calculate total pages
+
+        const item = await category.find()
+            .sort({ _id: -1 })
+            .skip((page - 1) * perPage) // Skip the first (page-1) * perPage categories
+            .limit(perPage); // Limit to `perPage` categories
+
+        res.render('categories', { item, currentPage: page, totalPages });
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
-}
+};
+
 
 const addCategory = async (req,res) => {
     try {

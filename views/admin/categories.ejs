@@ -37,12 +37,7 @@
                             <button class="btn btn-light bg" type="button"><i
                                     class="material-icons md-search"></i></button>
                         </div>
-                        <datalist id="search_terms">
-                            <option value="Products"></option>
-                            <option value="New orders"></option>
-                            <option value="Apple iphone"></option>
-                            <option value="Ahmed Hassan"></option>
-                        </datalist>
+                       
                     </form>
                 </div>
                 <div class="col-nav">
@@ -102,7 +97,7 @@
                         <p>Add, edit or delete a category</p>
                     </div>
                     <div>
-                        <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+                        <input type="text" placeholder="Search Categories" class="form-control bg-white" hidden />
                     </div>
                 </div>
                 <div class="card">
@@ -111,21 +106,17 @@
                             <div class="col-md-3">
                                 <form action="" method="post">
                                     <div class="mb-4">
-
                                         <% if (typeof message !=='undefined' ) { %>
-                                            <p class="text-danger">
-                                                <%= message %>
-                                            </p>
-                                            <% } %>
-
-                                                <label for="product_name" class="form-label">Name</label>
-                                                <input type="text" placeholder="Type here" class="form-control"
-                                                    id="product_name" name="name" required />
+                                        <p class="text-danger">
+                                            <%= message %>
+                                        </p>
+                                        <% } %>
+                                        <label for="product_name" class="form-label">Name</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="product_name" name="name" required />
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Description</label>
-                                        <textarea placeholder="Type here" class="form-control" name="description"
-                                            required></textarea>
+                                        <textarea placeholder="Type here" class="form-control" name="description" required></textarea>
                                     </div>
                                     <div class="d-grid">
                                         <button class="btn btn-primary" type="submit">Create category</button>
@@ -146,123 +137,129 @@
                                         </thead>
                                         <tbody>
                                             <% item.forEach((element, index) => { %>
-                                                <tr>
-                                                    <td>
-                                                        <%= index + 1 %>
-                                                    </td>
-                                                    <td><b>
-                                                            <%= element.name %>
-                                                        </b></td>
-                                                    <td>
-                                                        <%= element.description %>
-                                                    </td>
-                                                
-                                                    <% if (element.status) { %>
-                                                    <td><span class="badge rounded-pill badge-soft-success"
-                                                            id="active-<%= element.id %>">Active</span></td>
-                                                    <% } else { %>
-                                                    <td><span class="badge rounded-pill badge-soft-danger"
-                                                            id="active-<%= element.id %>">Inactive</span></td>
-                                                    <% } %>
-                                                
-                                                    <td class="text-end">
-                                                        <div class="btn-group" role="group">
-                                                            <a href="/admin/editCategory?id=<%= element.id %>">
-                                                                <button class="btn btn-sm" style="background-color: #3BB77E; width: 99%;">
-                                                                    <i class="material-icons md-edit"></i> Edit
-                                                                </button>
-                                                            </a>
-                                                
-                                                            <form action="" method="post" onsubmit="event.preventDefault(); categoryBlock('<%= element.id %>');"
-                                                                style="width: 99%; display:inline; margin-left: 5px; margin-right: 5px;">
-                                                                <button type="submit"
-                                                                    class="btn btn-sm <%= element.status ? 'btn-danger' : 'btn-brand' %>"
-                                                                    style="width: 99%;" id="categoryBlock-<%= element.id %>">
-                                                                    <i class="material-icons md-List"></i>
-                                                                    <%= element.status ? 'UnList' : 'List' %>
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <% }) %>
-                                                
+                                            <tr>
+                                                <td>
+                                                    <%= (currentPage - 1) * 10 + index + 1 %>
+                                                </td>
+                                                <td><b>
+                                                        <%= element.name %>
+                                                    </b></td>
+                                                <td>
+                                                    <%= element.description %>
+                                                </td>
+                                                <% if (element.status) { %>
+                                                <td><span class="badge rounded-pill badge-soft-success" id="active-<%= element.id %>">Active</span></td>
+                                                <% } else { %>
+                                                <td><span class="badge rounded-pill badge-soft-danger" id="active-<%= element.id %>">Inactive</span></td>
+                                                <% } %>
+                                                <td class="text-end">
+                                                    <div class="btn-group" role="group">
+                                                        <a href="/admin/editCategory?id=<%= element.id %>">
+                                                            <button class="btn btn-sm" style="background-color: #3BB77E; width: 99%;">
+                                                                <i class="material-icons md-edit"></i> Edit
+                                                            </button>
+                                                        </a>
+                                                        <form action="" method="post" onsubmit="event.preventDefault(); categoryBlock('<%= element.id %>');" style="width: 99%; display:inline; margin-left: 5px; margin-right: 5px;">
+                                                            <button type="submit" class="btn btn-sm <%= element.status ? 'btn-danger' : 'btn-brand' %>" style="width: 99%;" id="categoryBlock-<%= element.id %>">
+                                                                <i class="material-icons md-List"></i>
+                                                                <%= element.status ? 'UnList' : 'List' %>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
                                         </tbody>
                                     </table>
+                                    <!-- Pagination controls -->
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination">
+                                            <% if (currentPage > 1) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            <% } %>
+                                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                            </li>
+                                            <% } %>
+                                            <% if (currentPage < totalPages) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                            <% } %>
+                                        </ul>
+                                    </nav>
                                 </div>
                             </div>
-
-                            <!-- .col// -->
                         </div>
-                        <!-- .row // -->
                     </div>
-                    <!-- card body .// -->
                 </div>
+            </section>
+            
+            <!-- content-main end// -->
+            
+            
+            
+            
+<script>
+    function categoryBlock(categoryId) {
+        console.log(categoryId)
+        Swal.fire({
+            title: "Do you want to save the changes?",
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            customClass: {
+                title: 'swal2-title',
+                htmlContainer: 'swal2-html-container'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post(`/admin/categoryBlock?id=${categoryId}`)
+                    .then((response) => {
+                        if (response.data.success == 1) {
+                            const button = document.getElementById(`categoryBlock-${categoryId}`);
+                            const active = document.getElementById(`active-${categoryId}`);
 
+                            if (button.classList.contains('btn-danger')) {
+                                button.classList.remove('btn-danger');
+                                button.classList.add('btn-brand');
+                                button.innerHTML = '<i class="material-icons md-List"></i> List';
 
+                                active.classList.remove('badge-soft-success');
+                                active.classList.add('badge-soft-danger');
+                                active.innerHTML = 'Inactive';
 
-                <script>
-                    function categoryBlock(categoryId) {
-                        console.log(categoryId)
-                        Swal.fire({
-                            title: "Do you want to save the changes?",
-                            showCancelButton: true,
-                            confirmButtonText: 'Yes',
-                            customClass: {
-                                title: 'swal2-title',
-                                htmlContainer: 'swal2-html-container'
+                            } else {
+                                button.classList.remove('btn-brand');
+                                button.classList.add('btn-danger');
+                                button.innerHTML = '<i class="material-icons md-List"></i> UnList';
+
+                                active.classList.remove('badge-soft-danger');
+                                active.classList.add('badge-soft-success');
+                                active.innerHTML = 'Active';
                             }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                axios.post(`/admin/categoryBlock?id=${categoryId}`)
-                                    .then((response) => {
-                                        if (response.data.success == 1) {
-                                            const button = document.getElementById(`categoryBlock-${categoryId}`);
-                                            const active = document.getElementById(`active-${categoryId}`);
-                
-                                            if (button.classList.contains('btn-danger')) {
-                                                button.classList.remove('btn-danger');
-                                                button.classList.add('btn-brand');
-                                                button.innerHTML = '<i class="material-icons md-List"></i> List';
-                
-                                                active.classList.remove('badge-soft-success');
-                                                active.classList.add('badge-soft-danger');
-                                                active.innerHTML = 'Inactive';
-                
-                                            } else {
-                                                button.classList.remove('btn-brand');
-                                                button.classList.add('btn-danger');
-                                                button.innerHTML = '<i class="material-icons md-List"></i> UnList';
-                
-                                                active.classList.remove('badge-soft-danger');
-                                                active.classList.add('badge-soft-success');
-                                                active.innerHTML = 'Active';
-                                            }
-                                        }
-                                    })
-                                    .catch((error) => {
-                                        console.log(error)
-                                    })
-                                Swal.fire("Succeeded!", "", "success")
-                            } else if (result.isDenied) {
-                                Swal.fire("Changes are not saved", "", "info");
-                            }
-                        });
-                    }
-                </script>
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+                Swal.fire("Succeeded!", "", "success")
+            } else if (result.isDenied) {
+                Swal.fire("Changes are not saved", "", "info");
+            }
+        });
+    }
+</script>
                 
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-                <!-- card .// -->
-            </section>
-            <!-- content-main end// -->
-
-
-
-
 
 
 

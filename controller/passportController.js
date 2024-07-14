@@ -12,9 +12,9 @@ const successGoogleLogin = async (req, res) => {
             if(!user){
                 // ---- If not insert user details ----
                 userSchema.insertMany({ email: req.user.email, name: req.user.displayName, is_blocked: false })
+                console.log('hello')
             }
 
-            console.log("asdkjfgasdjhfgasd"+req.user.email)
             // ---- Find user and store to session ----
 
             let existingUser = await userSchema.findOne({ email: req.user.email });
@@ -22,15 +22,13 @@ const successGoogleLogin = async (req, res) => {
 
             if(existingUser){
                 req.session.user_id = existingUser.id;
-                console.log(existingUser.id, 'this is 654646545')
                 res.redirect('/')
             }else{   
 
                 console.log('create user');
                 const data = await userSchema({
                     email: req.user.email,
-                    name: req.user.displayName,
-                    _id: user._id
+                    name: req.user.displayName
                 })
                 req.session.user_id = data.id;
 

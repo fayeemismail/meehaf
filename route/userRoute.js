@@ -116,7 +116,8 @@ user_route.post('/removeCart', cartController.removeCart);
 
 
 
-user_route.post('/sortItem', productCantroller.sortProduct)
+// user_route.post('/sortItem', productCantroller.sortProduct)
+user_route.get('/filterProduct', userController.filterProduct)
 
 
 

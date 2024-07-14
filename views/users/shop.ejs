@@ -228,46 +228,48 @@
                     </ol>
                 </div><!-- End .container-fluid -->
             </nav><!-- End .breadcrumb-nav -->
-        
-            <div class="page-content">
-                <div class="container-fluid">
-                    <div class="toolbox">
-                        <div class="toolbox-left">
-                            <a href="#" class="btn btn-primary"><i class="icon-apply"></i>Filters</a>
-                            <div class="toolbox-sort" >
-                                <label for="category">Category:</label>
-                                <div class="select-custom">
-                                    <select name="category" id="category" class="form-control" onchange="filterByCategory(this.value)">
-                                        <option value="all">All Categories</option>
-                                        <% categoryData.forEach(category => { %>
-                                            <option value="<%= category %>"><%= category.name %></option>
-                                        <% }) %>
-                                    </select>
-                                </div>
-                            </div>
-                        </div><!-- End .toolbox-left -->
-            
-                        <div class="toolbox-center">
-                            <div class="toolbox-info">
-                                Showing <span>1 of 1 </span> Products
-                            </div><!-- End .toolbox-info -->
-                        </div><!-- End .toolbox-center -->
-            
-                        <div class="toolbox-right">
-                            <div class="toolbox-sort">
-                                <label for="sortby">Sort by:</label>
-                                <div class="select-custom">
-                                    <select name="sortby" id="sortby" class="form-control" onchange="sortItem(this.value)">
-                                        <option value="none">None</option>
-                                        <option value="sortAZ">A - Z</option>
-                                        <option value="sortZA">Z - A</option>
-                                        <option value="PriceLow">Price Low - High</option>
-                                        <option value="priceHigh">Price High - Low</option>
-                                    </select>
-                                </div>
-                            </div><!-- End .toolbox-sort -->
-                        </div><!-- End .toolbox-right -->
-                    </div><!-- End .toolbox -->
+        <form id="filterForm" action="/filterProduct" method="">
+    <div class="page-content">
+        <div class="container-fluid">
+            <div class="toolbox">
+                <div class="toolbox-left">
+                    <div class="toolbox-sort">
+                        <label for="category">Category:</label>
+                        <div class="select-custom">
+                            <select name="category" id="category" class="form-control" onchange="filterByCategories()">
+                                <option value="allCategories">All Categories</option>
+                                <% categoryData.forEach(category => { %>
+                                    <option value="<%= category.name %>"><%= category.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+                </div><!-- End .toolbox-left -->
+                
+                <div class="toolbox-center">
+                    <div class="toolbox-info">
+                        Showing <span>1 of 1</span> Products
+                    </div>
+                </div><!-- End .toolbox-center -->
+                
+                <div class="toolbox-right">
+                    <div class="toolbox-sort">
+                        <label for="sortby">Sort by:</label>
+                        <div class="select-custom">
+                            <select name="sortbyPrice" id="sortbyPrice" class="form-control" onchange="filterByCategories()">
+                                <option value="allPrice">None</option>
+                                <option value="sortAZ">A - Z</option>
+                                <option value="sortZA">Z - A</option>
+                                <option value="lowToHigh">Price Low - High</option>
+                                <option value="highToLow">Price High - Low</option>
+                            </select>
+                        </div>
+                    </div>
+                </div><!-- End .toolbox-right -->
+            </div><!-- End .toolbox -->
+        </div>
+    </div>
+</form>
             
                     <div class="products">
                         <div class="row" id="allProducts">
@@ -289,8 +291,6 @@
                                                 </div><!-- End .product-action -->
                                                 <div class="product-action action-icon-top">
                                                     <a class="btn-product btn-cart" onclick="addToCart('<%= item._id %>')"><span>add to cart</span></a>
-                                                    <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                                                    <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
                                                 </div><!-- End .product-action -->
                                             </figure><!-- End .product-media -->
                                             <div class="product-body">
@@ -612,30 +612,33 @@
     }
 
     //SORTING PRODUCTS IN THE SHOP PAGE----------------------------------------------------------------------------------------
-    function sortItem(itemValue) {
-        fetch('/sortItem', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ itemValue: itemValue })
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not okay with sort')
-            }
+function filterByCategories() {
+    const form = document.getElementById('filterForm');
+    
+    // Create a FormData object to handle the form submission
+    const formData = new FormData(form);
+    
+    // Ensure the current selected values are set
+    // formData.set('category', document.getElementById('category').value);
+    formData.set('sortbyPrice', document.getElementById('sortbyPrice').value);
+    const category = document.getElementById('category').value
+    const price = document.getElementById('sortbyPrice').value
+    console.log("body is",category , price);
+    
+    // Submit the form using fetch
+    fetch(`/filterProduct?sortByPrice=${price}&sortByCategory=${category}`)
+    .then(response => response.json())
+			.then(data => {
+				appendSortingProducts(data.products);
+			})
+			.catch(error => console.error('Error:', error))
+}
 
-            return response.json()
-        })
-            .then(productData => {
-                console.log(productData.productData, 'this is product data in the 1169');
-                appendSortingProducts(productData.productData)
-            })
-            .catch(error => {
-                console.log('Error:', error)
-            })
-    }
+
+    // ###########################
 
     function appendSortingProducts(productData) {
+        console.log("produuu",productData);
         const allProductsDiv = document.getElementById('allProducts');
         allProductsDiv.innerHTML = '';
 
@@ -654,8 +657,6 @@
                     </div>
                     <div class="product-action action-icon-top">
                         <a class="btn-product btn-cart" onclick="addToCart('${item._id}')"><span>add to cart</span></a>
-                        <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                        <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
                     </div>
                 </figure>
                 <div class="product-body">
