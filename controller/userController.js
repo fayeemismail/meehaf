@@ -199,6 +199,7 @@ const verifyOtp = async (req, res) => {
 
         if (OTPData && OTPData.otp === otpp) {
             const newUser = new user(userData);
+            newUser.balance = 301 + newUser.balance
             await newUser.save();
 
             // Create a wallet for the new user
