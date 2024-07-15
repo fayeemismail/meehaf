@@ -7,41 +7,50 @@ const { disconnect } = require('mongoose');
 
 const offer = async (req, res) => {
     try {
-        // Fetch all offers from the database
-        const offerData = await offerSchema.find().sort({_id:-1})
+        const page = parseInt(req.query.page) || 1; 
+        const limit = 5; 
+        const skip = (page - 1) * limit; 
 
-        // Array to hold offers with non-zero amounts
+        
+        const offerData = await offerSchema.find().sort({_id:-1}).skip(skip).limit(limit);
+
+        
         const remainingOffers = [];
 
-        // Current date for checking expiration
+        
         const currentDate = new Date().toISOString().split('T')[0];
 
-        // Iterate through the offers
+        
         for (const offer of offerData) {
-            // Convert the endDate to the same format as currentDate
+            
             const offerEndDate = new Date(offer.endDate).toISOString().split('T')[0];
 
-            // Check if the offer amount is 0 or if the offer is expired
             if (offer.amount === 0 || offerEndDate < currentDate) {
-                // If expired, delete the offer and update the product's offer field to 0
                 await offerSchema.deleteOne({ _id: offer._id });
                 await productSchema.updateOne(
                     { _id: offer.product },
                     { $set: { offer: 0 } }
                 );
             } else {
-                // Add the offer to the remaining offers array
                 remainingOffers.push(offer);
             }
         }
 
-        // Render the offer page with the remaining offers
-        res.render('offerPage', { offerData: remainingOffers });
+        const totalOffers = await offerSchema.countDocuments();
+
+        const totalPages = Math.ceil(totalOffers / limit);
+
+        res.render('offerPage', { 
+            offerData: remainingOffers, 
+            currentPage: page, 
+            totalPages 
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send("Server Error");
     }
 };
+
 
 
 

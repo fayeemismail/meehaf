@@ -92,7 +92,6 @@
             <a href="/admin/offerProduct" class="btn btn-primary">Product</a>
             <a href="/admin/categoryOffer" class="btn btn-secondary">Category</a>
         </div>
-        
     
         <!-- Container with Table for Offers -->
         <div class="container">
@@ -110,23 +109,46 @@
                     <!-- Example row -->
                     <% offerData.forEach((element, index) => { %>
                     <tr>
-                         
-                       
                         <td><%= index + 1 %></td>
                         <td><%= element.type %></td>
                         <td><%= element.endDate.toLocaleDateString() %></td>
                         <td><%= Math.round(element.amount) %></td>
                         <td class="text-end">
-                            <a  onclick="deleteOffer('<%= element._id %>')" class="btn btn-danger btn-sm">Delete</a>
+                            <a onclick="deleteOffer('<%= element._id %>')" class="btn btn-danger btn-sm">Delete</a>
                         </td>
-                        
                     </tr>
                     <% }) %>
                     <!-- Additional rows go here -->
                 </tbody>
             </table>
         </div>
+    
+        <!-- Pagination Controls -->
+        <div class="d-flex justify-content-center mt-3">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <% if (currentPage > 1) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                    </li>
+                    <% } %>
+                    
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                    </li>
+                    <% } %>
+    
+                    <% if (currentPage < totalPages) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                    </li>
+                    <% } %>
+                </ul>
+            </nav>
+        </div>
     </section>
+    
     
 </main>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -148,9 +148,9 @@
                                                 </div>
                                                 <div>
                                                     <% if (element.status) { %>
-                                                        <button class="btn btn-sm font-sm btn-danger rounded" id="productBlock-<%= element._id %>" onclick="productBlock('<%= element._id %>', 'UnList')">UnList</button>
-                                                    <% } else { %>
                                                         <button class="btn btn-sm font-sm btn-brand rounded" id="productBlock-<%= element._id %>" onclick="productBlock('<%= element._id %>', 'List')">List</button>
+                                                        <% } else { %>
+                                                            <button class="btn btn-sm font-sm btn-danger rounded" id="productBlock-<%= element._id %>" onclick="productBlock('<%= element._id %>', 'UnList')">UnList</button>
                                                     <% } %>
                                                 </div>
                                             </div>

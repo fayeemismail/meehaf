@@ -86,12 +86,12 @@
                 <p>Add, edit or delete a Coupon</p>
             </div>
             <div>
-                <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+                <input type="text" placeholder="Search Categories" class="form-control bg-white" hidden/>
             </div>
         </div>
         <div class="card">
             <div class="card-body">
-                <div class="row">
+                <div class="row position-relative">
                     <div class="col-md-3">
                         <form action="" method="post">
                             <div class="mb-4">
@@ -146,9 +146,9 @@
                                     <% couponData.forEach((element, index) => { %>
                                     <tr>
                                         <td class="text-center"></td>
-                                        <td><%= index + 1 %></td>
+                                        <td><%= (currentPage - 1) * 10 + index + 1 %></td>
                                         <td><b><%= element.name %></b></td>
-                                        <td><%= element.expires.toLocaleDateString() %></td>
+                                        <td><%= new Date(element.expires).toLocaleDateString() %></td>
                                         <td>₹ <%= element.minimumAmount %></td>
                                         <td><%= element.couponCode %></td>
                                         <td>₹ <%= element.amount %></td>
@@ -158,23 +158,21 @@
                                             <td><span class="badge rounded-pill badge-soft-danger"><%= element.status  %></span></td>
                                         <% } %>
                                         <td class="text-end">
-                                            
                                             <!-- Edit Button -->
                                             <a href="/admin/editCoupon?id=<%= element._id %>" class="btn btn-info btn-sm" title="Edit">
                                                 <i class="material-icons md-edit"></i>
                                             </a>
-                                            
                                             <!-- Delete Button -->
                                             <a onclick="deleteCoupon('<%= element._id %>')" class="btn btn-danger btn-sm" title="Delete">
                                                 <i class="material-icons md-close"></i>
                                             </a>
-                                            
                                         </td>
                                     </tr>
                                     <% }) %>
                                 </tbody>
                             </table>
                         </div>
+                       
                     </div>
                     <!-- .col// -->
                 </div>
@@ -182,8 +180,19 @@
             </div>
             <!-- card body .// -->
         </div>
+         <!-- Pagination -->
+         <nav aria-label="Page navigation" class="pagination-nav">
+            <ul class="pagination justify-content-center">
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
         <!-- card .// -->
     </section>
+    
 </main>
 
 
@@ -212,6 +221,12 @@
             console.log(error)
         })
     }
+</script>
+
+<script>
+    // SET THE MINIMUM DATE TODAY
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('coupon_expires').setAttribute('min', today);
 </script>
 
 

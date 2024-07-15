@@ -3,20 +3,41 @@ const  userSchema = require('../models/userModel');
 const cartSchema = require('../models/cartModel')
 
 
-const coupon = async (req,res) => {
+const coupon = async (req, res) => {
     try {
-        const couponData = await couponSchema.find({})
-        
-        if(couponData){
-            res.render('coupon', {couponData:couponData})
-        }else{
-            res.render('coupon', {couponData:[]})
+        // Get page number from query params, default to 1 if not provided
+        const page = parseInt(req.query.page) || 1;
+        // Number of coupons to display per page
+        const limit = 10;
+        // Calculate the number of items to skip
+        const skip = (page - 1) * limit;
+
+        // Get the total number of coupons
+        const totalCoupons = await couponSchema.countDocuments({});
+        // Get the coupon data for the current page
+        const couponData = await couponSchema.find({}).skip(skip).limit(limit).sort({_id:-1});
+
+        // Calculate the total number of pages
+        const totalPages = Math.ceil(totalCoupons / limit);
+
+        if (couponData) {
+            res.render('coupon', {
+                couponData: couponData,
+                currentPage: page,
+                totalPages: totalPages
+            });
+        } else {
+            res.render('coupon', {
+                couponData: [],
+                currentPage: page,
+                totalPages: 0
+            });
         }
-        
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
-}
+};
+
 
 
 const addCoupon = async (req,res) => {
