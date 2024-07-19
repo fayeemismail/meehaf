@@ -89,7 +89,10 @@ admin_route.get('/offerProduct', offerController.offerProduct);
 admin_route.get('/categoryOffer', offerController.categoryOffer)
 admin_route.post('/addCategoryOffer', offerController.addCategoryOffer)
 admin_route.post('/addProductOffer', offerController.addProductOffer);
-admin_route.post('/deleteOffer', offerController.deleteOffer)
+admin_route.post('/deleteOffer', offerController.deleteOffer);
+
+
+admin_route.get('/sales-data',  adminController.salesChart)
 
 
 module.exports = admin_route;

@@ -123,11 +123,11 @@
                             <tbody>
                                 <% orderList.forEach((order, index) => { %>
                                     <tr>
-                                        <td style="color:brown; font-weight: bold;"><%= (currentPage - 1) * limit + index + 1 %></td>
-                                        <td style="color:brown; font-weight: bold;"><%= order.billingAddress.userName %></td>
-                                        <td style="color:brown; font-weight: bold;"><%= order.billingAddress.email %></td>
-                                        <td style="color:brown; font-weight: bold;">₹<%= order.totalAmount.toFixed(2) %></td>
-                                        <td style="color:brown; font-weight: bold;">₹<%= order.claimedAmount ? order.claimedAmount.toFixed(2) : '0.00' %></td>
+                                        <td style="color: gray; font-weight: bold;"><%= (currentPage - 1) * limit + index + 1 %></td>
+                                        <td style="color: gray; font-weight: bold;"><%= order.billingAddress.userName %></td>
+                                        <td style="color: gray; font-weight: bold;"><%= order.billingAddress.email %></td>
+                                        <td style="color: gray; font-weight: bold;">₹<%= order.totalAmount.toFixed(2) %></td>
+                                        <td style="color: gray; font-weight: bold;">₹<%= order.claimedAmount ? order.claimedAmount.toFixed(2) : '0.00' %></td>
                                         <td>
                                             <span class="badge rounded-pill 
                                                 <% if (order.orderStatus === 'Delivered') { %>
@@ -142,8 +142,8 @@
                                                 <%= order.orderStatus %>
                                             </span>
                                         </td>
-                                        <td style="color:brown; font-weight: bold;"><%= new Date(order.createdAt).toDateString() %></td>
-                                        <td style="color:brown; font-weight: bold;"><%= order.paymentMethod %></td>
+                                        <td style="color: gray; font-weight: bold;"><%= new Date(order.createdAt).toDateString() %></td>
+                                        <td style="color: gray; font-weight: bold;"><%= order.paymentMethod %></td>
                                     </tr>
                                 <% }) %>
                             </tbody>

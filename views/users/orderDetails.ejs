@@ -17,16 +17,7 @@
                 <% }) %>
             </div>
             <div class="card-body">
-                <h4 class="card-title">Billing Information</h4>
-                <p><strong>Name:</strong> <%= order.billingAddress.userName %></p>
-                <p><strong>Email:</strong> <%= order.billingAddress.email %></p>
-                <p><strong>Address:</strong> <%= order.billingAddress.address %>, <%= order.billingAddress.city %>, <%= order.billingAddress.state %>, <%= order.billingAddress.pincode %></p>
-                <p><strong>Mobile:</strong> <%= order.billingAddress.mobile %></p>
-                <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
-                <p class="text-danger"><strong class="text-dark">Status:</strong> <%= order.orderStatus %></p>
-                <p><strong>Total:</strong> ₹<%= order.totalAmount %>.00</p>
-
-                <h4 class="card-title mt-4">Items</h4>
+                <h4 class="card-title">Items</h4>
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead class="thead-dark">
@@ -54,6 +45,15 @@
                     </table>
                 </div>
 
+                <h4 class="card-title mt-4">Billing Information</h4>
+                <p><strong>Name:</strong> <%= order.billingAddress.userName %></p>
+                <p><strong>Email:</strong> <%= order.billingAddress.email %></p>
+                <p><strong>Address:</strong> <%= order.billingAddress.address %>, <%= order.billingAddress.city %>, <%= order.billingAddress.state %>, <%= order.billingAddress.pincode %></p>
+                <p><strong>Mobile:</strong> <%= order.billingAddress.mobile %></p>
+                <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                <p class="text-danger"><strong class="text-dark">Status:</strong> <%= order.orderStatus %></p>
+                <p><strong>Total:</strong> ₹<%= order.totalAmount %>.00</p>
+
                 <% if (order.orderStatus == 'canceled') { %>
                     <p class="text-danger">The order is canceled</p>
                     <a href="/userProfile" class="btn btn-primary">
@@ -69,20 +69,16 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <button type="submit" onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">Cancel Order</button>
                     </div>
-                    <% } else if(order.orderStatus == 'returned') { %>
-                     <p class="text-danger">The order is Returned</p>
+                <% } else if(order.orderStatus == 'returned') { %>
+                    <p class="text-danger">The order is Returned</p>
                     <a href="/userProfile" class="btn btn-primary">
                         <i class="fas fa-arrow-left"></i> Back
                     </a>
-
-                    <% } else if (order.orderStatus == 'cannot return') { %>
-                        <p class="text-danger">This order cannot return</p>
-                        <a href="/orderPage" class="btn btn-primary">
-                            <i class="fas fa-arrow-left"></i> Back
-                        </a>
-
-
-
+                <% } else if (order.orderStatus == 'cannot return') { %>
+                    <p class="text-danger">This order cannot return</p>
+                    <a href="/orderPage" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
                 <% } %>
             </div>
         </div>
@@ -106,7 +102,16 @@
                     axios.post(`/cancelOrder?id=${orderId}`)
                         .then((response) => {
                             if (response.data.success == 1) {
-                                window.location.href = '/userProfile';
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Order Canceled',
+                                    confirmButtonText: 'OK'
+                                })
+                                .then((response)=> {
+                                    if(response.isConfirmed){
+                                        window.location.href = '/orderPage';
+                                    }
+                                })
                             } else if (response.data.cancel) {
                                 Swal.fire({
                                     icon: 'success',
@@ -114,7 +119,7 @@
                                     confirmButtonText: 'OK'
                                 }).then(result => {
                                     if (result.isConfirmed) {
-                                        window.location.href = '/userProfile#pills-order';
+                                        window.location.href = '/orderPage';
                                     }
                                 });
                             }
@@ -190,5 +195,6 @@
         }
     </script>
 </body>
+
 
 </html>

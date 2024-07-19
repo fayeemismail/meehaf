@@ -215,11 +215,6 @@
         </header><!-- End .header -->
 
         <main class="main">
-            <div class="page-header text-center" style="background-image: url('/user/assets/images/page-header-bg.jpg')">
-                <div class="container-fluid">
-                    <h1 class="page-title">Fullwidth No Sidebar<span>Shop</span></h1>
-                </div><!-- End .container-fluid -->
-            </div><!-- End .page-header -->
             <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
                 <div class="container-fluid">
                     <ol class="breadcrumb">
@@ -279,11 +274,11 @@
                                         <div class="product">
                                             <figure class="product-media">
                                                 <% if (item.offer > 0) { %>
-                                                    <span class="product-label label-off">Off</span>
+                                                    <span class="product-label label-off">OFF <%= item.discountPercentage %>%</span>
                                                  <% } else { %>
                                                     <span class="product-label label-new">New</span>
                                                 <% } %>
-                                                <a href="/singleProduct/?id=<%= item.id %>">
+                                                <a href="/singleProduct/?id=<%= item._id %>">
                                                     <img src="/public/productImage/<%= item.image[0] %>" alt="Product image" class="product-image">
                                                 </a>
                                                 <div class="product-action-vertical">
@@ -295,9 +290,9 @@
                                             </figure><!-- End .product-media -->
                                             <div class="product-body">
                                                 <div class="product-cat">
-                                                    <a href="#"><%= item.category %></a>
+                                                    <a href="/singleProduct/?id=<%= item._id %>"><%= item.category %></a>
                                                 </div><!-- End .product-cat -->
-                                                <h3 class="product-title"><a href="/singleProduct"><%= item.name %></a></h3>
+                                                <h3 class="product-title"><a href="/singleProduct/?id=<%= item._id %>"><%= item.name %></a></h3>
                                                 <% if (item.offer > 0) { %>
                                                     <div class="product-price" style="font-family: sans-serif;">
                                                         <span class="original-price" style="text-decoration: line-through; color: maroon;">

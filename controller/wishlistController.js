@@ -1,6 +1,7 @@
 const userSchema = require('../models/userModel')
 const productSchema = require('../models/productModel');
 const wishlistSchema = require('../models/wishlistSchema');
+const cartSchema = require('../models/cartModel');
 
 
 const wishlist = async (req, res) => {

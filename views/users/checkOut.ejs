@@ -442,12 +442,7 @@
         </header><!-- End .header -->
 
         <main class="main">
-            <div class="page-header text-center"
-                style="background-image: url('/user/assets/images/page-header-bg.jpg')">
-                <div class="container">
-                    <h1 class="page-title">Checkout<span>Shop</span></h1>
-                </div><!-- End .container -->
-            </div><!-- End .page-header -->
+            
             <nav aria-label="breadcrumb" class="breadcrumb-nav">
                 <div class="container">
                     <ol class="breadcrumb">
@@ -608,6 +603,7 @@
                                         <div class="accordion-summary" id="accordion-payment">
                                             <div class="card">
                                                 <div class="card-header" id="heading-1">
+                                                    
                                                     <h2 class="card-title">
                                                         <input type="radio" name="paymentMethod"
                                                             value="Cash on delivery" id="paymentMethod1">
@@ -868,6 +864,17 @@
                 });
                 document.getElementById('subtotal').innerText = `₹${subtotal}`;
                 document.getElementById('total').innerText = `₹${subtotal}`;
+
+                 // Hide Cash on delivery option if subtotal is greater than 1000
+            if (subtotal > 1000) {
+                document.getElementById('paymentMethod1').closest('.card').style.display = 'none';
+                const importantText = document.createElement('div');
+                importantText.style.color = 'red';
+                importantText.style.fontWeight = 'bold';
+                importantText.innerText = 'For Cash on delivery, the order must be less than ₹1000';
+                document.querySelector('#accordion-payment').prepend(importantText);
+            }
+            
             })
             .catch(error => {
                 console.log(error)

@@ -109,7 +109,6 @@ const deleteCoupon = async (req,res) => {
             const removeCoupon = await couponSchema.findOneAndDelete({_id:couponId});
             if(removeCoupon){
                 res.json({success:true})
-                console.log('COUPON DATA DELETED')
             }
         }
     } catch (error) {

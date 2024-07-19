@@ -15,7 +15,55 @@ require('dotenv').config();
 
 const home = async (req, res) => {
     try {
-        res.render('home');
+        const orderData = await orderSchema.find()
+        const deliveredOrders = orderData.filter(order => order.orderStatus == 'Delivered')
+        const totalOrders = await orderSchema.aggregate([
+            { $match: { orderStatus : 'Delivered' } },
+            { $count: 'total' } 
+        ])
+        
+        const totalAmount = await orderSchema.aggregate([
+            { $match: { orderStatus : 'Delivered' } },
+            { $group: { _id:null, total: { $sum:'$totalAmount' } } }
+        ])
+
+        const totalProducts = await products.find().countDocuments();
+
+        const totalCategories = await category.find().countDocuments();
+
+        // Calculate the date 30 days ago from the current date
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const monthlyIncome = await orderSchema.aggregate([
+            { 
+                $match: { 
+                    orderStatus: 'Delivered',
+                    createdAt: { $gte: thirtyDaysAgo }
+                }
+            },
+            { 
+                $group: { 
+                    _id: null, 
+                    total: { $sum: '$totalAmount' } 
+                } 
+            }
+        ]);
+
+
+        const orderList = await orderSchema.find().sort({_id: -1}).limit(6)
+
+        
+
+        res.render('home', {
+            orders: deliveredOrders,
+            totalAmount: totalAmount.length ? totalAmount[0].total : 0,
+            totalOrders: totalOrders.length ? totalOrders[0].total : 0,
+            totalProducts: totalProducts,
+            totalCategories: totalCategories,
+            monthlyIncome: monthlyIncome.length ? monthlyIncome[0].total : 0,
+            orderList: orderList
+        });
     } catch (error) {
         console.log(error)
     }
@@ -228,6 +276,7 @@ const acceptReturn = async (req, res) => {
                     const creditedAmount = await user.findOne({ _id: userId });
                     creditedAmount.balance += orderData.totalAmount;
                     orderData.orderStatus = 'returned';
+                    orderData.paymentStatus = 'refund'
                     await orderData.save();
                     await creditedAmount.save();
                     res.status(200).send('Return accepted and amount credited to the wallet');
@@ -235,6 +284,7 @@ const acceptReturn = async (req, res) => {
             } else {
                 // If payment method is not 'Razor Pay' or 'Wallet'
                 orderData.orderStatus = 'returned';
+                orderData.paymentStatus = 'refund'
                 await orderData.save();
                 res.status(200).send('Return request accepted');
             }
@@ -410,6 +460,53 @@ const downloadWithExcel = async (req, res) => {
 
 
 
+const salesChart = async (req,res) => {
+    const filter = req.query.filter;
+    let matchCondition = { orderStatus: 'Delivered' };
+    let groupBy;
+
+    const now = new Date();
+    let startDate;
+
+    switch (filter) {
+        case 'daily':
+            startDate = new Date(now.setDate(now.getDate() - 30));
+            groupBy = { $dayOfMonth: '$createdAt' };
+            break;
+        case 'weekly':
+            startDate = new Date(now.setDate(now.getDate() - 7));
+            groupBy = { $week: '$createdAt' };
+            break;
+        case 'monthly':
+            startDate = new Date(now.setMonth(now.getMonth() - 1));
+            groupBy = { $month: '$createdAt' };
+            break;
+        case 'yearly':
+            startDate = new Date(now.getFullYear(), 0, 1);
+            groupBy = { $year: '$createdAt' };
+            break;
+        default:
+            return res.status(400).send('Invalid filter type');
+    }
+
+    matchCondition.createdAt = { $gte: startDate };
+
+    try {
+        const salesData = await orderSchema.aggregate([
+            { $match: matchCondition },
+            { $group: { _id: groupBy, total: { $sum: '$totalAmount' } } },
+            { $sort: { _id: 1 } }
+        ]);
+
+        const labels = salesData.map(data => data._id);
+        const values = salesData.map(data => data.total);
+
+        res.json({ labels, values });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
+}
 
 
 
@@ -429,7 +526,7 @@ module.exports = {
     denyReturn,
     salesReport,   
     downloadWithExcel,
-    
+    salesChart
 
     
 }

@@ -53,12 +53,14 @@ const home = async (req, res) => {
 
 const shop = async (req, res) => {
     try {
-
         const userId = req.session.user_id;
-        const userData = await user.findOne({_id:userId})
-        if(userData.is_blocked == true){
-            req.session.destroy()
+        const userData = await user.findOne({ _id: userId });
+
+        if (userData.is_blocked == true) {
+            req.session.destroy();
+            return res.redirect('/login'); // Redirect to login if the user is blocked
         }
+
         const page = parseInt(req.query.page) || 1;
         const limit = 12;
         const skip = (page - 1) * limit;
@@ -69,27 +71,30 @@ const shop = async (req, res) => {
         // Find products that match the search query
         const query = searchQuery ? { name: { $regex: searchQuery, $options: 'i' } } : {};
 
-        const categoryData = await category.find()
-        
-        
+        const categoryData = await category.find();
         const allProduct = await products.find(query).skip(skip).limit(limit);
 
         const falseCategories = await category.find({ status: false });
-        
         const falseCategoryName = falseCategories.map(category => category.name);
-        
-
         const productsInFalseCategory = allProduct.filter(product => !falseCategoryName.includes(product.category));
-        
+
+        // Calculate the discount percentage for each product
+        const productsWithDiscount = productsInFalseCategory.map(product => {
+            if (product.offer) {
+                const discountPercentage = Math.round((product.price - product.offer) / product.price * 100)
+                return { ...product.toObject(), discountPercentage }; // Convert mongoose document to plain object
+            }
+            return { ...product.toObject(), discountPercentage: 0 }; // If no offer, discount is 0%
+        });
 
         const totalProducts = await products.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / limit);
 
         res.render('shop', {
-            Products: productsInFalseCategory,
+            Products: productsWithDiscount,
             currentPage: page,
             totalPages: totalPages,
-            categoryData:categoryData
+            categoryData: categoryData
         });
 
     } catch (error) {
