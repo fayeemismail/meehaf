@@ -1072,12 +1072,38 @@
                     const rzpl = new Razorpay(options);
                     rzpl.on('payment.failed', function (response) {
 
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Payment Failed!',
-                            text: 'There was an issue with your payment. Please try again.',
-                            confirmButtonText: 'OK'
-                        });
+                        fetch('/paymentFailure', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type' : 'application/json'
+                            },
+                            body: JSON.stringify( { orderId: data.orderId } )
+                        })
+                        .then( response => {
+                            if( !response.ok ){
+                                throw new Error('Network response was not okey')
+                            }
+                            return response.json()
+                        } )
+                        .then(data => {
+                            console.log(data.message)
+                            if( data.message === 'Order payment status updated to failed' ){
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Payment Failed!',
+                                    text: 'Order pending payment Failed.',
+                                    confirmButtonText: 'OK'
+                                })
+                                .then( result => {
+                                    if( result.isConfirmed ) {
+                                        window.location.href = '/'
+                                    }
+                                })
+                                .catch( error => {
+                                    console.log(error)
+                                } )
+                            }
+                        })
                     });
                     rzpl.open();
                 } else if (data.puskas && data.cashOnDelivary) {

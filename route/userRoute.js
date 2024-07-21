@@ -182,7 +182,12 @@ user_route.post('/confirm-addMoney', userAuth.is_login, walletController.confirm
 user_route.get('/refferlLink', userAuth.is_login, offerController.reffrel);
 
 
+user_route.post('/paymentFailure', checkOutController.paymentFailure);
+user_route.post('/continuePayment', userAuth.is_login, checkOutController.continuePayment);
+user_route.post('/confirmRetryPayment', userAuth.is_login, checkOutController.retryPayment);
 
+
+user_route.get('/invoiceDownload',userController.downloadInvoice)
 
 
 module.exports = user_route;

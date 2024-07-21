@@ -460,7 +460,7 @@ const downloadWithExcel = async (req, res) => {
 
 
 
-const salesChart = async (req,res) => {
+const salesChart = async (req, res) => {
     const filter = req.query.filter;
     let matchCondition = { orderStatus: 'Delivered' };
     let groupBy;
@@ -468,25 +468,20 @@ const salesChart = async (req,res) => {
     const now = new Date();
     let startDate;
 
-    switch (filter) {
-        case 'daily':
-            startDate = new Date(now.setDate(now.getDate() - 30));
-            groupBy = { $dayOfMonth: '$createdAt' };
-            break;
-        case 'weekly':
-            startDate = new Date(now.setDate(now.getDate() - 7));
-            groupBy = { $week: '$createdAt' };
-            break;
-        case 'monthly':
-            startDate = new Date(now.setMonth(now.getMonth() - 1));
-            groupBy = { $month: '$createdAt' };
-            break;
-        case 'yearly':
-            startDate = new Date(now.getFullYear(), 0, 1);
-            groupBy = { $year: '$createdAt' };
-            break;
-        default:
-            return res.status(400).send('Invalid filter type');
+    if (filter === 'daily') {
+        startDate = new Date(now.setDate(now.getDate() - 30));
+        groupBy = { $dayOfMonth: '$createdAt' };
+    } else if (filter === 'weekly') {
+        startDate = new Date(now.setDate(now.getDate() - 7));
+        groupBy = { $week: '$createdAt' };
+    } else if (filter === 'monthly') {
+        startDate = new Date(now.setMonth(now.getMonth() - 1));
+        groupBy = { $month: '$createdAt' };
+    } else if (filter === 'yearly') {
+        startDate = new Date(now.getFullYear(), 0, 1);
+        groupBy = { $year: '$createdAt' };
+    } else {
+        return res.status(400).send('Invalid filter type');
     }
 
     matchCondition.createdAt = { $gte: startDate };
@@ -506,7 +501,8 @@ const salesChart = async (req,res) => {
         console.error(error);
         res.status(500).send('Server error');
     }
-}
+};
+
 
 
 

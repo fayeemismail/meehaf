@@ -13,8 +13,9 @@
         <div class="card">
             <div class="card-header">
                 <% order.Products.forEach(element=> { %>
-                    <h1>Order Details for Order #<%= element.name %></h1>
-                <% }) %>
+                    <h1>Order Details for Order #<%= element.name %>
+                    </h1>
+                    <% }) %>
             </div>
             <div class="card-body">
                 <h4 class="card-title">Items</h4>
@@ -33,53 +34,85 @@
                                 <tr>
                                     <td>
                                         <% if(item.Product.image) { %>
-                                            <img src="/public/productImage/<%= item.Product.image[0] %>" alt="<%= item.name %> photo" width="100">
-                                        <% } %>
+                                            <img src="/public/productImage/<%= item.Product.image[0] %>"
+                                                alt="<%= item.name %> photo" width="100">
+                                            <% } %>
                                     </td>
-                                    <td><%= item.name %></td>
-                                    <td>₹ <%= item.price %></td>
-                                    <td><%= item.quantity %></td>
+                                    <td>
+                                        <%= item.name %>
+                                    </td>
+                                    <td>₹ <span id="price">
+                                            <%= order.totalAmount %>
+                                        </span></td>
+                                    <td>
+                                        <%= item.quantity %>
+                                    </td>
                                 </tr>
-                            <% }) %>
+                                <% }) %>
                         </tbody>
                     </table>
                 </div>
 
                 <h4 class="card-title mt-4">Billing Information</h4>
-                <p><strong>Name:</strong> <%= order.billingAddress.userName %></p>
-                <p><strong>Email:</strong> <%= order.billingAddress.email %></p>
-                <p><strong>Address:</strong> <%= order.billingAddress.address %>, <%= order.billingAddress.city %>, <%= order.billingAddress.state %>, <%= order.billingAddress.pincode %></p>
-                <p><strong>Mobile:</strong> <%= order.billingAddress.mobile %></p>
-                <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
-                <p class="text-danger"><strong class="text-dark">Status:</strong> <%= order.orderStatus %></p>
+                <p><strong>Name:</strong>
+                    <%= order.billingAddress.userName %>
+                </p>
+                <p><strong>Email:</strong>
+                    <%= order.billingAddress.email %>
+                </p>
+                <p><strong>Address:</strong>
+                    <%= order.billingAddress.address %>, <%= order.billingAddress.city %>, <%=
+                                order.billingAddress.state %>, <%= order.billingAddress.pincode %>
+                </p>
+                <p><strong>Mobile:</strong>
+                    <%= order.billingAddress.mobile %>
+                </p>
+                <p><strong>Date:</strong>
+                    <%= new Date(order.createdAt).toLocaleDateString() %>
+                </p>
+                <p class="text-danger"><strong class="text-dark">Status:</strong>
+                    <%= order.orderStatus %>
+                </p>
                 <p><strong>Total:</strong> ₹<%= order.totalAmount %>.00</p>
+                <p id="theOrderId" hidden>
+                    <%= order._id %>
+                </p>
 
-                <% if (order.orderStatus == 'canceled') { %>
+                <% if (order.orderStatus=='canceled' ) { %>
                     <p class="text-danger">The order is canceled</p>
                     <a href="/userProfile" class="btn btn-primary">
                         <i class="fas fa-arrow-left"></i> Back
                     </a>
-                <% } else if (order.orderStatus == 'Delivered') { %>
-                    <aside>
-                        <button type="button" onclick="returnOrder('<%= order._id %>')" class="btn btn-secondary">
-                            <i class="fas fa-undo"></i> Return Order
-                        </button>
-                    </aside>
-                <% } else if (order.orderStatus == 'Pending') { %>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <button type="submit" onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">Cancel Order</button>
-                    </div>
-                <% } else if(order.orderStatus == 'returned') { %>
-                    <p class="text-danger">The order is Returned</p>
-                    <a href="/userProfile" class="btn btn-primary">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </a>
-                <% } else if (order.orderStatus == 'cannot return') { %>
-                    <p class="text-danger">This order cannot return</p>
-                    <a href="/orderPage" class="btn btn-primary">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </a>
-                <% } %>
+                    <% } else if (order.orderStatus=='Delivered' ) { %>
+                        <aside>
+                            <button type="button" onclick="returnOrder('<%= order._id %>')" class="btn btn-dark">
+                                <i class="fas fa-undo"></i> Return Order
+                            </button>
+                            <a href="/invoiceDownload?id=<%= order._id %>" class="btn btn-success">
+                                <i class="fas fa-download"></i> Download Invoice
+                            </a>
+                        </aside>
+                        <% } else if (order.orderStatus=='Pending' && order.paymentStatus=='Pending' || order.paymentStatus == 'Confirmed' ) { %>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button type="submit" onclick="cancelOrder('<%= order._id %>')"
+                                    class="btn btn-danger">Cancel Order</button>
+                            </div>
+                            <% } else if (order.orderStatus=='Pending' && order.paymentStatus=='Failed' ) { %>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button id="continuePayment" class="btn btn-warning">Continue Payment</button>
+                                </div>
+
+                                <% } else if(order.orderStatus=='returned' ) { %>
+                                    <p class="text-danger">The order is Returned</p>
+                                    <a href="/userProfile" class="btn btn-primary">
+                                        <i class="fas fa-arrow-left"></i> Back
+                                    </a>
+                                    <% } else if (order.orderStatus=='cannot return' ) { %>
+                                        <p class="text-danger">This order cannot return</p>
+                                        <a href="/orderPage" class="btn btn-primary">
+                                            <i class="fas fa-arrow-left"></i> Back
+                                        </a>
+                                        <% } %>
             </div>
         </div>
     </div>
@@ -107,11 +140,11 @@
                                     title: 'Order Canceled',
                                     confirmButtonText: 'OK'
                                 })
-                                .then((response)=> {
-                                    if(response.isConfirmed){
-                                        window.location.href = '/orderPage';
-                                    }
-                                })
+                                    .then((response) => {
+                                        if (response.isConfirmed) {
+                                            window.location.href = '/orderPage';
+                                        }
+                                    })
                             } else if (response.data.cancel) {
                                 Swal.fire({
                                     icon: 'success',
@@ -165,35 +198,135 @@
                                 },
                                 body: JSON.stringify({ orderId: orderId, reason: reason })
                             })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not okay');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                if (data.success) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Request sent successfully',
-                                        text: 'Your return request has been sent successfully. The order will be returned after admin acceptance.',
-                                        confirmButtonText: 'OK'
-                                    }).then(response => {
-                                        if (response.isConfirmed) {
-                                            window.location.href = '/userProfile#pills-order';
-                                        }
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.log(error);
-                            });
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not okay');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Request sent successfully',
+                                            text: 'Your return request has been sent successfully. The order will be returned after admin acceptance.',
+                                            confirmButtonText: 'OK'
+                                        }).then(response => {
+                                            if (response.isConfirmed) {
+                                                window.location.href = '/userProfile#pills-order';
+                                            }
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.log(error);
+                                });
                         }
                     });
                 }
             });
         }
+
+
+
+
+
+        document.getElementById('continuePayment').addEventListener('click', function (event) {
+            event.preventDefault();
+            let price = document.getElementById('price').innerHTML;
+            let numPrice = parseInt(price);
+            let orderId = document.getElementById('theOrderId').innerHTML.trim();
+            console.log(orderId);
+
+
+            fetch('/continuePayment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ amount: numPrice, orderId: orderId })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.message === 'paying again') {
+                        const options = {
+                            key: data.key,
+                            amount: data.amount * 100,
+                            order_id: data.razorpayOrderId,
+                            handler: function (response) {
+                                fetch('/confirmRetryPayment', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        orderId: data.orderId,
+                                        razorpayPaymentId: response.razorpay_payment_id,
+                                        razorpayOrderId: response.razorpay_order_id,
+                                        razorpaySignature: response.razorpay_signature,
+                                        amount: data.amount
+                                    })
+                                })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Network response was not ok');
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        if (data.message === 'success') {
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Payment done',
+                                                text: 'Payment successfully done.',
+                                                confirmButtonText: 'OK'
+                                            }).then(() => {
+                                                window.location.href = `/orderPage`;
+                                            });
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.log(error);
+                                    });
+                            },
+                            prefill: {
+                                name: 'fayeem',
+                                email: 'email@email.com',
+                                contact: '9867876598'
+                            },
+                            theme: {
+                                color: "#3399cc"
+                            }
+                        };
+                        const rzpl = new Razorpay(options);
+                        rzpl.on('payment.failed', function (response) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Payment Failed!',
+                                text: 'There was an issue with your payment. Please try again.',
+                                confirmButtonText: 'OK'
+                            });
+                        });
+                        rzpl.open();
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        });
+
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!--   For linking the razor pay     -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+
 </body>
 
 

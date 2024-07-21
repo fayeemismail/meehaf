@@ -10,12 +10,12 @@ require('dotenv').config();
 const crypto = require('crypto')
 
 
-
+//REQUIRING RAZORPAY
 const razorpay = require('razorpay');
 const razorpayInstance = new razorpay({
     key_id : process.env.RAZORPAY_ID,
     key_secret : process.env.RAZORPAY_KEY
-})
+});
 
 
 const checkOut = async (req, res) => {
@@ -249,11 +249,103 @@ const orderSuccess = async (req, res) => {
 };
 
 
+
+const paymentFailure = async (req,res) => {
+    try {
+        const { orderId } = req.body;
+
+        // Find the order and update paymentStatus to 'failed'
+        const order = await orderSchema.findByIdAndUpdate(orderId, { paymentStatus: 'Failed' }, { new: true });
+
+        if (order) {
+            res.status(200).json({ message: 'Order payment status updated to failed' });
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+
+const continuePayment = async (req, res) => {
+    try {
+        const { amount, orderId } = req.body;
+        if (amount && orderId) {
+            const razorpayOrder = await razorpayInstance.orders.create({
+                amount: amount * 100,
+                currency: 'INR'
+            });
+
+
+            if (razorpayOrder) {
+                return res.json({
+                    message: 'paying again',
+                    razorpayOrderId: razorpayOrder.id,
+                    amount: amount,
+                    key: process.env.RAZORPAY_ID,
+                    orderId: orderId
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+
+
+
+
+const retryPayment = async (req, res) => {
+    try {
+        const { orderId, razorpayPaymentId, razorpayOrderId, razorpaySignature, amount } = req.body;
+
+       
+        
+
+        // Verify the payment using Razorpay SDK
+        const crypto = require('crypto');
+        const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY);
+        hmac.update(`${razorpayOrderId}|${razorpayPaymentId}`);
+        const generatedSignature = hmac.digest('hex');
+
+        if (generatedSignature === razorpaySignature) {
+            // Find the order and update the payment status
+            const order = await orderSchema.findById(orderId);
+            if (order) {
+                order.paymentStatus = 'Confirmed';
+                await order.save();
+                return res.json({ message: 'success' });
+            } else {
+                return res.status(404).json({ message: 'Order not found' });
+            }
+        } else {
+            return res.status(400).json({ message: 'Invalid signature' });
+
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+
+
 module.exports = {
     checkOut,
     placeOrder,
     orderSuccess,
     confirmPayment,
+    paymentFailure,
+    continuePayment,
+    retryPayment
+
+
 
     
 }

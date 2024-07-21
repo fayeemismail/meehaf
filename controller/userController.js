@@ -10,7 +10,8 @@ const cartSchema = require('../models/cartModel');
 const couponSchema = require('../models/couponModel');
 const walletSchema = require('../models/walletModel');
 const returnSchema = require('../models/returnModel');
-const wishlistSchema = require('../models/wishlistSchema')
+const wishlistSchema = require('../models/wishlistSchema');
+const PDFDocument = require('pdfkit');
 
 
 
@@ -857,6 +858,118 @@ const filterProduct = async(req,res)=>{
 }
 
 
+const downloadInvoice = async (req, res) => {
+    try {
+        const orderId = req.query.id;
+        const order = await orderSchema.findById(orderId).populate('Products.Product');
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        const doc = new PDFDocument({ margin: 50 });
+
+        // Set response headers for PDF
+        res.setHeader('Content-disposition', `attachment; filename=invoice_${orderId}.pdf`);
+        res.setHeader('Content-type', 'application/pdf');
+
+        // Pipe PDF data to response
+        doc.pipe(res);
+
+        // Header
+        doc
+            .fillColor('#000080')
+            .fontSize(20)
+            .text('INVOICE', { align: 'center' })
+            .moveDown();
+
+        // Order Info
+        doc
+            .fontSize(12)
+            .fillColor('#000000')
+            .text(`Order ID: ${order._id}`)
+            .text(`Date: ${order.createdAt.toDateString()}`)
+            .moveDown();
+
+        // Billing Address
+        doc
+            .fontSize(14)
+            .fillColor('#000080')
+            .text('Billing Address', { underline: true })
+            .moveDown()
+            .fontSize(12)
+            .fillColor('#000000')
+            .text(`Name: ${order.billingAddress.userName}`)
+            .text(`Email: ${order.billingAddress.email}`)
+            .text(`Address: ${order.billingAddress.address}`)
+            .text(`City: ${order.billingAddress.city}`)
+            .text(`State: ${order.billingAddress.state}`)
+            .text(`Pincode: ${order.billingAddress.pincode}`)
+            .text(`Mobile: ${order.billingAddress.mobile}`)
+            .moveDown();
+
+        // Draw Table Header
+        const tableTop = 300;
+        const itemDescriptionX = 50;
+        const itemQuantityX = 300;
+        const itemPriceX = 400;
+
+        doc
+            .fontSize(14)
+            .fillColor('#000080')
+            .text('No.', itemDescriptionX, tableTop)
+            .text('Product Name', itemDescriptionX + 50, tableTop)
+            .text('Quantity', itemQuantityX, tableTop)
+            .text('Price', itemPriceX, tableTop);
+
+        // Draw Table Rows
+        const rowHeight = 30;
+        let currentY = tableTop + rowHeight;
+
+        order.Products.forEach((product, index) => {
+            doc
+                .fontSize(12)
+                .fillColor(index % 2 === 0 ? '#f2f2f2' : '#ffffff')
+                .rect(50, currentY - 5, 500, rowHeight)
+                .fill()
+                .fillColor('#000000')
+                .text(index + 1, itemDescriptionX, currentY)
+                .text(product.Product.name, itemDescriptionX + 50, currentY)
+                .text(product.quantity, itemQuantityX, currentY)
+                .text(`$${product.price}`, itemPriceX, currentY);
+            currentY += rowHeight;
+        });
+
+        // Total Amount
+        doc
+            .fontSize(14)
+            .fillColor('#000080')
+            .text('Total Amount', { underline: true })
+            .moveDown()
+            .fontSize(12)
+            .fillColor('#000000')
+            .text(`Total Amount: $${order.totalAmount}`)
+            .moveDown();
+
+        // Payment and Order Status
+        doc
+            .fontSize(14)
+            .fillColor('#000080')
+            .text('Payment and Order Status', { underline: true })
+            .moveDown()
+            .fontSize(12)
+            .fillColor('#000000')
+            .text(`Payment Method: ${order.paymentMethod}`)
+
+        // Finalize the PDF and end the stream
+        doc.end();
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error generating invoice');
+    }
+};
+
+
 
 
 module.exports = {
@@ -885,7 +998,8 @@ module.exports = {
     returnOrder,
     orderPage,
     walletPage,
-    filterProduct
+    filterProduct,
+    downloadInvoice
 
 };
 
