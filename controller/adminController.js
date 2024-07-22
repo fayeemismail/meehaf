@@ -52,6 +52,9 @@ const home = async (req, res) => {
 
 
         const orderList = await orderSchema.find().sort({_id: -1}).limit(6)
+        const productCount = await products.findOne().sort({count:-1})
+        const categoryCount = await category.findOne().sort({count:-1})
+        console.log(productCount)
 
         
 
@@ -62,7 +65,9 @@ const home = async (req, res) => {
             totalProducts: totalProducts,
             totalCategories: totalCategories,
             monthlyIncome: monthlyIncome.length ? monthlyIncome[0].total : 0,
-            orderList: orderList
+            orderList: orderList,
+            productCount:productCount,
+            categoryCount:categoryCount
         });
     } catch (error) {
         console.log(error)

@@ -6,6 +6,7 @@ const productSchema = require('../models/productModel')
 const couponSchema = require('../models/couponModel');
 const walletSchema = require('../models/walletModel');
 const { ObjectId } = require('mongodb');
+const categorySchema = require('../models/categoryModel');
 require('dotenv').config();
 const crypto = require('crypto')
 
@@ -91,11 +92,19 @@ const placeOrder = async (req, res) => {
             }
         }
 
-        // Deduct stock quantities
+        // Deduct stock quantities and increase product count
         for (let i = 0; i < productDetails.length; i++) {
             const product = await productSchema.findById(productDetails[i].Product);
             product.stock -= productDetails[i].quantity;
+            product.count += 1;
             await product.save();
+
+            // Increment category count
+            const category = await categorySchema.findOne({ name: product.category });
+            if (category) {
+                category.count += 1;
+                await category.save();
+            }
         }
 
         let totalAmount = 0;
@@ -192,6 +201,7 @@ const placeOrder = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
 
 
 

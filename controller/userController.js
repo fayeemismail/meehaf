@@ -955,7 +955,7 @@ const downloadInvoice = async (req, res) => {
         doc
             .fontSize(14)
             .fillColor('#000080')
-            .text('Payment and Order Status', { underline: true })
+            .text('Payment Method', { underline: true })
             .moveDown()
             .fontSize(12)
             .fillColor('#000000')
