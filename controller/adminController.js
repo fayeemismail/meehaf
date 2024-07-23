@@ -52,9 +52,8 @@ const home = async (req, res) => {
 
 
         const orderList = await orderSchema.find().sort({_id: -1}).limit(6)
-        const productCount = await products.findOne().sort({count:-1})
-        const categoryCount = await category.findOne().sort({count:-1})
-        console.log(productCount)
+        const productCount = await products.find().sort({count:-1}).limit(5)
+        const categoryCount = await category.find().sort({count:-1}).limit(5)
 
         
 

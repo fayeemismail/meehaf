@@ -63,7 +63,7 @@ const shop = async (req, res) => {
         }
 
         const page = parseInt(req.query.page) || 1;
-        const limit = 12;
+        const limit = 8;
         const skip = (page - 1) * limit;
 
         // Get the search query
