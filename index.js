@@ -43,4 +43,4 @@ app.use('/admin', admin_route)
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/public',express.static('public'))
 
-app.listen(5000, console.log('http://localhost:5000'))
+app.listen(3000, console.log('http://localhost:3000'));

@@ -205,55 +205,57 @@ const verifyOtp = async (req, res) => {
 
         if (OTPData && OTPData.otp === otpp) {
             const newUser = new user(userData);
-            newUser.balance = 301 + newUser.balance
-            await newUser.save();
-
-            // Create a wallet for the new user
-            const walletData = await walletSchema.create({
-                user: newUser._id,
-                amount: 301, // Initialize with the credited amount
-                payment_type: 'Credited'
-            });
-
-            // If there's a referral, update the wallet of the referrer
             
-            const userDetail = await user.findOne({ refferel: req.session.refferel });
-            console.log(userDetail)
-            if (userDetail) {
-                // Check if the referrer already has a wallet
-                let referrerWalletData = await walletSchema.findOne({ user: userDetail._id });
-                
+            // Check if there's a referral
+            if (req.session.refferel) {
+                newUser.balance = 301 + (newUser.balance || 0);
+                await newUser.save();
 
-                if (referrerWalletData) {
-                    // If the wallet exists, update the amount
-                    userDetail.balance = 301 + userDetail.balance
-                    const save = await userDetail.save()
-                    const newWallet = {
-                        user: userDetail._id,
-                        amount:301,
-                        payment_type: 'Credited'
+                // Create a wallet for the new user
+                const walletData = await walletSchema.create({
+                    user: newUser._id,
+                    amount: 301, // Initialize with the credited amount
+                    payment_type: 'Credited'
+                });
+
+                // If there's a referral, update the wallet of the referrer
+                const userDetail = await user.findOne({ refferel: req.session.refferel });
+                if (userDetail) {
+                    // Check if the referrer already has a wallet
+                    let referrerWalletData = await walletSchema.findOne({ user: userDetail._id });
+
+                    if (referrerWalletData) {
+                        // If the wallet exists, update the amount
+                        userDetail.balance = 301 + (userDetail.balance || 0);
+                        await userDetail.save();
+
+                        const newWallet = {
+                            user: userDetail._id,
+                            amount: 301,
+                            payment_type: 'Credited'
+                        };
+
+                        const newWalletData = new walletSchema(newWallet);
+                        await newWalletData.save();
+
+                    } else {
+                        userDetail.balance = 301 + (userDetail.balance || 0);
+                        await userDetail.save();
+
+                        // If the wallet does not exist, create a new wallet
+                        const newWallet = {
+                            user: userDetail._id,
+                            amount: 301,
+                            payment_type: 'Credited'
+                        };
+
+                        const newWalletData = new walletSchema(newWallet);
+                        await newWalletData.save();
                     }
-
-                    const newWalletData = new walletSchema(newWallet);
-                    await newWalletData.save()
-
-                } else {
-                    userDetail.balance = 301 + userDetail.balance 
-                    await userDetail.save()
-                    // If the wallet does not exist, create a new wallet
-                    const newWallet = {
-                        user: userDetail._id,
-                        amount:301,
-                        payment_type: 'Credited'
-                    }
-
-                    const newWalletData = new walletSchema(newWallet);
-                    await newWalletData.save()
                 }
+            } else {
+                await newUser.save();
             }
-
-
-            
 
             res.render('login');
         } else {
@@ -265,6 +267,7 @@ const verifyOtp = async (req, res) => {
         res.render('otp', { message: 'An error occurred. Please try again later.' });
     }
 };
+
 
 
 

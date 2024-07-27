@@ -14,8 +14,8 @@ const crypto = require('crypto')
 //REQUIRING RAZORPAY
 const razorpay = require('razorpay');
 const razorpayInstance = new razorpay({
-    key_id : process.env.RAZORPAY_ID,
-    key_secret : process.env.RAZORPAY_KEY
+    key_id: process.env.RAZORPAY_ID,
+    key_secret: process.env.RAZORPAY_KEY
 });
 
 
@@ -62,137 +62,143 @@ const checkOut = async (req, res) => {
 const placeOrder = async (req, res) => {
     try {
         const { checkAddress, couponCode, paymentMethod } = req.body;
-        
-        const userId = req.session.user_id;
-        const userData = await UserSchema.findOne({ _id: userId });
-        const addressData = await addressSchema.findOne({ user_id: userId });
-        const correctAddress = addressData.address.find(value => value.id == checkAddress ? value : '');
+        if (checkAddress == null) {
+            res.json({ message: 'no address found' })
+        } else {
+            console.log(checkAddress, 'this is check address')
+            const userId = req.session.user_id;
+            const userData = await UserSchema.findOne({ _id: userId });
 
-        const findCart = await cartSchema.findOne({ user: userId }).populate('Products.Product');
+            const addressData = await addressSchema.findOne({ user_id: userId });
+            const correctAddress = addressData.address.find(value => value.id == checkAddress ? value : '');
 
-        const productDetails = await Promise.all(findCart.Products.map(async val => {
-            const product = await productSchema.findById(val.Product.id);
-            const price = product.offer > 0 ? product.offer : product.price;
+            const findCart = await cartSchema.findOne({ user: userId }).populate('Products.Product');
 
-            return {
-                Product: product.id,
-                name: product.name,
-                quantity: val.quantity,
-                price: price // Use offer price if available
+            const productDetails = await Promise.all(findCart.Products.map(async val => {
+                const product = await productSchema.findById(val.Product.id);
+                const price = product.offer > 0 ? product.offer : product.price;
+
+                return {
+                    Product: product.id,
+                    name: product.name,
+                    quantity: val.quantity,
+                    price: price // Use offer price if available
+                };
+            }));
+
+
+            console.log(productDetails);
+
+            // Check stock availability
+            for (let i = 0; i < productDetails.length; i++) {
+                const product = await productSchema.findById(productDetails[i].Product);
+                if (product.stock < productDetails[i].quantity) {
+                    return res.status(400).json({ success: false, message: `Insufficient stock for product ${product.name}` });
+                }
+            }
+
+            // Deduct stock quantities and increase product count
+            for (let i = 0; i < productDetails.length; i++) {
+                const product = await productSchema.findById(productDetails[i].Product);
+                product.stock -= productDetails[i].quantity;
+                product.count += 1;
+                await product.save();
+
+                // Increment category count
+                const category = await categorySchema.findOne({ name: product.category });
+                if (category) {
+                    category.count += 1;
+                    await category.save();
+                }
+            }
+
+            let totalAmount = 0;
+            let discountAmount = 0;
+
+            if (couponCode) {
+                const couponData = await couponSchema.findOne({ couponCode });
+                if (couponData) {
+                    discountAmount = couponData.amount;
+                }
+            }
+
+            totalAmount = productDetails.reduce((accu, val) => {
+                return accu + val.quantity * val.price;
+            }, 0) - discountAmount;
+
+            const newOrderData = {
+                user: userId,
+                Products: productDetails,
+                billingAddress: {
+                    userName: correctAddress.name,
+                    email: userData.email,
+                    address: correctAddress.address,
+                    city: correctAddress.city,
+                    state: correctAddress.state,
+                    pincode: correctAddress.pincode,
+                    mobile: correctAddress.mobile
+                },
+                paymentMethod: paymentMethod,
+                totalAmount: totalAmount,
+                orderStatus: 'Pending',
+                paymentStatus: 'Pending'
             };
-        }));
 
-        console.log(productDetails);
-
-        // Check stock availability
-        for (let i = 0; i < productDetails.length; i++) {
-            const product = await productSchema.findById(productDetails[i].Product);
-            if (product.stock < productDetails[i].quantity) {
-                return res.status(400).json({ success: false, message: `Insufficient stock for product ${product.name}` });
+            // Coupon handling
+            if (couponCode) {
+                const couponData = await couponSchema.findOne({ couponCode });
+                if (couponData) {
+                    couponData.userList.push({ userId, couponUsed: true });
+                    await couponData.save();
+                    newOrderData.claimedAmount = discountAmount;
+                }
             }
-        }
 
-        // Deduct stock quantities and increase product count
-        for (let i = 0; i < productDetails.length; i++) {
-            const product = await productSchema.findById(productDetails[i].Product);
-            product.stock -= productDetails[i].quantity;
-            product.count += 1;
-            await product.save();
+            const newOrder = new orderSchema(newOrderData);
+            const saving = await newOrder.save();
 
-            // Increment category count
-            const category = await categorySchema.findOne({ name: product.category });
-            if (category) {
-                category.count += 1;
-                await category.save();
-            }
-        }
+            if (saving) {
+                // Clear the cart after the order is saved
+                await cartSchema.findOneAndDelete({ user: userId });
 
-        let totalAmount = 0;
-        let discountAmount = 0;
-
-        if (couponCode) {
-            const couponData = await couponSchema.findOne({ couponCode });
-            if (couponData) {
-                discountAmount = couponData.amount;
-            }
-        }
-
-        totalAmount = productDetails.reduce((accu, val) => {
-            return accu + val.quantity * val.price;
-        }, 0) - discountAmount;
-
-        const newOrderData = {
-            user: userId,
-            Products: productDetails,
-            billingAddress: {
-                userName: correctAddress.name,
-                email: userData.email,
-                address: correctAddress.address,
-                city: correctAddress.city,
-                state: correctAddress.state,
-                pincode: correctAddress.pincode,
-                mobile: correctAddress.mobile
-            },
-            paymentMethod: paymentMethod,
-            totalAmount: totalAmount,
-            orderStatus: 'Pending',
-            paymentStatus: 'Pending'
-        };
-
-        // Coupon handling
-        if (couponCode) {
-            const couponData = await couponSchema.findOne({ couponCode });
-            if (couponData) {
-                couponData.userList.push({ userId, couponUsed: true });
-                await couponData.save();
-                newOrderData.claimedAmount = discountAmount;
-            }
-        }
-
-        const newOrder = new orderSchema(newOrderData);
-        const saving = await newOrder.save();
-
-        if (saving) {
-            // Clear the cart after the order is saved
-            await cartSchema.findOneAndDelete({ user: userId });
-            
-            // Handle different payment methods
-            if (newOrderData.paymentMethod === 'Cash on delivery') {
-                res.json({ puskas: true, orderId: saving._id, cashOnDelivary: true });
-            } else if (newOrderData.paymentMethod === 'Razor Pay') {
-                const razorpayOrder = await razorpayInstance.orders.create({
-                    amount: totalAmount * 100,
-                    currency: 'INR',
-                    receipt: `RECIPT_IS${newOrder._id}`
-                });
-                res.status(200).json({
-                    message: 'Razorpay order created',
-                    razorpayOrderId: razorpayOrder.id,
-                    userName: userData.name,
-                    orderId: newOrder._id,
-                    amount: totalAmount,
-                    currency: 'INR',
-                    key: process.env.RAZORPAY_ID
-                });
-            } else if (newOrderData.paymentMethod === 'Wallet') {
-                const walletData = await walletSchema.findOne({ user: userId });
-                if (walletData && userData.balance >= totalAmount) {
-                    userData.balance -= totalAmount;
-                    await userData.save();
-                    const newWalletData = new walletSchema({
-                        user: userId,
-                        amount: totalAmount,
-                        payment_type: 'Debited'
+                // Handle different payment methods
+                if (newOrderData.paymentMethod === 'Cash on delivery') {
+                    res.json({ puskas: true, orderId: saving._id, cashOnDelivary: true });
+                } else if (newOrderData.paymentMethod === 'Razor Pay') {
+                    const razorpayOrder = await razorpayInstance.orders.create({
+                        amount: totalAmount * 100,
+                        currency: 'INR',
+                        receipt: `RECIPT_IS${newOrder._id}`
                     });
-                    await newWalletData.save();
+                    res.status(200).json({
+                        message: 'Razorpay order created',
+                        razorpayOrderId: razorpayOrder.id,
+                        userName: userData.name,
+                        orderId: newOrder._id,
+                        amount: totalAmount,
+                        currency: 'INR',
+                        key: process.env.RAZORPAY_ID
+                    });
+                } else if (newOrderData.paymentMethod === 'Wallet') {
+                    const walletData = await walletSchema.findOne({ user: userId });
+                    if (walletData && userData.balance >= totalAmount) {
+                        userData.balance -= totalAmount;
+                        await userData.save();
+                        const newWalletData = new walletSchema({
+                            user: userId,
+                            amount: totalAmount,
+                            payment_type: 'Debited'
+                        });
+                        await newWalletData.save();
 
-                    // Update payment status to 'Confirmed' for wallet payments
-                    newOrder.paymentStatus = 'Confirmed';
-                    await newOrder.save();
+                        // Update payment status to 'Confirmed' for wallet payments
+                        newOrder.paymentStatus = 'Confirmed';
+                        await newOrder.save();
 
-                    res.json({ success: true, orderId: saving._id, wallet: true });
-                } else {
-                    res.send({ message1: true });
+                        res.json({ success: true, orderId: saving._id, wallet: true });
+                    } else {
+                        res.send({ message1: true });
+                    }
                 }
             }
         }
@@ -247,12 +253,12 @@ const orderSuccess = async (req, res) => {
         const orderId = req.query.orderId;
         const order = await orderSchema.findById(orderId).populate('Products.Product')
 
-        
-        const productDetails = order.Products.map(item => item.Product)
-        const items = await productSchema.find({_id:productDetails})
-        
 
-        res.render('orderSuccess', { cartData:order });
+        const productDetails = order.Products.map(item => item.Product)
+        const items = await productSchema.find({ _id: productDetails })
+
+
+        res.render('orderSuccess', { cartData: order });
     } catch (error) {
         console.log(error);
     }
@@ -260,7 +266,7 @@ const orderSuccess = async (req, res) => {
 
 
 
-const paymentFailure = async (req,res) => {
+const paymentFailure = async (req, res) => {
     try {
         const { orderId } = req.body;
 
@@ -314,8 +320,8 @@ const retryPayment = async (req, res) => {
     try {
         const { orderId, razorpayPaymentId, razorpayOrderId, razorpaySignature, amount } = req.body;
 
-       
-        
+
+
 
         // Verify the payment using Razorpay SDK
         const crypto = require('crypto');
@@ -357,5 +363,5 @@ module.exports = {
 
 
 
-    
+
 }
