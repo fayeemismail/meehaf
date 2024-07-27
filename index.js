@@ -38,7 +38,7 @@ app.use('/', user_route)
 // REQUIRING ADMIN ROUTE
 const admin_route = require('./route/adminRoute')
 app.use('/admin', admin_route)
-// index has changes us ---------------------------------------
+// index has changes us ------------------------------
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/public',express.static('public'))
