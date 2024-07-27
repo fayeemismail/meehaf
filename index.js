@@ -20,7 +20,8 @@ app.use(session({
 
 
 //CONNECTING DATABASE
-mongoose.connect("mongodb://127.0.0.1:27017/usersData");
+mongoose.connect(process.env.MONGO_URI)
+.then((data)=>console.log("mongodb connectd -------"))
 app.use(nocache());
 
 

@@ -43,7 +43,8 @@ const offer = async (req, res) => {
         res.render('offerPage', { 
             offerData: remainingOffers, 
             currentPage: page, 
-            totalPages 
+            totalPages,
+            activePage: 'offer'
         });
     } catch (error) {
         console.log(error);
@@ -57,7 +58,7 @@ const offer = async (req, res) => {
 const offerProduct = async (req, res) => {
     try {
         const productData = await productSchema.find()
-        res.render('offerProduct', {productData})
+        res.render('offerProduct', {productData, activePage: 'offer'})
     } catch (error) {
         console.log(error)
     }
@@ -115,7 +116,7 @@ const addProductOffer = async (req, res) => {
 const categoryOffer = async (req,res) => {
     try {
         const categoryData = await categorySchema.find()
-        res.render('categoryOffer', {categoryData})
+        res.render('categoryOffer', {categoryData, activePage: 'offer'})
     } catch (error) {
         console.log(error)
     }

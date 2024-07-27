@@ -8,7 +8,7 @@ const newProducts = async (req, res) => {
 
     try {
         const categoryData = await category.find();
-        res.render('newProducts', { categories: categoryData })
+        res.render('newProducts', { categories: categoryData, activePage:'product'})
     } catch (error) {
         console.log(error)
     }
@@ -23,23 +23,23 @@ const addProducts = async (req, res) => {
 
         // Validate name
         if (!name || name.trim().length < 3) {
-            return res.render('newProducts', { message: 'The name should contain at least 3 letters' });
+            return res.render('newProducts', { message: 'The name should contain at least 3 letters', activePage:'product' });
         }
         
         // Validate price
         if (!price || price <= 0) {
-            return res.render('newProducts', { message: 'The price must be greater than 0' });
+            return res.render('newProducts', { message: 'The price must be greater than 0', activePage:'product' });
         }
 
         // Validate stock
         if (stock < 0) {
-            return res.render('newProducts', { message: 'The stock must be 0 or greater' });
+            return res.render('newProducts', { message: 'The stock must be 0 or greater', activePage:'product' });
         }
         
         // Check for existing product
         const existingProduct = await products.findOne({ name });
         if (existingProduct) {
-            return res.render('newProducts', { message: 'A product with the same name already exists' });
+            return res.render('newProducts', { message: 'A product with the same name already exists', activePage:'product' });
         }
 
         const imagePath = req.files.map(file => file.filename);
@@ -79,7 +79,7 @@ const editProducts = async (req, res) => {
 
         // console.log('this is item '+item+ ' ' + 'this is category ' + categoryData)
 
-        res.render('editProducts', { product: item, categories: categoryData })
+        res.render('editProducts', { product: item, categories: categoryData, activePage:'product' })
     } catch (error) {
         console.log(error)
     }

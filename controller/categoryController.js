@@ -16,7 +16,7 @@ const categories = async (req, res) => {
             .skip((page - 1) * perPage) // Skip the first (page-1) * perPage categories
             .limit(perPage); // Limit to `perPage` categories
 
-        res.render('categories', { item, currentPage: page, totalPages });
+        res.render('categories', { item, currentPage: page, totalPages, activePage: 'categories' });
     } catch (error) {
         console.log(error);
     }
@@ -29,7 +29,7 @@ const addCategory = async (req,res) => {
         
         const item = await category.find()
         if(!name || name.trim().length <= 2){
-            res.render('categories' , {message: 'name must contain atleast 2 letters' ,item })
+            res.render('categories' , {message: 'name must contain atleast 2 letters' ,item, activePage: 'categories' })
         }else{
 
         const newCategory = new category({
@@ -57,7 +57,7 @@ const editCategory = async (req,res) => {
         const categoryId = req.query.id;
         console.log(categoryId)
         const categoryData = await category.findById(categoryId)
-        res.render('editCategory',{categoryData} )
+        res.render('editCategory',{categoryData, activePage: 'categories'} )
     } catch (error) {
         console.log(error)
     }

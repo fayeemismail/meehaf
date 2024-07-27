@@ -24,13 +24,15 @@ const coupon = async (req, res) => {
             res.render('coupon', {
                 couponData: couponData,
                 currentPage: page,
-                totalPages: totalPages
+                totalPages: totalPages,
+                activePage: 'coupon'
             });
         } else {
             res.render('coupon', {
                 couponData: [],
                 currentPage: page,
-                totalPages: 0
+                totalPages: 0,
+                activePage: 'coupon'
             });
         }
     } catch (error) {
@@ -70,7 +72,7 @@ const editCoupon = async (req,res) => {
         const couponId = req.query.id
         const couponData = await couponSchema.findOne({_id:couponId})
         
-        res.render('editCoupon', { couponData:couponData })        
+        res.render('editCoupon', { couponData:couponData, activePage: 'coupon' })        
     } catch (error) {
         console.log(error)
     }

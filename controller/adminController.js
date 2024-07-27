@@ -66,7 +66,8 @@ const home = async (req, res) => {
             monthlyIncome: monthlyIncome.length ? monthlyIncome[0].total : 0,
             orderList: orderList,
             productCount:productCount,
-            categoryCount:categoryCount
+            categoryCount:categoryCount,
+            activePage: 'dashboard'
         });
     } catch (error) {
         console.log(error)
@@ -105,7 +106,8 @@ const product = async (req, res) => {
         res.render('product', {
             item: productsToShow,
             currentPage: page,
-            totalPages: totalPages
+            totalPages: totalPages,
+            activePage:'product'
         });
     } catch (error) {
         console.log(error);
@@ -118,7 +120,7 @@ const product = async (req, res) => {
 const order = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 5; // Default to 5 orders per page
+        const limit = parseInt(req.query.limit) || 10; // Default to 5 orders per page
         const skip = (page - 1) * limit;
 
         const orderList = await orderSchema.find().skip(skip).limit(limit).sort({_id: -1});
@@ -128,7 +130,8 @@ const order = async (req, res) => {
             orderList: orderList,
             currentPage: page,
             totalPages: Math.ceil(totalOrders / limit),
-            limit: limit
+            limit: limit,
+            activePage:'order'
         });
     } catch (error) {
         console.log(error);
@@ -180,7 +183,7 @@ const usersList = async (req, res) => {
             .limit(limit)
             .sort({_id:-1});
 
-        res.render('usersList', { data, page, totalPages });
+        res.render('usersList', { data, page, totalPages, activePage:'usersList' });
 
     } catch (error) {
         console.log(error);
@@ -216,7 +219,7 @@ const orderDetails = async (req,res) => {
     try {
         const orderId = req.query.id
         const orderData = await orderSchema.findById(orderId).populate('Products.Product')
-        res.render('orderDetails', {orderData})
+        res.render('orderDetails', {orderData, activePage:'order'})
     } catch (error) {
         console.log(error)
     }
@@ -396,7 +399,8 @@ const salesReport = async (req, res) => {
             limit: parseInt(limit),
             dateRange: dateRange || '',
             startDate: startDate || '',
-            endDate: endDate || ''
+            endDate: endDate || '',
+            activePage:'salesReport'
         });
     } catch (error) {
         console.log(error);

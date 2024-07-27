@@ -4,51 +4,51 @@
 
 <nav>
     <ul class="menu-aside">
-        <li class="menu-item">
+        <li class="menu-item <%= activePage == 'dashboard' ? 'active' : '' %>">
             <a class="menu-link" href="/admin">
                 <i class="icon material-icons md-home"></i>
                 <span class="text">Dashboard</span>
             </a>
         </li>
-        <li class="menu-item">
+        <li class="menu-item <%= activePage == 'product' ? 'active' : '' %>">
             <a class="menu-link" href="/admin/product">
                 <i class="icon material-icons md-shopping_bag"></i>
                 <span class="text">Products</span>
             </a>
         
         </li>
-        <li class="menu-item">
+        <li class="menu-item <%= activePage == 'order' ? 'active' : '' %>">
             <a class="menu-link" href="/admin/order">
                 <i class="icon material-icons md-shopping_cart"></i>
                 <span class="text">Orders</span>
             </a>
         </li>
-        <li class="menu-item ">
+        <li class="menu-item <%= activePage == 'categories' ? 'active' : '' %>">
             <a class="menu-link" href="/admin/categories">
                 <i class="icon material-icons md-category"></i>
                 <span class="text">Categories</span>
             </a>
             
         </li>
-        <li class="menu-item">
+        <li class="menu-item <%= activePage == 'coupon' ? 'active' : '' %>">
             <a class="menu-link" href="/admin/coupon">
                 <i class="icon material-icons md-local_offer"></i>
                 <span class="text">Copon Management</span>
             </a>
         </li>
-        <li class="menu-item">
+        <li class="menu-item <%= activePage == 'usersList' ? 'active' : '' %>">
             <a class="menu-link" href="/admin/usersList">
                 <i class="icon material-icons md-people"></i>
                 <span class="text">User Management</span>
             </a>
         </li>
-        <li class="menu-item">
+        <li class="menu-item <%= activePage == 'offer' ? 'active' : '' %>">
             <a href="/admin/offer" class="menu-link">
                 <i class="icon material-icons md-description"></i>
                 <span class="text">Offer</span>
             </a>
         </li>
-        <li class="menu-item">
+        <li class="menu-item <%= activePage == 'salesReport' ? 'active' : '' %>">
             <a class="menu-link" href="/admin/salesReport">
                 <i class="icon material-icons md-insert_chart"></i>
                 <span class="text">Sales Report</span>
