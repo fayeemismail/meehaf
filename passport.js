@@ -12,7 +12,7 @@ passport.deserializeUser(function(user, done) {
 passport.use(new GoogleStrategy({
     clientID:process.env.CLIENT_ID, // MY CREADENTIALS
     clientSecret:process.env.CLIENT_SECRET, // MY SECREAT CREDENTIAL
-    callbackURL:"http://localhost:3000/auth/google/callback",
+    callbackURL:"https://www.meehaf.shop/auth/google/callback",
     passReqToCallback:true
 },
 function(request, accessToken, refreshToken, profile, done) {
