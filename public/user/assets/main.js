@@ -8,7 +8,7 @@ jQuery(document).ready(function($) {
 		$(this).addClass('active').siblings().removeClass('active');
 	});
 
-	$('.molla-lz').lazyload({
+	$('.-lz').lazyload({
 		effect: 'fadeIn',
 		effect_speed: 400,
 		appearEffect: '',
